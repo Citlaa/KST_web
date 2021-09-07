@@ -1,0 +1,96 @@
+/* Menú */
+.navbar{
+    background-color: #002d5c !important;  
+  }
+
+.router-link-active{
+    color:blue;
+}
+  
+.navbar-dark .navbar-nav .nav-link {
+    color: #FFFFFF !important;
+}
+  
+.dropdown-menu {    
+    right: 0;
+    left: auto;
+}
+  
+.logo{
+    position: absolute;
+    top: 0px;
+    max-width: 200px;
+}
+  
+/* Título de vistas */
+.titulo_azul{  
+    color: #002d5c;
+    text-align: center;
+    font-family: "Playfair", sans-serif;
+    font-size: 1cm;
+    padding: 1em 0 .25em 0;
+}
+  
+.line_red {
+    background-color: #cc003d;
+    height: 3px;
+    width: 8em;
+    margin: 0 auto;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+/* Tablas */
+.table {
+    margin-bottom: 0px !important;
+}
+.pagination {
+    justify-content: center;
+}
+
+/* Botones */
+.button.is-primary {
+    background-color: #002d5c;    
+}
+
+.button.is-primary:hover {
+    background-color: #cc003d;    
+}
+
+.align-rigth{
+    float:right
+}
+
+/* modal */
+.modal-mask {
+    position: fixed;
+    z-index: 9998;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, .5);
+    display: table;
+    transition: opacity .3s ease;
+}
+
+.modal-wrapper {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.modal-header{
+    background-color: #002d5c;
+}
+
+.modal-title{
+    color: white;    
+    font-family: "Playfair", sans-serif;
+    font-size: 1cm;    
+}
+
+.button.close_modal {
+    background-color: #002d5c;
+    color: white;
+}
+

@@ -58,27 +58,6 @@ export default {
 <style>
 /* import style bulma */
 @import "~bulma/css/bulma.css";
+@import "../dist/css/kst.css";
 
-.navbar{
-  background-color: #002d5c !important;  
-}
-.router-link-active{
-  color:blue;
-
-}
-
-.navbar-dark .navbar-nav .nav-link {
-    color: #FFFFFF !important;
-}
-
-.dropdown-menu {    
-    right: 0;
-    left: auto;
-}
-
-.logo{
-  position: absolute;
-  top: 0px;
-  max-width: 200px;
-}
 </style>

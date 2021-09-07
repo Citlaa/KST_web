@@ -26,7 +26,7 @@ import routes from '@/routes/routes.js'
  
 const router = new VueRouter({ mode: 'history', routes: routes })
 
-new Vue({
+new Vue({  
   router,
   render: h => h(App),
 }).$mount('#app')

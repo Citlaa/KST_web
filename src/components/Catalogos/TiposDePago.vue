@@ -1,5 +1,9 @@
 <template>
   <div>
+    <div class="col-12" id="Titulo">
+        <h1 class="titulo_azul">Ciclo Escolar</h1>
+        <div class="line_red"></div>
+    </div> 
     <router-link :to="{ name: 'Create' }" class="button is-success mt-5"
       >Add New</router-link
     >
