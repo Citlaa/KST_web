@@ -5,10 +5,10 @@
         <div class="line_red"></div>
     </div>
     <div>
-        <button class="button is-primary mt-5 mb-1 align-rigth" @click="abrirModal('Agregar', {})">Agregar ciclo escolar</button>
+        <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})">Agregar ciclo escolar</button>
         <br/>        
         <div id="bootstrap_table">
-            <div class="col-3 mr-0">
+            <div class="col-3 mr-0 align-rigth">
                 <input class="form-control" v-model="filter" type="search" placeholder="Buscar" />
             </div>
             <b-table striped hover outlined
