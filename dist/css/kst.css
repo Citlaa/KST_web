@@ -98,5 +98,9 @@
 .button.close_modal {
     background-color: #002d5c;
     color: white;
+    border: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 

@@ -12,8 +12,7 @@
                 <input class="form-control" v-model="filter" type="search" placeholder="Buscar" />
             </div>
             <b-table striped hover outlined
-                :items="items"  
-                :columns="columns"
+                :items="items"                  
                 :fields="fields"  
                 :per-page="perPage"
                 :current-page="currentPage"
@@ -152,8 +151,21 @@ export default {
         this.mostrarModal = !this.mostrarModal;        
     },
     async guardarTipoDeCicloEscolar(){
-        
-
+        try {
+            console.log(this.item); 
+            const data = {
+                tipoDeCicloEscolar: {
+                    AñoDeInicio: Number(this.item.AñoDeInicio),
+                    AñoDeTermino: Number(this.item.AñoDeTermino),
+                    Activo: Number(this.Activo)
+                }
+            }
+            console.log(data);
+            const response = await axios.post("http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar", data);   
+            console.log(response);    
+        } catch(err) {
+        console.log(err);
+      }
     }
   },
 };
