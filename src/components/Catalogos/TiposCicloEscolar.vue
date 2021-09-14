@@ -4,8 +4,33 @@
         <h1 class="titulo_azul">Ciclo Escolar</h1>
         <div class="line_red"></div>
     </div>
-    <div>
-        <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})">Agregar ciclo escolar</button>
+    <div class="col-12 row filtros_div" id="filtros_div">
+        <div class="col-12 filtro_titulo">
+            <div class="row">
+            <div class="col-10"><h1 class="col-10">Favor de indicar filtros</h1></div>
+            <div class="col-2" @click="mostrarFiltros = !mostrarFiltros" :key="mostrarFiltros">
+                <i class="fas fa-angle-down" v-if="!mostrarFiltros" style="float: right;"></i>
+                <i class="fas fa-angle-up" v-if="mostrarFiltros" style="float: right;"></i>
+            </div>
+            </div>
+        </div>
+        <div v-if="mostrarFiltros" class="col-12 row">
+        <div class="col-4">
+            <label>Año de inicio</label>
+            <input class="form-control" type="number" />
+        </div>
+        <div class="col-4">
+            <label>Año de termino</label>
+            <input class="form-control" type="number" />
+        </div>
+        <div class="col-4">
+            <label>Activo</label>
+            <input class="form-control" type="number" />
+        </div>
+        </div>
+    </div>
+    <div class="col-12" style="margin-bottom:100px;">
+        <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})"><i class="fas fa-plus" style=""></i>&nbsp;&nbsp;Agregar ciclo escolar</button>
         <br/>        
         <div id="bootstrap_table">
             <div class="col-3 mr-0 align-rigth">
@@ -81,6 +106,7 @@
  
 <script>
 import axios from "axios";
+import bootbox from 'bootbox';
  
 export default {
   name: "TiposDeCicloEscolar",
@@ -118,6 +144,7 @@ export default {
       currentPage: 1,
       mostrarModal: false,
       titutoModal: '',
+      mostrarFiltros: false
     };
   },
   created() {
@@ -147,22 +174,57 @@ export default {
     },
     abrirModal: function(tipo, item){         
         this.titutoModal = tipo;
-        this.item = item;        
+        this.item = item;  
+        console.log(this.item);           
         this.mostrarModal = !this.mostrarModal;        
     },
     async guardarTipoDeCicloEscolar(){
-        try {
-            console.log(this.item); 
+      if(this.item.TipoDeCicloEscolarId > 0){
+          this.editarTipoDeCicloEscolar();
+      }else{
+          this.agregarTipoDeCicloEscolar();
+      }
+    },
+    async agregarTipoDeCicloEscolar(){
+        try {             
             const data = {
                 tipoDeCicloEscolar: {
-                    AñoDeInicio: Number(this.item.AñoDeInicio),
-                    AñoDeTermino: Number(this.item.AñoDeTermino),
-                    Activo: Number(this.Activo)
+                    TipoDeCicloEscolarId: null,
+                    Inicio: Number(this.item.AñoDeInicio),
+                    Termino: Number(this.item.AñoDeTermino),
+                    Activo: Number(this.item.Activo)
                 }
             }
             console.log(data);
-            const response = await axios.post("http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar", data);   
+            bootbox.alert("Hello world!");
+            // const response = await axios.post("http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar", data);   
+            // console.log(response);    
+            // if(!response.data.hayError){
+
+            // }
+            
+        } catch(err) {
+        console.log(err);
+      }
+    },
+    async editarTipoDeCicloEscolar(){
+        try {             
+            const data = {
+                tipoDeCicloEscolar: {
+                    TipoDeCicloEscolarId: this.item.TipoDeCicloEscolarId,
+                    Inicio: Number(this.item.AñoDeInicio),
+                    Termino: Number(this.item.AñoDeTermino),
+                    Activo: Number(this.item.Activo)
+                }
+            }
+            console.log(data);
+            // bootbox.alert("Hello world!");
+            const response = await axios.post("http://castelazo.edu.mx/app/administracion/editarTiposDeCicloEscolar", data);   
             console.log(response);    
+            // if(!response.data.hayError){
+
+            // }
+            
         } catch(err) {
         console.log(err);
       }
@@ -172,6 +234,5 @@ export default {
 </script>
  
 <style>
-
 
 </style>

@@ -40,6 +40,23 @@
     margin-bottom: 1em;
 }
 
+/* Filtros */
+.filtros_div{
+    border: 1px solid #adb5bd;
+    padding-bottom: 15px;
+    border-radius: 5px;
+    margin-left: 0px;
+}
+
+.filtro_titulo{
+    background-color: #dbdbdb;
+    padding-top: 5px;
+    padding-bottom: 5px;    
+}
+.filtro_titulo h1{
+    font-size: larger;
+}
+
 /* Tablas */
 .table {
     margin-bottom: 0px !important;

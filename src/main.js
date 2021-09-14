@@ -16,13 +16,7 @@ Vue.use(BootstrapVue)
 Vue.config.productionTip = false
 
 import routes from '@/routes/routes.js'
-// const routes = [  
-//   {
-//     name: 'Index',
-//     path: '/',
-//     component: Index
-//   },
-// ];
+
  
 const router = new VueRouter({ mode: 'history', routes: routes })
 
