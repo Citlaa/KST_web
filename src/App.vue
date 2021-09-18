@@ -33,6 +33,11 @@
     <div id="app" class="container is-max-desktop">
       <router-view />
     </div>
+    <div id="footer">
+      <div id="container_footer">
+        &copy; {{new Date().getFullYear()}} Copyright: <a href="http://castelazo.edu.mx/"> castelazo.edu.mx </a>
+      </div>
+    </div>
   </div>
 </template>
  
@@ -49,8 +54,10 @@ export default {
     return {
       logo: {
         url: require('./assets/logo.png')
-      }
+      }      
     }
+  },
+  created(){    
   }
 };
 </script>
@@ -60,4 +67,21 @@ export default {
 @import "~bulma/css/bulma.css";
 @import "../dist/css/kst.css";
 
+
+#container_footer{
+  padding-top:20px;
+  padding-bottom:5px;
+  margin-top:20px;
+  border-top: 2px solid red;
+  width:100vw;
+  color:#FFF;
+  background-color:#002d5c;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+#container_footer a {
+  color: white;
+}
 </style>
