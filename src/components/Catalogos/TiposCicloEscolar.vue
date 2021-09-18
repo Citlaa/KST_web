@@ -106,7 +106,6 @@
  
 <script>
 import axios from "axios";
-import bootbox from 'bootbox';
  
 export default {
   name: "TiposDeCicloEscolar",
@@ -174,11 +173,10 @@ export default {
     },
     abrirModal: function(tipo, item){         
         this.titutoModal = tipo;
-        this.item = item;  
-        console.log(this.item);           
+        this.item = item;              
         this.mostrarModal = !this.mostrarModal;        
     },
-    async guardarTipoDeCicloEscolar(){
+    async guardarTipoDeCicloEscolar(){           
       if(this.item.TipoDeCicloEscolarId > 0){
           this.editarTipoDeCicloEscolar();
       }else{
@@ -194,19 +192,23 @@ export default {
                     Termino: Number(this.item.AñoDeTermino),
                     Activo: Number(this.item.Activo)
                 }
+            }           
+            
+            const response = await axios.post("http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar", data);   
+            
+            this.mostrarModal = false;    
+            if(!response.data.hayError){
+                this.$alert("El ciclo escolar se guardó con éxito.");
+                this.getTiposDeCicloEscolar();
+            }else{
+                console.log(response);
+                this.$alert("Alert Message.");
             }
-            console.log(data);
-            bootbox.alert("Hello world!");
-            // const response = await axios.post("http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar", data);   
-            // console.log(response);    
-            // if(!response.data.hayError){
-
-            // }
             
         } catch(err) {
-        console.log(err);
-      }
-    },
+            console.log(err);
+        }
+    }, 
     async editarTipoDeCicloEscolar(){
         try {             
             const data = {
@@ -218,16 +220,21 @@ export default {
                 }
             }
             console.log(data);
-            // bootbox.alert("Hello world!");
+            
             const response = await axios.post("http://castelazo.edu.mx/app/administracion/editarTiposDeCicloEscolar", data);   
             console.log(response);    
-            // if(!response.data.hayError){
-
-            // }
+            this.mostrarModal = false;    
+            if(!response.data.hayError){
+                this.$alert("El ciclo escolar se guardó con éxito.");
+                this.getTiposDeCicloEscolar();
+            }else{
+                console.log(response);
+                this.$alert("Alert Message.");
+            }
             
         } catch(err) {
-        console.log(err);
-      }
+            console.log(err);
+        }
     }
   },
 };

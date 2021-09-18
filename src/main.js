@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import { BootstrapVue } from 'bootstrap-vue'
+import VueSimpleAlert from "vue-simple-alert";
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
@@ -11,6 +12,7 @@ import '@fortawesome/fontawesome-free/js/all'
 import App from './App.vue'
 
 Vue.use(VueRouter)
+Vue.use(VueSimpleAlert)
 Vue.use(BootstrapVue)
 
 Vue.config.productionTip = false
