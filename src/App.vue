@@ -13,7 +13,7 @@
           <b-nav-item-dropdown text="Administración">
             <b-dropdown-item :to="{ name: 'TiposDePago'}">Tipos de pago</b-dropdown-item>          
             <b-dropdown-item :to="{ name: 'TiposDePago'}">Creación de grupos</b-dropdown-item>
-            <b-dropdown-item :to="{ name: 'TiposDePago'}">Ciclo Escolar</b-dropdown-item>
+            <b-dropdown-item :to="{ name: 'tiposCicloEscolar'}">Ciclo Escolar</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'TiposDePago'}">Control de pagos</b-dropdown-item>            
             <b-dropdown-item :to="{ name: 'TiposDePago'}">Tipos de recargos</b-dropdown-item>            
           </b-nav-item-dropdown>
@@ -75,7 +75,7 @@ export default {
   border-top: 2px solid red;
   width:100vw;
   color:#FFF;
-  background-color:#002d5c;
+  background-color:#002d5c !important;
   display:flex;
   flex-direction:column;
   align-items:center;

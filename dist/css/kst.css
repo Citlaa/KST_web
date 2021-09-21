@@ -43,7 +43,7 @@
 /* Filtros */
 .filtros_div{
     border: 1px solid #adb5bd;
-    padding-bottom: 15px;
+    padding-bottom: 10px;
     border-radius: 5px;
     margin-left: 0px;
 }
@@ -55,6 +55,13 @@
 }
 .filtro_titulo h1{
     font-size: larger;
+}
+
+.filtro_footer{
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 10px;    
 }
 
 /* Tablas */
