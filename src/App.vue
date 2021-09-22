@@ -9,7 +9,8 @@
 
       <b-collapse id="nav-collapse" class="justify-content-end" is-nav>
         <b-navbar-nav>
-          <b-nav-item :to="{ name: 'Index'}">Inicio</b-nav-item>
+          <!-- <b-nav-item :to="{ name: 'Index'}">Inicio</b-nav-item> -->
+          <b-nav-item :to="{ name: ''}">Inicio</b-nav-item>
           <b-nav-item-dropdown text="Administración">
             <b-dropdown-item :to="{ name: ''}">Tipos de pago</b-dropdown-item>          
             <b-dropdown-item :to="{ name: ''}">Creación de grupos</b-dropdown-item>
