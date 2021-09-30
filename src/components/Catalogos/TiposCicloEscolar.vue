@@ -26,7 +26,7 @@
           <input class="form-control" type="number" v-model="filtro_añoDeTermino" />
         </div>
         <div class="col-4">
-          <label>Activo</label>
+          <label class="activo_label">Activo</label>
           <select class="form-control" v-model="filtro_activo">
             <option value="1">Si</option>
             <option value="0">No</option>
@@ -108,9 +108,9 @@
                       <label>Año de termino</label>
                       <input type="number" class="form-control" v-model="item.AñoDeTermino" />
                     </div>
-                    <div class="col-2 form-group">
+                    <div class="col-2">
                       <label>Activo</label>
-                      <select class="form-control" v-model="item.Activo">
+                      <select class="form-control " v-model="item.Activo">
                         <option value="1">Si</option>
                         <option value="0">No</option>
                       </select>
@@ -320,4 +320,9 @@ export default {
 </script>
  
 <style>
+@media screen and (max-width: 600px) {
+    .activo_label::before{
+      content: "Estado "
+    }
+}
 </style>

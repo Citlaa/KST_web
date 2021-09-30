@@ -3,7 +3,8 @@
     <div>
     <b-navbar toggleable="md" type="dark" style="padding-left: 20px; padding-right: 20px;">      
       <b-navbar-brand href="#">
-        <img :src="logo.url" class="d-inline-block align-top logo" alt="Instituto Castelazo">
+        <img :src="logo.url" class="align-top logo-sm" alt="Instituto Castelazo">
+        <img :src="logo.url" class="align-top logo-md" alt="Instituto Castelazo">       
       </b-navbar-brand>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
@@ -66,7 +67,7 @@ export default {
 <style>
 /* import style bulma */
 @import "~bulma/css/bulma.css";
-@import "../dist/css/kst.css";
+@import "css/kst.css";
 
 
 #container_footer{
