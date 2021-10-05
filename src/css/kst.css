@@ -41,7 +41,7 @@
 
     .logo-md {
       display: inline-block;
-    }        
+    }          
 }
 
 @media screen and (max-width: 600px) {
@@ -52,6 +52,10 @@
     .logo-md {
       display: none;
     }
+
+    .modal-dialog {
+        width: 75%
+    }  
 }
 
 

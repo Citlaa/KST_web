@@ -83,7 +83,7 @@
         <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
       </div>
     </div>
-    <div v-if="mostrarModal" id="modal_div">
+    <div v-if="mostrarModal" class="modal_div" id="modal_div">
       <transition name="modal">
         <div class="modal-mask">
           <div class="modal-wrapper">
@@ -100,15 +100,15 @@
                 </div>
                 <div class="modal-body">
                   <div class="row">
-                    <div class="col-5 form-group">
+                    <div class="col-5 form-group padding-model">
                       <label>Año de inicio</label>
                       <input type="number" class="form-control" v-model="item.AñoDeInicio" />
                     </div>
-                    <div class="col-5 form-group">
+                    <div class="col-5 form-group padding-model">
                       <label>Año de termino</label>
                       <input type="number" class="form-control" v-model="item.AñoDeTermino" />
                     </div>
-                    <div class="col-2">
+                    <div class="col-2 padding-model">
                       <label>Activo</label>
                       <select class="form-control " v-model="item.Activo">
                         <option value="1">Si</option>
@@ -141,6 +141,7 @@
  
 <script>
 import axios from "axios";
+import routeAPI from '@/js/api';
 
 export default {
   name: "TiposDeCicloEscolar",
@@ -167,9 +168,11 @@ export default {
           sortable: true
         },
         {
+          label:"Activo",
           key: "Activo"
         },
         {
+          label:"Opciones",
           key: "opciones"
         }
       ],
@@ -205,8 +208,8 @@ export default {
           }
         };
 
-        const response = await axios.post("http://castelazo.edu.mx/app/administracion/tiposDeCicloEscolar", filtros);
-        console.log(response);
+        const response = await axios.post(routeAPI + "administracion/tiposDeCicloEscolar", filtros);
+        
         response.data.response.forEach(element => {
           this.items.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
@@ -243,7 +246,7 @@ export default {
         };
 
         const response = await axios.post(
-          "http://castelazo.edu.mx/app/administracion/guardarTiposDeCicloEscolar",
+          routeAPI + "administracion/guardarTiposDeCicloEscolar",
           data
         );
 
@@ -268,11 +271,10 @@ export default {
             Termino: Number(this.item.AñoDeTermino),
             Activo: Number(this.item.Activo)
           }
-        };
-        console.log(data);
+        };  
 
         const response = await axios.post(
-          "http://castelazo.edu.mx/app/administracion/editarTiposDeCicloEscolar",
+          routeAPI + "administracion/editarTiposDeCicloEscolar",
           data
         );
         console.log(response);
@@ -298,7 +300,7 @@ export default {
         };
 
         const response = await axios.post(
-          "http://castelazo.edu.mx/app/administracion/cancelarTiposDeCicloEscolar",
+          routeAPI + "administracion/cancelarTiposDeCicloEscolar",
           data
         );
         if (!response.data.hayError) {
@@ -324,5 +326,10 @@ export default {
     .activo_label::before{
       content: "Estado "
     }
+
+    .padding-model{
+  padding-left: 6px;
+  padding-right: 6px;
+}
 }
 </style>
