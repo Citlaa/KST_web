@@ -2,7 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import administracionRoutes from '@/routes/Administracion/routes.js';
 
-import Index from '@/components/HelloWorld.vue'
+import Index from '@/components/Inicio.vue'
 
 Vue.use(Router);
 

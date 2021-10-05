@@ -11,7 +11,7 @@
       <b-collapse id="nav-collapse" class="justify-content-end" is-nav>
         <b-navbar-nav>
           <!-- <b-nav-item :to="{ name: 'Index'}">Inicio</b-nav-item> -->
-          <b-nav-item :to="{ name: ''}">Inicio</b-nav-item>
+          <b-nav-item :to="{ name: 'Index'}">Inicio</b-nav-item>
           <b-nav-item-dropdown text="Administración">
             <b-dropdown-item :to="{ name: ''}">Tipos de pago</b-dropdown-item>          
             <b-dropdown-item :to="{ name: ''}">Creación de grupos</b-dropdown-item>
@@ -22,7 +22,7 @@
           <b-nav-item-dropdown text="Alumnos">
             <b-dropdown-item :to="{ name: ''}">Registro de alumnos</b-dropdown-item>          
             <b-dropdown-item :to="{ name: ''}">Consulta de Historial Acádemico</b-dropdown-item>            
-            <b-dropdown-item :to="{ name: ''}">Rgistro de Padre/Tutor</b-dropdown-item>            
+            <b-dropdown-item :to="{ name: ''}">Registro de Padre/Tutor</b-dropdown-item>            
           </b-nav-item-dropdown>          
           <b-nav-item-dropdown text="Reportes">
             <b-dropdown-item :to="{ name: ''}" class="ms-auto">Lista de grupo</b-dropdown-item>          
