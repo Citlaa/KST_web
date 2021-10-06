@@ -226,9 +226,9 @@ export default {
             AñoDeInicio: element["002AñoDeInicio"],
             AñoDeTermino: element["002AñoDeTermino"],
             Activo: element["002Activo"]
-          });
-          this.isLoading = false;
+          });          
         });
+        this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
