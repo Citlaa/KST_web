@@ -32,7 +32,7 @@
       </b-collapse>      
     </b-navbar>
     </div>
-    <div id="app" class="container is-max-desktop">
+    <div id="app" class="">
       <router-view />
     </div>
     <div id="footer">

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container is-max-desktop">
     <div class="col-12" id="Titulo">
       <h1 class="titulo_azul">Ciclo Escolar</h1>
       <div class="line_red"></div>

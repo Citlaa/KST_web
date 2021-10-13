@@ -1,41 +1,48 @@
 <template>
-    <div class="row col-12">
-        <div class="col-4 modulo">   
-            <div class="titulo_modulo" style="text-align: center;">
-                <h1>Administración</h1>
+    <div>
+        <div class="">
+            <img :src="logo.url">
+        </div>
+        <div class="cover-home">
+        <div class="row" style="padding-top: 50px;">
+            <div class="col-4" style="">
+                <div class="titulo_modulo">
+                    <h1>Administración</h1>
+                </div>
+                <div class="cuerpo_modulo">
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de pago</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Creación de grupos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Ciclo Escolar</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Control de pagos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de recargos</router-link></li>
+                    </ul> 
+                </div>
             </div>
-            <div class="cuerpo_modulo">
-                <ul>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de pago</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Creación de grupos</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Ciclo Escolar</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Control de pagos</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de recargos</router-link></li>
-                </ul> 
+            <div class="col-4">
+                <div class="titulo_modulo">
+                    <h1>Alumnos</h1>
+                </div>
+                <div class="cuerpo_modulo">
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de alumnos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Consulta de Historial Acádemico</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de Padre/Tutor</router-link></li>
+                    </ul> 
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="titulo_modulo">
+                    <h1>Reportes</h1>
+                </div>
+                <div class="cuerpo_modulo">
+                    <ul>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Lista de grupo</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Lista de personas con aduedo</router-link></li>                    
+                    </ul> 
+                </div>
             </div>
         </div>
-        <div class="col-4 modulo">   
-            <div class="titulo_modulo" style="text-align: center;">
-                <h1>Alumnos</h1>
-            </div>
-            <div class="cuerpo_modulo">
-                <ul>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de alumnos</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Consulta de Historial Acádemico</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de Padre/Tutor</router-link></li>
-                </ul> 
-            </div>
-        </div>
-        <div class="col-4 modulo">   
-            <div class="titulo_modulo" style="text-align: center;">
-                <h1>Reportes</h1>
-            </div>
-            <div class="cuerpo_modulo">
-                <ul>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Lista de grupo</router-link></li>
-                    <li><i class="fas fa-chevron-right"></i> <router-link to="/">Lista de personas con aduedo</router-link></li>                    
-                </ul> 
-            </div>
         </div>
     </div>
 </template>
@@ -43,7 +50,10 @@
 export default {
   name: 'Inicio',
   data(){
-    return {            
+    return {    
+        logo: {
+            url: require('../assets/home.jpg')
+      }         
     }
   },
   props: {
@@ -53,7 +63,8 @@ export default {
 </script>
 <style scoped>
 .cover_home {
-     max-width: 100%;
+    max-width: 100%;
+    display: contents;
     padding: 0px;
     height: 70vh;
     color: #fff;
@@ -75,19 +86,25 @@ export default {
 }
 }
 
-.modulo{
-    margin: 30px 10px 10px 10px;
-    border: 1px solid #adb5bd;
-    border-radius: 5px;
-    padding: 0px;
+.cover-home {
+    max-width: 960px; 
+    margin:0 auto;
 }
 
 .titulo_modulo{
-    background-color: #dbdbdb;
+    background-color: #002d5c;
+    color:white;
     padding: 10px; 
+    text-align: center;
+    border: 1px solid #cc003d;
+    border-radius: 5px 5px 0px 0px;
 }
 
 .cuerpo_modulo{
-    padding: 10px; 
+    padding: 12px; 
+    border: 1px solid #adb5bd;
+    border-radius: 0px 0px 5px 5px;
 }
+
+
 </style>
