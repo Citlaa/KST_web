@@ -1,0 +1,73 @@
+<template>
+  <div>
+    <div class="col-12">
+      <label class="activo_label">{{ label }}</label>        
+      <select class="form-control" v-model="valor" @change="seleccionar()">
+        <option v-for="(element, index) in items" :key="index" :value="element['TipoDeCicloEscolarId']">{{ element["AñoDeInicio"] }} - {{ element["AñoDeTermino"] }}</option>
+      </select>
+    </div>
+    <loading :active="isLoading"
+                 :can-cancel="true"                
+                 :is-full-page="true"/>
+  </div>
+</template>
+<script>
+import axios from "axios";
+import routeAPI from "@/js/api";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+
+export default {
+  components: {
+    Loading
+  },
+  data() {
+    return {
+      valor: String,
+      funcion1: String,
+      isLoading: false,
+      items: [],
+    };
+  },
+  props: {
+    label: String,
+    funcion: String
+  },
+  created() {
+      this.getTiposDeCicloEscolar();    
+  },
+  computed: {},
+  methods: {
+    async getTiposDeCicloEscolar() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDeCicloEscolarCatalogo",
+          filtros
+        );
+
+        response.data.response.forEach(element => {            
+          this.items.push({
+            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+            AñoDeInicio: element["002AñoDeInicio"],
+            AñoDeTermino: element["002AñoDeTermino"],
+            Activo: element["002Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    seleccionar: function(){                 
+        this.$emit(this.$props.funcion, this.valor);
+    }
+  }
+};
+</script>

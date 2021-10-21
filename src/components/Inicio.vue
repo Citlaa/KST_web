@@ -4,14 +4,14 @@
             <img :src="logo.url">
         </div>
         <div class="cover-home">
-        <div class="row" style="padding-top: 50px;">
+        <div class="row" style="padding-top: 40px;">
             <div class="col-4" style="">
                 <div class="titulo_modulo">
                     <h1>Administración</h1>
                 </div>
                 <div class="cuerpo_modulo">
                     <ul>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de pago</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposDePago">Tipos de pago</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Creación de grupos</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Ciclo Escolar</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Control de pagos</router-link></li>
