@@ -26,7 +26,7 @@
           <input class="form-control" type="number" v-model="filtro_monto" />
         </div>
         <div class="col-4">          
-          <tiposCicloEscolar :label="'Ciclo escolar'" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
+          <tiposCicloEscolar :label="'Ciclo escolar'" :titulo="true" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
         </div>
         <div class="filtro_footer">
           <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>
@@ -52,10 +52,16 @@
           :current-page="currentPage"
           :filter="filter"
         >
+          <template v-slot:cell(cicloEscolar)="data">
+            <tiposCicloEscolar  :titulo="false"
+                                :tipoDeCicloEscolarId="data.item.CicloEscolarId"
+                                v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" 
+                                :funcion="'seleccionarCicloEscolar'" />          
+          </template>
           <template v-slot:cell(Activo)="data">
             <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
             <i v-else class="far fa-times-circle" style="color: red"></i>
-          </template>
+          </template>          
           <template v-slot:cell(opciones)="data">
             <button
               class="button is-info is-small"
@@ -157,27 +163,27 @@ export default {
       isLoading: false,
       items: [],
       item: {
-        AñoDeInicio: Number,
-        AñoDeTermino: Number,
+        Nombre: Number,
+        Monto: Number,
         Activo: Boolean
       },
       fields: [
         {
-          key: "TipoDeCicloEscolarId",
+          key: "TipoDePagoId",
           label: "Folio",
           sortable: true
         },
         {
-          key: "AñoDeInicio",
+          key: "Nombre",
           sortable: true
+        },        
+        {
+          key:"Monto",
+          sortable: true          
         },
         {
-          key: "AñoDeTermino",
-          sortable: true
-        },
-        {
-          label:"Activo",
-          key: "Activo"
+          key: "cicloEscolar",
+          label: "Ciclo Escolar",          
         },
         {
           label:"Opciones",
@@ -215,7 +221,7 @@ export default {
           };
 
         const response = await axios.post(routeAPI + "administracion/tiposDePago", filtros);
-        console.log(response);
+        
         if(!response.data.hayError)
         {                  
           if(response.data.response.length > 0){
@@ -223,10 +229,13 @@ export default {
             this.items.push({
               TipoDePagoId : element["001TipoDePagoId"],
               Nombre: element["001Nombre"],
-              Monto: element["001Monto"]
+              Monto: '$' + element["001Monto"],
+              CicloEscolarId: element["002TipoDeCicloEscolarId"],
+              Activo: element["001Activo"]
             });
           });                  
           }
+          
         }else
           this.$alert("No se pudo obtenera información, favor de volverlo a intentar.");
           
