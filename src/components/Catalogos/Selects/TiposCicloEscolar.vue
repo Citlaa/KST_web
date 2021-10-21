@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="col-12">
-      <label class="activo_label">{{ label }}</label>        
+      <label v-if="titulo" class="activo_label">{{ label }}</label>        
       <select class="form-control" v-model="valor" @change="seleccionar()">
         <option v-for="(element, index) in items" :key="index" :value="element['TipoDeCicloEscolarId']">{{ element["AñoDeInicio"] }} - {{ element["AñoDeTermino"] }}</option>
       </select>
     </div>
     <loading :active="isLoading"
-                 :can-cancel="true"                
-                 :is-full-page="true"/>
+             :can-cancel="true"                
+             :is-full-page="true"/>
   </div>
 </template>
 <script>
@@ -23,18 +23,22 @@ export default {
   },
   data() {
     return {
-      valor: String,
-      funcion1: String,
+      valor: String,      
       isLoading: false,
       items: [],
     };
   },
   props: {
     label: String,
-    funcion: String
+    funcion: String,
+    tipoDeCicloEscolarId: Number,
+    titulo: { type: Boolean, required: true, default: true}
   },
   created() {
-      this.getTiposDeCicloEscolar();    
+      this.getTiposDeCicloEscolar();
+      
+      if(this.$props.tipoDeCicloEscolarId > 0)
+        this.valor = this.$props.tipoDeCicloEscolarId;
   },
   computed: {},
   methods: {
