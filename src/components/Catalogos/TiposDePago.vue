@@ -19,11 +19,11 @@
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-4">
           <label>Nombre</label>
-          <input class="form-control" type="number" v-model="filtro_nombre" />
+          <input class="form-control" type="text" v-model="filtro_nombre" />
         </div>
         <div class="col-4">
           <label>Monto</label>
-          <input class="form-control" type="number" v-model="filtro_monto" />
+          <input class="form-control" type="text" v-model="filtro_monto" />
         </div>
         <div class="col-4">          
           <tiposCicloEscolar :label="'Ciclo escolar'" :titulo="true" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
@@ -215,11 +215,18 @@ export default {
         this.isLoading = true;
           this.limpiarVariables();
           const filtros = {
-            filtro: {
-              cicloEscolarId: Number(this.filtro_cicloEscolar)              
+            filtro: {                      
             }
           };
+          console.log(filtros);
 
+        if(this.filtro_nombre != "")
+          filtros.filtro.nombre = this.filtro_nombre
+        if(this.filtro_monto != "")
+          filtros.filtro.monto = Number(this.filtro_monto)
+        if(this.filtro_cicloEscolar != "")
+          filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar)   
+        
         const response = await axios.post(routeAPI + "administracion/tiposDePago", filtros);
         
         if(!response.data.hayError)
