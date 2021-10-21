@@ -26,10 +26,10 @@
           <input class="form-control" type="number" v-model="filtro_monto" />
         </div>
         <div class="col-4">          
-          <tiposCicloEscolar :label="'Ciclo escolar'" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
+          <tiposCicloEscolar :label="'Ciclo escolar'" :titulo="true" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
         </div>
         <div class="filtro_footer">
-          <button class="button is-primary btn-sm" @click="getTiposDeRecargos()">Filtrar</button>
+          <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">Filtrar</button>
         </div>
       </div>
     </div>
@@ -98,11 +98,11 @@
                   <div class="row">
                     <div class="col-5 form-group padding-model">
                       <label>Nombre</label>
-                      <input type="text" class="form-control" v-model="item.NombreRecargo" />
+                      <input type="text" class="form-control" v-model="item.Nombre" />
                     </div>
                     <div class="col-5 form-group padding-model">
                       <label>Monto</label>
-                      <input type="number" class="form-control" v-model="item.MontoRecargo" />
+                      <input type="number" class="form-control" v-model="item.Monto" />
                     </div>
                     <div class="col-2 padding-model">
                       <label>Activo</label>
@@ -117,7 +117,7 @@
                   <button
                     type="button"
                     class="button is-primary"
-                    @click="guardarTipoDeRegargos()"
+                    @click="guardarTipoDeRegargo()"
                   >Guardar</button>
                   <button
                     type="button"
@@ -163,7 +163,7 @@ export default {
       },
       fields: [
         {
-          key: "TipoDeRecargosId",
+          key: "TipoDeRecargoId",
           label: "Folio",
           sortable: true
         },
@@ -196,7 +196,7 @@ export default {
     };
   },
   created() {
-    this.getTiposDeRecargos();
+    //this.getTiposDeRecargo();
   },
   computed: {
     rows() {
@@ -204,7 +204,7 @@ export default {
     }
   },
   methods: {    
-    async getTiposDeRecargos() {
+    async getTiposDeRecargo() {
       try {
         this.isLoading = true;
           this.limpiarVariables();
@@ -214,16 +214,18 @@ export default {
             }
           };
 
-        const response = await axios.post(routeAPI + "administracion/tiposDePago", filtros);
+        const response = await axios.post(routeAPI + "administracion/tiposDeRecargos", filtros);
         console.log(response);
         if(!response.data.hayError)
         {                  
           if(response.data.response.length > 0){
             response.data.response.forEach(element => {
             this.items.push({
-              TipoDeRegargpId : element["001TipoDeRecargoId"],
-              NombreRecargo: element["001Nombre"],
-              MontoRecargo: element["001Monto"]
+              TipoDeRegargoId : element["003TipoDeRecargoId"],
+              Nombre: element["003Nombre"],
+              Monto: '$' + element["003Monto"],
+              CicloEscolarId: element["002TipoDeCicloEscolarId"],
+              Activo: element["001Activo"]
             });
           });                  
           }
@@ -243,14 +245,14 @@ export default {
       this.item = item;
       this.mostrarModal = !this.mostrarModal;
     },
-    async guardarTipoRecargos() {
+    async guardarTipoRecargo() {
       if (this.item.TipoDeCicloEscolarId > 0) {
-        this.editarTipoDeRecagos();
+        this.editarTipoDeRecago();
       } else {
-        this.agregarTipoDeRecagos();
+        this.agregarTipoDeRecago();
       }
     },
-    async agregarTipoDeRecagos() {
+    async agregarTipoDeRecago() {
       try {
         this.isLoading = true;
         const data = {
@@ -263,7 +265,7 @@ export default {
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/guardarTiposDeCicloEscolar",
+          routeAPI + "administracion/guardarTipoDeRecargos",
           data
         );
 
@@ -271,7 +273,7 @@ export default {
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El recargo se guardó con éxito.");          
-          this.getTiposDeCicloEscolar();
+          this.getTiposDeRecagos();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -293,7 +295,7 @@ export default {
         };  
 
         const response = await axios.post(
-          routeAPI + "administracion/editarTiposDeCicloEscolar",
+          routeAPI + "administracion/editarTiposDeRecargos",
           data
         );
         
@@ -301,7 +303,7 @@ export default {
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El recargo se guardó con éxito.");          
-          this.getTiposDeReagos();
+          this.getTiposDeRecargo();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -321,7 +323,7 @@ export default {
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/cancelarTiposDeCicloEscolar",
+          routeAPI + "administracion/cancelarTiposDeRecargos",
           data
         );
         this.isLoading = false;
