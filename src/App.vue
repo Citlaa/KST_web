@@ -17,7 +17,7 @@
             <b-dropdown-item :to="{ name: ''}">Creación de grupos</b-dropdown-item>
             <b-dropdown-item :to="{ name: 'TiposCicloEscolar'}">Ciclo Escolar</b-dropdown-item>
             <b-dropdown-item :to="{ name: ''}">Control de pagos</b-dropdown-item>            
-            <b-dropdown-item :to="{ name: ''}">Tipos de recargos</b-dropdown-item>            
+            <b-dropdown-item :to="{ name: 'TiposDeRecargos'}">Tipos de recargos</b-dropdown-item>            
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Alumnos">
             <b-dropdown-item :to="{ name: ''}">Registro de alumnos</b-dropdown-item>          

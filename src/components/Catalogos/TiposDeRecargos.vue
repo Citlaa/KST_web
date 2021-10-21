@@ -1,0 +1,347 @@
+<template>
+  <div class="container is-max-desktop">
+    <div class="col-12" id="Titulo">
+      <h1 class="titulo_azul">Tipos de Recargo</h1>
+      <div class="line_red"></div>
+    </div>
+    <div class="col-12 row filtros_div" id="filtros_div">
+      <div class="col-12 filtro_titulo">
+        <div class="row">
+          <div class="col-10">
+            <h1 class="col-10">Favor de indicar filtros</h1>
+          </div>
+          <div class="col-2" @click="mostrarFiltros = !mostrarFiltros" :key="mostrarFiltros">
+            <i class="fas fa-angle-down" v-if="!mostrarFiltros" style="float: right;"></i>
+            <i class="fas fa-angle-up" v-if="mostrarFiltros" style="float: right;"></i>
+          </div>
+        </div>
+      </div>
+      <div v-if="mostrarFiltros" class="col-12 row">
+        <div class="col-4">
+          <label>Nombre</label>
+          <input class="form-control" type="text" v-model="filtro_nombre" />
+        </div>
+        <div class="col-4">
+          <label>Monto</label>
+          <input class="form-control" type="number" v-model="filtro_monto" />
+        </div>
+        <div class="col-4">          
+          <tiposCicloEscolar :label="'Ciclo escolar'" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
+        </div>
+        <div class="filtro_footer">
+          <button class="button is-primary btn-sm" @click="getTiposDeRecargos()">Filtrar</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-12" style="margin-bottom:100px;">
+      <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})">
+        <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar tipo de recargo
+      </button>
+      <br />
+      <div id="bootstrap_table">
+        <div class="col-3 mr-0 align-rigth">
+          <input class="form-control" v-model="filter" type="search" placeholder="Buscar" />
+        </div>
+        <b-table
+          striped
+          hover
+          outlined
+          :items="items"
+          :fields="fields"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :filter="filter"
+        >
+          <template v-slot:cell(Activo)="data">
+            <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
+            <i v-else class="far fa-times-circle" style="color: red"></i>
+          </template>
+          <template v-slot:cell(opciones)="data">
+            <button
+              class="button is-info is-small"
+              @click="abrirModal('Editar', data.item)"
+              value="Editar"
+              title="Editar"
+            >
+              <i class="far fa-edit"></i>
+            </button>
+            <button
+              class="button is-danger is-small"
+              :disabled="data.item.Activo == 0"
+              @click="cancelar(data.item)"
+              value="Eliminar"
+              title="Cancelar"
+            >
+              <i class="fas fa-ban"></i>
+            </button>
+          </template>
+        </b-table>
+        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
+      </div>
+    </div>
+    <div v-if="mostrarModal" class="modal_div" id="modal_div">
+      <transition name="modal">
+        <div class="modal-mask">
+          <div class="modal-wrapper">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <div class="col-11">
+                    <h2 class="modal-title text-center">{{ titutoModal }} Tipo de Recargo</h2>
+                    <div class="line_red"></div>
+                  </div>
+                  <a class="button close_modal" @click="mostrarModal = false">
+                    <span aria-hidden="true">&times;</span>
+                  </a>
+                </div>
+                <div class="modal-body">
+                  <div class="row">
+                    <div class="col-5 form-group padding-model">
+                      <label>Nombre</label>
+                      <input type="text" class="form-control" v-model="item.NombreRecargo" />
+                    </div>
+                    <div class="col-5 form-group padding-model">
+                      <label>Monto</label>
+                      <input type="number" class="form-control" v-model="item.MontoRecargo" />
+                    </div>
+                    <div class="col-2 padding-model">
+                      <label>Activo</label>
+                      <select class="form-control " v-model="item.Activo">
+                        <option value="1">Si</option>
+                        <option value="0">No</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="button is-primary"
+                    @click="guardarTipoDeRegargos()"
+                  >Guardar</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-dismiss="modal"
+                    @click="mostrarModal = false"
+                  >Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <loading :active="isLoading"
+                 :can-cancel="true"                
+                 :is-full-page="true"/>
+  </div>
+</template>
+ 
+<script>
+// import axios
+import axios from "axios";
+import routeAPI from '@/js/api';
+import Loading from 'vue-loading-overlay';
+import 'vue-loading-overlay/dist/vue-loading.css';
+import tiposCicloEscolar from '@/components/Catalogos/Selects/TiposCicloEscolar';
+ 
+export default {
+  name: "ProductList",
+  components: {
+    Loading,
+    tiposCicloEscolar
+  },
+  data() {
+    return {
+      isLoading: false,
+      items: [],
+      item: {
+        Nombre: String,
+        Monto: Number,
+        Activo: Boolean
+      },
+      fields: [
+        {
+          key: "TipoDeRecargosId",
+          label: "Folio",
+          sortable: true
+        },
+        {
+          key: "Nombre",
+          sortable: true
+        },
+        {
+          key: "Monto",
+          sortable: true
+        },
+        {
+          label:"Activo",
+          key: "Activo"
+        },
+        {
+          label:"Opciones",
+          key: "opciones"
+        }
+      ],
+      filter: "",
+      perPage: 5,
+      currentPage: 1,
+      mostrarModal: false,
+      titutoModal: "",
+      mostrarFiltros: true,
+      filtro_nombre: "",
+      filtro_monto: "",
+      filtro_cicloEscolar: ""
+    };
+  },
+  created() {
+    this.getTiposDeRecargos();
+  },
+  computed: {
+    rows() {
+      return this.items.length;
+    }
+  },
+  methods: {    
+    async getTiposDeRecargos() {
+      try {
+        this.isLoading = true;
+          this.limpiarVariables();
+          const filtros = {
+            filtro: {
+              cicloEscolarId: Number(this.filtro_cicloEscolar)              
+            }
+          };
+
+        const response = await axios.post(routeAPI + "administracion/tiposDePago", filtros);
+        console.log(response);
+        if(!response.data.hayError)
+        {                  
+          if(response.data.response.length > 0){
+            response.data.response.forEach(element => {
+            this.items.push({
+              TipoDeRegargpId : element["001TipoDeRecargoId"],
+              NombreRecargo: element["001Nombre"],
+              MontoRecargo: element["001Monto"]
+            });
+          });                  
+          }
+        }else
+          this.$alert("No se pudo obtenera información, favor de volverlo a intentar.");
+          
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    seleccionarCicloEscolar: function(element){      
+      this.filtro_cicloEscolar = element;  
+    },
+    abrirModal: function(tipo, item) {
+      this.titutoModal = tipo;
+      this.item = item;
+      this.mostrarModal = !this.mostrarModal;
+    },
+    async guardarTipoRecargos() {
+      if (this.item.TipoDeCicloEscolarId > 0) {
+        this.editarTipoDeRecagos();
+      } else {
+        this.agregarTipoDeRecagos();
+      }
+    },
+    async agregarTipoDeRecagos() {
+      try {
+        this.isLoading = true;
+        const data = {
+          tipoDeCicloEscolar: {
+            TipoDeCicloEscolarId: null,
+            Nombre: Number(this.item.NombreRecargo),
+            Recargo: Number(this.item.MontoRecargo),
+            Activo: Number(this.item.Activo)
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/guardarTiposDeCicloEscolar",
+          data
+        );
+
+        this.mostrarModal = false;
+        this.isLoading = false;
+        if (!response.data.hayError) {
+          this.$alert("El recargo se guardó con éxito.");          
+          this.getTiposDeCicloEscolar();
+        } else {
+          console.log(response);
+          this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async editarTipoDeRecargos() {
+      try {
+        this.isLoading = true;
+        const data = {
+          tipoDeCicloEscolar: {
+            TipoDeCicloEscolarId: this.item.TipoDeCicloEscolarId,
+            Nombre: Number(this.item.NombreRecargo),
+            Monto: Number(this.item.MontoRecargo),
+            Activo: Number(this.item.Activo)
+          }
+        };  
+
+        const response = await axios.post(
+          routeAPI + "administracion/editarTiposDeCicloEscolar",
+          data
+        );
+        
+        this.mostrarModal = false;
+        this.isLoading = false;
+        if (!response.data.hayError) {
+          this.$alert("El recargo se guardó con éxito.");          
+          this.getTiposDeReagos();
+        } else {
+          console.log(response);
+          this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async cancelar(item) {
+      try {
+        this.isLoading = true;
+        const data = {
+          tipoDeCicloEscolar: {
+            TipoDeCicloEscolarId: item.TipoDeCicloEscolarId,
+            Activo: Number(0)
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/cancelarTiposDeCicloEscolar",
+          data
+        );
+        this.isLoading = false;
+        if (!response.data.hayError) {
+          this.$alert("El recargo se canceló correctamente.");          
+          this.getTiposDeRecagos();
+        } else {
+          console.log(response);
+          this.$alert("Alert Message.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    limpiarVariables: function() {
+      this.items = [];
+    }
+  },
+};
+</script>
+ 
+<style>
+</style>

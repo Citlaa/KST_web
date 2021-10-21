@@ -13,9 +13,9 @@
                     <ul>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposDePago">Tipos de pago</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Creación de grupos</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Ciclo Escolar</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposCicloEscolar">Ciclo Escolar</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Control de pagos</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Tipos de recargos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposDeRecargos">Tipos de recargos</router-link></li>
                     </ul> 
                 </div>
             </div>

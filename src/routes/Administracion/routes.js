@@ -1,5 +1,6 @@
 import TiposDePago from '@/components/Catalogos/TiposDePago';
 import TiposCicloEscolar from '@/components/Catalogos/TiposCicloEscolar';
+import TiposDeRecargos from '@/components/Catalogos/TiposDeRecargos'
 
 const routes = [
     {
@@ -11,6 +12,11 @@ const routes = [
         name: 'TiposCicloEscolar',
         path: '/tiposCicloEscolar',
         component: TiposCicloEscolar
+    },
+    {
+        name: 'TiposDeRecargos',
+        path: '/tiposDeRecargos',
+        component: TiposDeRecargos
     },
 ]
 
