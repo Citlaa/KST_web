@@ -332,7 +332,7 @@ export default {
           this.getTiposDeCicloEscolar();
         } else {
           console.log(response);
-          this.$alert("Alert Message.");
+          this.$alert("No se pudo cancelar, favor de volverlo a intentar.");
         }
       } catch (err) {
         console.log(err);

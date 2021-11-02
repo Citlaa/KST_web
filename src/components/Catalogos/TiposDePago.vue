@@ -25,8 +25,13 @@
           <label>Monto</label>
           <input class="form-control" type="text" v-model="filtro_monto" />
         </div>
-        <div class="col-4">          
-          <tiposCicloEscolar :label="'Ciclo escolar'" :titulo="true" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
+        <div class="col-4">
+          <tiposCicloEscolar
+            :label="'Ciclo escolar'"
+            :titulo="true"
+            v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
+            :funcion="'seleccionarCicloEscolar'"
+          />
         </div>
         <div class="filtro_footer">
           <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>
@@ -35,7 +40,7 @@
     </div>
     <div class="col-12" style="margin-bottom:100px;">
       <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})">
-        <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar tipo de pago
+        <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar Tipo de pago
       </button>
       <br />
       <div id="bootstrap_table">
@@ -53,15 +58,17 @@
           :filter="filter"
         >
           <template v-slot:cell(cicloEscolar)="data">
-            <tiposCicloEscolar  :titulo="false"
-                                :tipoDeCicloEscolarId="data.item.CicloEscolarId"
-                                v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" 
-                                :funcion="'seleccionarCicloEscolar'" />          
+            <tiposCicloEscolar
+              :titulo="false"
+              :tipoDeCicloEscolarId="data.item.TipoDeCicloEscolarId"
+              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
+              :funcion="'seleccionarCicloEscolar'"
+            />
           </template>
           <template v-slot:cell(Activo)="data">
             <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
             <i v-else class="far fa-times-circle" style="color: red"></i>
-          </template>          
+          </template>
           <template v-slot:cell(opciones)="data">
             <button
               class="button is-info is-small"
@@ -102,17 +109,26 @@
                 </div>
                 <div class="modal-body">
                   <div class="row">
-                    <div class="col-5 form-group padding-model">
-                      <label>Año de inicio</label>
-                      <input type="number" class="form-control" v-model="item.AñoDeInicio" />
+                    <div class="col-3 form-group padding-model">
+                      <label>Nombre</label>
+                      <input type="text" class="form-control" v-model="item.Nombre" />
                     </div>
-                    <div class="col-5 form-group padding-model">
-                      <label>Año de termino</label>
-                      <input type="number" class="form-control" v-model="item.AñoDeTermino" />
+                    <div class="col-3 form-group padding-model">
+                      <label>Monto</label>
+                      <input type="number" class="form-control" v-model="item.Monto" />
                     </div>
-                    <div class="col-2 padding-model">
+                    <div class="col-3">
+                      <tiposCicloEscolar
+                        :label="'Ciclo escolar'"
+                        :titulo="true"
+                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
+                        v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
+                        :funcion="'seleccionarCicloEscolar'"
+                      />
+                    </div>
+                    <div class="col-3 padding-model">
                       <label>Activo</label>
-                      <select class="form-control " v-model="item.Activo">
+                      <select class="form-control" v-model="item.Activo">
                         <option value="1">Si</option>
                         <option value="0">No</option>
                       </select>
@@ -123,7 +139,7 @@
                   <button
                     type="button"
                     class="button is-primary"
-                    @click="guardarTipoDeCicloEscolar()"
+                    @click="guardarTipoDePago()"
                   >Guardar</button>
                   <button
                     type="button"
@@ -138,20 +154,18 @@
         </div>
       </transition>
     </div>
-    <loading :active="isLoading"
-                 :can-cancel="true"                
-                 :is-full-page="true"/>
+    <loading :active="isLoading" :can-cancel="true" :is-full-page="true" />
   </div>
 </template>
  
 <script>
 // import axios
 import axios from "axios";
-import routeAPI from '@/js/api';
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
-import tiposCicloEscolar from '@/components/Catalogos/Selects/TiposCicloEscolar';
- 
+import routeAPI from "@/js/api";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+import tiposCicloEscolar from "@/components/Catalogos/Selects/TiposCicloEscolar";
+
 export default {
   name: "ProductList",
   components: {
@@ -165,6 +179,7 @@ export default {
       item: {
         Nombre: Number,
         Monto: Number,
+        TipoDeCicloEscolarId: Number,
         Activo: Boolean
       },
       fields: [
@@ -176,17 +191,21 @@ export default {
         {
           key: "Nombre",
           sortable: true
-        },        
+        },
         {
-          key:"Monto",
-          sortable: true          
+          key: "Monto",
+          sortable: true
         },
         {
           key: "cicloEscolar",
-          label: "Ciclo Escolar",          
+          label: "Ciclo Escolar"
         },
         {
-          label:"Opciones",
+          label:"Activo",
+          key: "Activo"
+        },
+        {
+          label: "Opciones",
           key: "opciones"
         }
       ],
@@ -209,85 +228,92 @@ export default {
       return this.items.length;
     }
   },
-  methods: {    
+  methods: {
     async getTiposDePago() {
       try {
         this.isLoading = true;
-          this.limpiarVariables();
-          const filtros = {
-            filtro: {                      
-            }
-          };
-          console.log(filtros);
+        this.limpiarVariables();
+        const filtros = {
+          filtro: {}
+        };        
 
-        if(this.filtro_nombre != "")
-          filtros.filtro.nombre = this.filtro_nombre
-        if(this.filtro_monto != "")
-          filtros.filtro.monto = Number(this.filtro_monto)
-        if(this.filtro_cicloEscolar != "")
-          filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar)   
-        
-        const response = await axios.post(routeAPI + "administracion/tiposDePago", filtros);
-        
-        if(!response.data.hayError)
-        {                  
-          if(response.data.response.length > 0){
+        if (this.filtro_nombre != "")
+          filtros.filtro.nombre = this.filtro_nombre;
+        if (this.filtro_monto != "")
+          filtros.filtro.monto = Number(this.filtro_monto);
+        if (this.filtro_cicloEscolar != "")
+          filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDePago",
+          filtros
+        );
+
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
             response.data.response.forEach(element => {
-            this.items.push({
-              TipoDePagoId : element["001TipoDePagoId"],
-              Nombre: element["001Nombre"],
-              Monto: '$' + element["001Monto"],
-              CicloEscolarId: element["002TipoDeCicloEscolarId"],
-              Activo: element["001Activo"]
+              this.items.push({
+                TipoDePagoId: element["001TipoDePagoId"],
+                Nombre: element["001Nombre"],
+                Monto: "$" + element["001Monto"],
+                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                Activo: element["001Activo"]
+              });
             });
-          });                  
           }
-          
-        }else
-          this.$alert("No se pudo obtenera información, favor de volverlo a intentar.");
-          
+        } else
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+
         this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
     },
-    seleccionarCicloEscolar: function(element){      
-      this.filtro_cicloEscolar = element;  
+    seleccionarCicloEscolar: function(element) {
+      this.filtro_cicloEscolar = element;
+    },
+    seleccionarCicloEscolarItem(element) {      
+      this.item.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
+      this.item.Monto = this.item.Monto.split('$')[1];
+      console.log(this.item);
       this.mostrarModal = !this.mostrarModal;
     },
-    async guardarTipoDeCicloEscolar() {
-      if (this.item.TipoDeCicloEscolarId > 0) {
-        this.editarTipoDeCicloEscolar();
+    async guardarTipoDePago() {
+      if (this.item.TipoDePagoId > 0) {
+        this.editarTipoDePago();
       } else {
-        this.agregarTipoDeCicloEscolar();
+        this.agregarTipoDePago();
       }
     },
-    async agregarTipoDeCicloEscolar() {
+    async agregarTipoDePago() {
       try {
         this.isLoading = true;
         const data = {
           tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: null,
-            Inicio: Number(this.item.AñoDeInicio),
-            Termino: Number(this.item.AñoDeTermino),
+            TipoDePagoId: null,
+            Nombre: this.item.Nombre,
+            Monto: Number(this.item.Monto),
+            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
             Activo: Number(this.item.Activo)
           }
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/guardarTiposDeCicloEscolar",
+          routeAPI + "administracion/guardarTiposDePago",
           data
         );
 
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se guardó con éxito.");          
-          this.getTiposDeCicloEscolar();
+          this.$alert("El tipo de pago se guardó con éxito.");
+          this.getTiposDePago();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -296,28 +322,29 @@ export default {
         console.log(err);
       }
     },
-    async editarTipoDeCicloEscolar() {
+    async editarTipoDePago() {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: this.item.TipoDeCicloEscolarId,
-            Inicio: Number(this.item.AñoDeInicio),
-            Termino: Number(this.item.AñoDeTermino),
+          tipoDePago: {
+            TipoDePagoId: this.item.TipoDePagoId,
+            Nombre: this.item.Nombre,
+            Monto: Number(this.item.Monto),
+            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
             Activo: Number(this.item.Activo)
           }
-        };  
+        };
 
         const response = await axios.post(
-          routeAPI + "administracion/editarTiposDeCicloEscolar",
+          routeAPI + "administracion/editarTiposDePago",
           data
         );
-        
+
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se guardó con éxito.");          
-          this.getTiposDeCicloEscolar();
+          this.$alert("El tipo de pago se guardó con éxito.");
+          this.getTiposDePago();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -330,23 +357,24 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: item.TipoDeCicloEscolarId,
+          tipoDePago: {
+            TipoDePagoId: item.TipoDePagoId,
             Activo: Number(0)
           }
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/cancelarTiposDeCicloEscolar",
+          routeAPI + "administracion/cancelarTiposDePago",
           data
         );
+        console.log(response);
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se canceló correctamente.");          
-          this.getTiposDeCicloEscolar();
+          this.$alert("El tipo de pago se canceló correctamente.");
+          this.getTiposDePago();
         } else {
           console.log(response);
-          this.$alert("Alert Message.");
+          this.$alert("No se pudo cancelar, favor de volverlo a intentar.");
         }
       } catch (err) {
         console.log(err);
@@ -355,7 +383,7 @@ export default {
     limpiarVariables: function() {
       this.items = [];
     }
-  },
+  }
 };
 </script>
  
