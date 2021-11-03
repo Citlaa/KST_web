@@ -2,7 +2,7 @@
   <div>
     <div class="col-12">
       <label v-if="titulo" class="activo_label">{{ label }}</label>        
-      <select class="form-control" v-model="valor" @change="seleccionar()">
+      <select class="form-control" v-model="valor" @change="seleccionar()">        
         <option v-for="(element, index) in items" :key="index" :value="element['TipoDeCicloEscolarId']">{{ element["AñoDeInicio"] }} - {{ element["AñoDeTermino"] }}</option>
       </select>
     </div>

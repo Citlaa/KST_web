@@ -17,24 +17,33 @@
         </div>
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
-        <div class="col-4">
+        <div class="col-3">
           <label>Nombre</label>
           <input class="form-control" type="text" v-model="filtro_nombre" />
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <label>Monto</label>
           <input class="form-control" type="text" v-model="filtro_monto" />
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <tiposCicloEscolar
+            :key="filtro_cicloEscolar_key"
             :label="'Ciclo escolar'"
-            :titulo="true"
+            :titulo="true"            
             v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
             :funcion="'seleccionarCicloEscolar'"
           />
         </div>
+        <div class="col-3">
+          <label class="activo_label">Activo</label>
+          <select class="form-control" v-model="filtro_activo">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+          </select>
+        </div>
         <div class="filtro_footer">
-          <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>
+          <button class="button is-primary btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
+          <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>           
         </div>
       </div>
     </div>
@@ -123,7 +132,7 @@
                         :titulo="true"
                         :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
                         v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
-                        :funcion="'seleccionarCicloEscolar'"
+                        :funcion="'seleccionarCicloEscolar'"                        
                       />
                     </div>
                     <div class="col-3 padding-model">
@@ -217,7 +226,9 @@ export default {
       mostrarFiltros: true,
       filtro_nombre: "",
       filtro_monto: "",
-      filtro_cicloEscolar: ""
+      filtro_cicloEscolar: "",
+      filtro_cicloEscolar_key: 0,
+      filtro_activo: ""
     };
   },
   created() {
@@ -243,6 +254,8 @@ export default {
           filtros.filtro.monto = Number(this.filtro_monto);
         if (this.filtro_cicloEscolar != "")
           filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
+        if(this.filtro_activo != "")
+          filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
           routeAPI + "administracion/tiposDePago",
@@ -280,12 +293,11 @@ export default {
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
-      this.item.Monto = this.item.Monto.split('$')[1];
-      console.log(this.item);
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDePago() {
       if (this.item.TipoDePagoId > 0) {
+        this.item.Monto = this.item.Monto.split('$')[1];
         this.editarTipoDePago();
       } else {
         this.agregarTipoDePago();
@@ -382,6 +394,13 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+    },
+    limpiarFiltros(){
+      this.filtro_nombre = "";
+      this.filtro_monto = "";
+      this.filtro_cicloEscolar = "";
+      this.filtro_cicloEscolar_key ++;
+      this.filtro_activo = "";
     }
   }
 };
