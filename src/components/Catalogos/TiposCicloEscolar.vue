@@ -33,6 +33,7 @@
           </select>
         </div>
         <div class="filtro_footer">
+          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
           <button class="button is-primary btn-sm" @click="getTiposDeCicloEscolar()">Filtrar</button>
         </div>
       </div>
@@ -110,7 +111,7 @@
                     </div>
                     <div class="col-2 padding-model">
                       <label>Activo</label>
-                      <select class="form-control " v-model="item.Activo">
+                      <select class="form-control" v-model="item.Activo">
                         <option value="1">Si</option>
                         <option value="0">No</option>
                       </select>
@@ -136,17 +137,15 @@
         </div>
       </transition>
     </div>
-    <loading :active="isLoading"
-                 :can-cancel="true"                
-                 :is-full-page="true"/>
+    <loading :active="isLoading" :can-cancel="true" :is-full-page="true" />
   </div>
 </template>
  
 <script>
 import axios from "axios";
-import routeAPI from '@/js/api';
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
+import routeAPI from "@/js/api";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
   name: "TiposDeCicloEscolar",
@@ -177,11 +176,11 @@ export default {
           sortable: true
         },
         {
-          label:"Activo",
+          label: "Activo",
           key: "Activo"
         },
         {
-          label:"Opciones",
+          label: "Opciones",
           key: "opciones"
         }
       ],
@@ -208,33 +207,40 @@ export default {
     // Obtener todos los ciclos escolares
     async getTiposDeCicloEscolar() {
       try {
-          this.isLoading = true;
-          this.limpiarVariables();
-          const filtros = {
-            filtro: {
-              inicio: Number(this.filtro_añoDeInicio),
-              fin: Number(this.filtro_añoDeTermino),
-              activo: Number(this.filtro_activo)
-            }
-          };
+        this.isLoading = true;
+        this.limpiarVariables();
+        const filtros = {
+          filtro: {}
+        };
 
-        const response = await axios.post(routeAPI + "administracion/tiposDeCicloEscolar", filtros);
-        
-        if(!response.data.hayError)
-        {                  
-          if(response.data.response.length > 0){        
+        if (this.filtro_añoDeInicio != "")
+          filtros.filtro.inicio = Number(this.filtro_añoDeInicio);
+        if (this.filtro_añoDeTermino != "")
+          filtros.filtro.fin = Number(this.filtro_añoDeTermino);
+        if (this.filtro_activo != "")
+          filtros.filtro.activo = Number(this.filtro_activo);
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDeCicloEscolar",
+          filtros
+        );
+
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
             response.data.response.forEach(element => {
               this.items.push({
                 TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
                 AñoDeInicio: element["002AñoDeInicio"],
                 AñoDeTermino: element["002AñoDeTermino"],
                 Activo: element["002Activo"]
-              });          
+              });
             });
           }
-        }else
-          this.$alert("No se pudo obtenera información, favor de volverlo a intentar.");
-          
+        } else
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+
         this.isLoading = false;
       } catch (err) {
         console.log(err);
@@ -272,7 +278,7 @@ export default {
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se guardó con éxito.");          
+          this.$alert("El ciclo escolar se guardó con éxito.");
           this.getTiposDeCicloEscolar();
         } else {
           console.log(response);
@@ -292,17 +298,17 @@ export default {
             Termino: Number(this.item.AñoDeTermino),
             Activo: Number(this.item.Activo)
           }
-        };  
+        };
 
         const response = await axios.post(
           routeAPI + "administracion/editarTiposDeCicloEscolar",
           data
         );
-        
+
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se guardó con éxito.");          
+          this.$alert("El ciclo escolar se guardó con éxito.");
           this.getTiposDeCicloEscolar();
         } else {
           console.log(response);
@@ -328,7 +334,7 @@ export default {
         );
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se canceló correctamente.");          
+          this.$alert("El ciclo escolar se canceló correctamente.");
           this.getTiposDeCicloEscolar();
         } else {
           console.log(response);
@@ -340,6 +346,11 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+    },
+    limpiarFiltros() {
+      this.filtro_añoDeInicio = "";
+      this.filtro_añoDeTermino = "";
+      this.filtro_activo = "";
     }
   }
 };
@@ -347,13 +358,13 @@ export default {
  
 <style>
 @media screen and (max-width: 600px) {
-    .activo_label::before{
-      content: "Estado "
-    }
+  .activo_label::before {
+    content: "Estado ";
+  }
 
-    .padding-model{
-  padding-left: 6px;
-  padding-right: 6px;
-}
+  .padding-model {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
 }
 </style>

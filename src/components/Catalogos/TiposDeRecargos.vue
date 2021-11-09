@@ -17,18 +17,32 @@
         </div>
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
-        <div class="col-4">
+        <div class="col-3">
           <label>Nombre</label>
           <input class="form-control" type="text" v-model="filtro_nombre" />
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <label>Monto</label>
           <input class="form-control" type="number" v-model="filtro_monto" />
         </div>
-        <div class="col-4">          
-          <tiposCicloEscolar :label="'Ciclo escolar'" :titulo="true" v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)" :funcion="'seleccionarCicloEscolar'" />          
+        <div class="col-3">
+          <tiposCicloEscolar
+            :key="filtro_cicloEscolar_key"
+            :label="'Ciclo escolar'"
+            :titulo="true"
+            v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
+            :funcion="'seleccionarCicloEscolar'"
+          />
+        </div>
+        <div class="col-3">
+          <label class="activo_label">Activo</label>
+          <select class="form-control" v-model="filtro_activo">
+            <option value="1">Si</option>
+            <option value="0">No</option>
+          </select>
         </div>
         <div class="filtro_footer">
+          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
           <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">Filtrar</button>
         </div>
       </div>
@@ -52,6 +66,15 @@
           :current-page="currentPage"
           :filter="filter"
         >
+          <template v-slot:cell(cicloEscolar)="data">
+            <tiposCicloEscolar
+              :titulo="false"
+              :tipoDeCicloEscolarId="data.item.TipoDeCicloEscolarId"
+              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
+              :funcion="'seleccionarCicloEscolar'"
+              :disabled="true"
+            />
+          </template>
           <template v-slot:cell(Activo)="data">
             <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
             <i v-else class="far fa-times-circle" style="color: red"></i>
@@ -96,17 +119,26 @@
                 </div>
                 <div class="modal-body">
                   <div class="row">
-                    <div class="col-5 form-group padding-model">
+                    <div class="col-4 form-group padding-model">
                       <label>Nombre</label>
                       <input type="text" class="form-control" v-model="item.Nombre" />
+                    </div>                    
+                    <div class="col-4">
+                      <TiposCicloEscolar
+                        :label="'Ciclo escolar'"
+                        :titulo="true"
+                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
+                        v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
+                        :funcion="'seleccionarCicloEscolar'"
+                      />
                     </div>
-                    <div class="col-5 form-group padding-model">
+                    <div class="col-2 form-group padding-model">
                       <label>Monto</label>
                       <input type="number" class="form-control" v-model="item.Monto" />
                     </div>
                     <div class="col-2 padding-model">
                       <label>Activo</label>
-                      <select class="form-control " v-model="item.Activo">
+                      <select class="form-control" v-model="item.Activo">
                         <option value="1">Si</option>
                         <option value="0">No</option>
                       </select>
@@ -117,7 +149,7 @@
                   <button
                     type="button"
                     class="button is-primary"
-                    @click="guardarTipoDeRegargo()"
+                    @click="guardarTipoDeRecargo()"
                   >Guardar</button>
                   <button
                     type="button"
@@ -132,25 +164,20 @@
         </div>
       </transition>
     </div>
-    <loading :active="isLoading"
-                 :can-cancel="true"                
-                 :is-full-page="true"/>
+    <loading :active="isLoading" :can-cancel="true" :is-full-page="true" />
   </div>
 </template>
  
 <script>
-// import axios
 import axios from "axios";
-import routeAPI from '@/js/api';
-import Loading from 'vue-loading-overlay';
-import 'vue-loading-overlay/dist/vue-loading.css';
-import tiposCicloEscolar from '@/components/Catalogos/Selects/TiposCicloEscolar';
- 
+import routeAPI from "@/js/api";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
+
 export default {
   name: "ProductList",
   components: {
     Loading,
-    tiposCicloEscolar
   },
   data() {
     return {
@@ -159,6 +186,7 @@ export default {
       item: {
         Nombre: String,
         Monto: Number,
+        TipoDeCicloEscolarId: Number,
         Activo: Boolean
       },
       fields: [
@@ -176,11 +204,15 @@ export default {
           sortable: true
         },
         {
-          label:"Activo",
+          key: "cicloEscolar",
+          label: "Ciclo Escolar"
+        },
+        {
+          label: "Activo",
           key: "Activo"
         },
         {
-          label:"Opciones",
+          label: "Opciones",
           key: "opciones"
         }
       ],
@@ -192,62 +224,80 @@ export default {
       mostrarFiltros: true,
       filtro_nombre: "",
       filtro_monto: "",
-      filtro_cicloEscolar: ""
+      filtro_cicloEscolar: "",
+      filtro_cicloEscolar_key: 0,
+      filtro_activo: ""
     };
   },
   created() {
-    //this.getTiposDeRecargo();
+    this.getTiposDeRecargo();
   },
   computed: {
     rows() {
       return this.items.length;
     }
   },
-  methods: {    
+  methods: {
     async getTiposDeRecargo() {
       try {
         this.isLoading = true;
-          this.limpiarVariables();
-          const filtros = {
-            filtro: {
-              cicloEscolarId: Number(this.filtro_cicloEscolar)              
-            }
-          };
+        this.limpiarVariables();
+        const filtros = {
+          filtro: {}
+        };
 
-        const response = await axios.post(routeAPI + "administracion/tiposDeRecargos", filtros);
-        console.log(response);
-        if(!response.data.hayError)
-        {                  
-          if(response.data.response.length > 0){
+        if (this.filtro_nombre != "")
+          filtros.filtro.nombre = this.filtro_nombre;
+        if (this.filtro_monto != "")
+          filtros.filtro.monto = Number(this.filtro_monto);
+        if (this.filtro_cicloEscolar != "")
+          filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
+        if (this.filtro_activo != "")
+          filtros.filtro.activo = Number(this.filtro_activo);
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDeRecargo",
+          filtros
+        );
+        
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
             response.data.response.forEach(element => {
-            this.items.push({
-              TipoDeRegargoId : element["003TipoDeRecargoId"],
-              Nombre: element["003Nombre"],
-              Monto: '$' + element["003Monto"],
-              CicloEscolarId: element["002TipoDeCicloEscolarId"],
-              Activo: element["001Activo"]
+              this.items.push({
+                TipoDeRecargoId: element["003TipoDeRecargoId"],
+                Nombre: element["003Nombre"],
+                Monto: "$" + element["003Monto"],
+                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                Activo: element["003Activo"]
+              });
             });
-          });                  
           }
-        }else
-          this.$alert("No se pudo obtenera información, favor de volverlo a intentar.");
-          
+        } else
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+
         this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
     },
-    seleccionarCicloEscolar: function(element){      
-      this.filtro_cicloEscolar = element;  
+    seleccionarCicloEscolar: function(element) {
+      this.filtro_cicloEscolar = element;
+    },
+    seleccionarCicloEscolarItem(element) {
+      this.item.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
+      if (this.item.TipoDeRecargoId > 0)      
+        this.item.Monto = this.item.Monto.split("$")[1];    
       this.mostrarModal = !this.mostrarModal;
     },
-    async guardarTipoRecargo() {
-      if (this.item.TipoDeCicloEscolarId > 0) {
-        this.editarTipoDeRecago();
+    async guardarTipoDeRecargo() {    
+      if (this.item.TipoDeRecargoId > 0) {                    
+        this.editarTipoDeRecargo();
       } else {
         this.agregarTipoDeRecago();
       }
@@ -256,24 +306,25 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: null,
-            Nombre: Number(this.item.NombreRecargo),
-            Recargo: Number(this.item.MontoRecargo),
+          tipoDeRecargo: {
+            TipoDeRecargoId: null,
+            Nombre: this.item.Nombre,
+            Monto: Number(this.item.Monto),
+            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
             Activo: Number(this.item.Activo)
           }
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/guardarTipoDeRecargos",
+          routeAPI + "administracion/guardarTiposDeRecargo",
           data
         );
 
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se guardó con éxito.");          
-          this.getTiposDeRecagos();
+          this.$alert("El recargo se guardó con éxito.");
+          this.getTiposDeRecargo();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -282,27 +333,28 @@ export default {
         console.log(err);
       }
     },
-    async editarTipoDeRecargos() {
+    async editarTipoDeRecargo() {
       try {
         this.isLoading = true;
         const data = {
           tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: this.item.TipoDeCicloEscolarId,
-            Nombre: Number(this.item.NombreRecargo),
+            TipoDeRecargoId: this.item.TipoDeRecargoId,
+            Nombre: this.item.NombreRecargo,
             Monto: Number(this.item.MontoRecargo),
+            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
             Activo: Number(this.item.Activo)
           }
-        };  
+        };
 
         const response = await axios.post(
-          routeAPI + "administracion/editarTiposDeRecargos",
+          routeAPI + "administracion/editarTiposDeRecargo",
           data
         );
-        
+
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se guardó con éxito.");          
+          this.$alert("El recargo se guardó con éxito.");
           this.getTiposDeRecargo();
         } else {
           console.log(response);
@@ -328,7 +380,7 @@ export default {
         );
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se canceló correctamente.");          
+          this.$alert("El recargo se canceló correctamente.");
           this.getTiposDeRecagos();
         } else {
           console.log(response);
@@ -340,8 +392,15 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+    },
+    limpiarFiltros() {
+      this.filtro_nombre = "";
+      this.filtro_monto = "";
+      this.filtro_cicloEscolar = "";
+      this.filtro_cicloEscolar_key++;
+      this.filtro_activo = "";
     }
-  },
+  }
 };
 </script>
  

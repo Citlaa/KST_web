@@ -2,7 +2,7 @@
   <div>
     <div class="col-12">
       <label v-if="titulo" class="activo_label">{{ label }}</label>        
-      <select class="form-control" v-model="valor" @change="seleccionar()">        
+      <select class="form-control" v-model="valor" @change="seleccionar()" :disabled="disabled">        
         <option v-for="(element, index) in items" :key="index" :value="element['TipoDeCicloEscolarId']">{{ element["AñoDeInicio"] }} - {{ element["AñoDeTermino"] }}</option>
       </select>
     </div>
@@ -32,7 +32,8 @@ export default {
     label: String,
     funcion: String,
     tipoDeCicloEscolarId: Number,
-    titulo: { type: Boolean, required: true, default: true}
+    titulo: { type: Boolean, required: true, default: true},
+    disabled: Boolean
   },
   created() {
       this.getTiposDeCicloEscolar();

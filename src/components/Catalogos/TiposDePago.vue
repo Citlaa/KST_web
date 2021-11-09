@@ -29,7 +29,7 @@
           <tiposCicloEscolar
             :key="filtro_cicloEscolar_key"
             :label="'Ciclo escolar'"
-            :titulo="true"            
+            :titulo="true"
             v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
             :funcion="'seleccionarCicloEscolar'"
           />
@@ -42,8 +42,8 @@
           </select>
         </div>
         <div class="filtro_footer">
-          <button class="button is-primary btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
-          <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>           
+          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
+          <button class="button is-primary btn-sm" @click="getTiposDePago()">Filtrar</button>
         </div>
       </div>
     </div>
@@ -72,6 +72,7 @@
               :tipoDeCicloEscolarId="data.item.TipoDeCicloEscolarId"
               v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
               :funcion="'seleccionarCicloEscolar'"
+              :disabled="true"
             />
           </template>
           <template v-slot:cell(Activo)="data">
@@ -118,24 +119,24 @@
                 </div>
                 <div class="modal-body">
                   <div class="row">
-                    <div class="col-3 form-group padding-model">
+                    <div class="col-4 form-group padding-model">
                       <label>Nombre</label>
                       <input type="text" class="form-control" v-model="item.Nombre" />
                     </div>
-                    <div class="col-3 form-group padding-model">
-                      <label>Monto</label>
-                      <input type="number" class="form-control" v-model="item.Monto" />
-                    </div>
-                    <div class="col-3">
-                      <tiposCicloEscolar
+                    <div class="col-4">
+                      <TiposCicloEscolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
                         :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
                         v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
-                        :funcion="'seleccionarCicloEscolar'"                        
+                        :funcion="'seleccionarCicloEscolar'"
                       />
                     </div>
-                    <div class="col-3 padding-model">
+                    <div class="col-2 form-group padding-model">
+                      <label>Monto</label>
+                      <input type="number" class="form-control" v-model="item.Monto" />
+                    </div>                    
+                    <div class="col-2 padding-model">
                       <label>Activo</label>
                       <select class="form-control" v-model="item.Activo">
                         <option value="1">Si</option>
@@ -173,13 +174,11 @@ import axios from "axios";
 import routeAPI from "@/js/api";
 import Loading from "vue-loading-overlay";
 import "vue-loading-overlay/dist/vue-loading.css";
-import tiposCicloEscolar from "@/components/Catalogos/Selects/TiposCicloEscolar";
 
 export default {
   name: "ProductList",
   components: {
-    Loading,
-    tiposCicloEscolar
+    Loading    
   },
   data() {
     return {
@@ -210,7 +209,7 @@ export default {
           label: "Ciclo Escolar"
         },
         {
-          label:"Activo",
+          label: "Activo",
           key: "Activo"
         },
         {
@@ -246,7 +245,7 @@ export default {
         this.limpiarVariables();
         const filtros = {
           filtro: {}
-        };        
+        };
 
         if (this.filtro_nombre != "")
           filtros.filtro.nombre = this.filtro_nombre;
@@ -254,7 +253,7 @@ export default {
           filtros.filtro.monto = Number(this.filtro_monto);
         if (this.filtro_cicloEscolar != "")
           filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
-        if(this.filtro_activo != "")
+        if (this.filtro_activo != "")
           filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
@@ -287,17 +286,18 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem(element) {      
+    seleccionarCicloEscolarItem(element) {
       this.item.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
+      if (this.item.TipoDePagoId > 0) 
+        this.item.Monto = this.item.Monto.split("$")[1];
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDePago() {
-      if (this.item.TipoDePagoId > 0) {
-        this.item.Monto = this.item.Monto.split('$')[1];
+      if (this.item.TipoDePagoId > 0) {        
         this.editarTipoDePago();
       } else {
         this.agregarTipoDePago();
@@ -307,7 +307,7 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
+          tipoDePago: {
             TipoDePagoId: null,
             Nombre: this.item.Nombre,
             Monto: Number(this.item.Monto),
@@ -395,11 +395,11 @@ export default {
     limpiarVariables: function() {
       this.items = [];
     },
-    limpiarFiltros(){
+    limpiarFiltros() {
       this.filtro_nombre = "";
       this.filtro_monto = "";
       this.filtro_cicloEscolar = "";
-      this.filtro_cicloEscolar_key ++;
+      this.filtro_cicloEscolar_key++;
       this.filtro_activo = "";
     }
   }
