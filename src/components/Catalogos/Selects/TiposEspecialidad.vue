@@ -59,7 +59,7 @@ export default {
         
         response.data.response.forEach(element => {            
           this.items.push({
-            TipoGrupoId: element["009EspecialidadId"],
+            TipoGrupoId: element["009TipoEspecialidadId"],
             Nombre: element["009Nombre"],
             Activo: element["009Activo"]
           });

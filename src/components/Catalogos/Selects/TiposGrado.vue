@@ -56,10 +56,10 @@ export default {
           routeAPI + "catalogo/tiposGrado",
           filtros
         );
-        console.log(response);
+        
         response.data.response.forEach(element => {            
           this.items.push({
-            TipoGradoId: element["006TipoDeGrupoId"],
+            TipoGradoId: element["008TipoGradoId"],
             Nombre: element["008Nombre"],
             Activo: element["008Activo"]
           });
