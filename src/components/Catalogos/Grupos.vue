@@ -138,70 +138,7 @@
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
-        >
-          <template v-slot:cell(TipoDeCicloEscolarId)="data">
-            <tiposCicloEscolar
-              :titulo="false"
-              :tipoDeCicloEscolarId="data.item.TipoDeCicloEscolarId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(TipoModalidadId)="data">
-            <TiposModalidad
-              :titulo="false"
-              :tipoDeModalidadId="data.item.TipoModalidadId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(TipoPeriodoId)="data">
-            <TiposPeriodo
-              :titulo="false"
-              :tipoPeriodoId="data.item.TipoPeriodoId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(TipoDeGrupoId)="data">
-            <TiposGrupo
-              :titulo="false"
-              :tipoDeGrupoId="data.item.TipoDeGrupoId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(TiposNivelId)="data">
-            <TiposNivel
-              :titulo="false"
-              :tipoNivelId="data.item.TiposNivelId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(TipoGradoId)="data">
-            <TiposGrado
-              :titulo="false"
-              :tipoDeGradoId="data.item.TipoGradoId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
-          <template v-slot:cell(EspecialidadId)="data">
-            <TiposEspecialidad
-              :titulo="false"
-              :tipoEspecialidadId="data.item.TipoGradoId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
+        >                                                                  
           <template v-slot:cell(Activo)="data">
             <i
               v-if="data.item.Activo == 1"
@@ -331,6 +268,13 @@ export default {
   data() {
     return {
       isLoading: false,
+      ciclosEscolares: [],
+      modalidades: [],
+      periodos: [],
+      tiposDeGrupos: [],
+      tiposDeNivel: [],
+      tiposDeGrado: [],
+      especialidades: [],
       items: [],
       item: {
         Nombre: String,
@@ -345,36 +289,36 @@ export default {
           sortable: true,
         },
         {
-          key: "TipoDeCicloEscolarId",
+          key: "TipoDeCicloEscolar.Nombre",
           label: "Ciclo Escolar",
           sortable: true,
         },
         {
-          key: "TipoModalidadId",
+          key: "TipoModalidad.Nombre",
           label: "Modalidad",
           sortable: true,
         },
         {
-          key: "TipoPeriodoId",
+          key: "TipoPeriodo.Nombre",
           label: "Periodo",
         },
         {
-          key: "TipoDeGrupoId",
+          key: "TipoDeGrupo.Nombre",
           label: "Grupo",
           sortable: true,
         },
         {
-          key: "TiposNivelId",
+          key: "TiposNivel.Nombre",
           label: "Nivel",
           sortable: true,
         },
         {
-          key: "TipoGradoId",
+          key: "TipoGrado.Nombre",
           label: "Grado",
           sortable: true,
         },
         {
-          key: "EspecialidadId",
+          key: "Especialidad.Nombre",
           label: "Especialidad",
           sortable: true,
         },
@@ -413,6 +357,13 @@ export default {
     };
   },
   created() {
+    this.getTipoDeCicloEscolar();
+    this.getTiposDeModalidad();
+    this.getTiposPeriodo();
+    this.getTiposDeGrupo();
+    this.getTiposNivel();
+    this.getTiposDeGrado();
+    this.getEspecialidades();
     this.getGrupos();
   },
   computed: {
@@ -421,6 +372,187 @@ export default {
     },
   },
   methods: {
+    async getTipoDeCicloEscolar() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDeCicloEscolarCatalogo",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.ciclosEscolares.push({
+            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+            Nombre: element["002AñoDeInicio"] + '-' + element["002AñoDeTermino"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposDeModalidad() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposDeModalidad",
+          filtros
+        );
+
+        response.data.response.forEach(element => {            
+          this.modalidades.push({
+            TipoDeModalidadId: element["004TipoModalidadId"],
+            Nombre: element["004Nombre"],
+            Activo: element["004Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposPeriodo() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposPeriodo",
+          filtros
+        );
+        
+        response.data.response.forEach(element => {            
+          this.periodos.push({
+            TipoPeriodoId: element["005TipoPeriodoId"],
+            Nombre: element["005Nombre"],
+            Activo: element["005Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposDeGrupo() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposDeGrupo",
+          filtros
+        );
+        
+        response.data.response.forEach(element => {            
+          this.tiposDeGrupos.push({
+            TipoGrupoId: element["006TipoDeGrupoId"],
+            Nombre: element["006Nombre"],
+            Activo: element["006Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposNivel() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposNivel",
+          filtros
+        );
+        
+        response.data.response.forEach(element => {            
+          this.tiposDeNivel.push({
+            TipoNivelId: element["007TiposNivelId"],
+            Nombre: element["007Nombre"],
+            Activo: element["007Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposDeGrado() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposGrado",
+          filtros
+        );
+        
+        response.data.response.forEach(element => {            
+          this.tiposDeGrado.push({
+            TipoGradoId: element["008TipoGradoId"],
+            Nombre: element["008Nombre"],
+            Activo: element["008Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getEspecialidades() {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {            
+            activo: 1
+          }
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/especialidades",
+          filtros
+        );
+        
+        response.data.response.forEach(element => {            
+          this.especialidades.push({
+            EspecialidadId: element["009TipoEspecialidadId"],
+            Nombre: element["009Nombre"],
+            Activo: element["009Activo"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async getGrupos() {
       try {
         this.isLoading = true;
@@ -454,16 +586,17 @@ export default {
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {            
+          if (response.data.response.length > 0) {                   
             response.data.response.forEach((element) => {
               this.items.push({
                 EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],
-                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-                TipoModalidadId: element["004TipoModalidadId"],
-                TipoPeriodoId: element["005TipoPeriodoId"],
-                TipoDeGrupoId: element["006TipoDeGrupoId"],
-                TiposNivelId: element["007TiposNivelId"],
-                TipoGradoId: element["008TipoGradoId"],
+                TipoDeCicloEscolar: this.ciclosEscolares.find(ciclo => ciclo.TipoDeCicloEscolarId === Number(element["002TipoDeCicloEscolarId"])),
+                TipoModalidad: this.modalidades.find(modalidad => modalidad.TipoDeModalidadId === Number(element["004TipoModalidadId"])),
+                TipoPeriodo: this.periodos.find(per => per.TipoPeriodoId === Number(element["005TipoPeriodoId"])),                
+                TipoDeGrupo: this.tiposDeGrupos.find(grupo => grupo.TipoGrupoId === Number(element["006TipoDeGrupoId"])),                
+                TiposNivel: this.tiposDeNivel.find(nivel => nivel.TipoNivelId === Number(element["007TiposNivelId"])),              
+                TipoGrado: this.tiposDeGrado.find(grado => grado.TipoGradoId === Number(element["008TipoGradoId"])),  
+                Especialidad: this.especialidades.find(especialidad => especialidad.EspecialidadId === Number(element["009TipoEspecialidadId"])),  
                 Activo: element["010Activo"],
               });
             });
