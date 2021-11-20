@@ -454,8 +454,7 @@ export default {
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {
-            console.log(response);
+          if (response.data.response.length > 0) {            
             response.data.response.forEach((element) => {
               this.items.push({
                 EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],

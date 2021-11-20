@@ -28,6 +28,7 @@
         <div class="col-4">
           <label class="activo_label">Activo</label>
           <select class="form-control" v-model="filtro_activo">
+            <option value="-1">Seleccionar Activo</option>
             <option value="1">Si</option>
             <option value="0">No</option>
           </select>
@@ -217,7 +218,7 @@ export default {
           filtros.filtro.inicio = Number(this.filtro_añoDeInicio);
         if (this.filtro_añoDeTermino != "")
           filtros.filtro.fin = Number(this.filtro_añoDeTermino);
-        if (this.filtro_activo != "")
+        if (this.filtro_activo != "" && Number(this.filtro_activo) > 0)
           filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
@@ -350,7 +351,7 @@ export default {
     limpiarFiltros() {
       this.filtro_añoDeInicio = "";
       this.filtro_añoDeTermino = "";
-      this.filtro_activo = "";
+      this.filtro_activo = "-1";
     }
   }
 };

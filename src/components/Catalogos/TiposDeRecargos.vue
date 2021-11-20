@@ -19,11 +19,11 @@
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-3">
           <label>Nombre</label>
-          <input class="form-control" type="text" v-model="filtro_nombre" />
+          <input class="form-control" type="text" v-model="filtro_nombre" placeholder="Indicar Nombre" />
         </div>
         <div class="col-3">
           <label>Monto</label>
-          <input class="form-control" type="number" v-model="filtro_monto" />
+          <input class="form-control" type="number" v-model="filtro_monto" placeholder="Indicar Monto" />
         </div>
         <div class="col-3">
           <tiposCicloEscolar
@@ -37,6 +37,7 @@
         <div class="col-3">
           <label class="activo_label">Activo</label>
           <select class="form-control" v-model="filtro_activo">
+            <option value="-1">Seleccionar Activo</option>
             <option value="1">Si</option>
             <option value="0">No</option>
           </select>
@@ -65,16 +66,7 @@
           :per-page="perPage"
           :current-page="currentPage"
           :filter="filter"
-        >
-          <template v-slot:cell(cicloEscolar)="data">
-            <tiposCicloEscolar
-              :titulo="false"
-              :tipoDeCicloEscolarId="data.item.TipoDeCicloEscolarId"
-              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-              :funcion="'seleccionarCicloEscolar'"
-              :disabled="true"
-            />
-          </template>
+        >          
           <template v-slot:cell(Activo)="data">
             <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
             <i v-else class="far fa-times-circle" style="color: red"></i>
@@ -182,6 +174,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      ciclosEscolares:[],
       items: [],
       item: {
         Nombre: String,
@@ -204,7 +197,7 @@ export default {
           sortable: true
         },
         {
-          key: "cicloEscolar",
+          key: "TipoDeCicloEscolar.Nombre",
           label: "Ciclo Escolar"
         },
         {
@@ -226,10 +219,11 @@ export default {
       filtro_monto: "",
       filtro_cicloEscolar: "",
       filtro_cicloEscolar_key: 0,
-      filtro_activo: ""
+      filtro_activo: "-1"
     };
   },
   created() {
+    this.getTipoDeCicloEscolar();
     this.getTiposDeRecargo();
   },
   computed: {
@@ -238,6 +232,31 @@ export default {
     }
   },
   methods: {
+     async getTipoDeCicloEscolar() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/tiposDeCicloEscolarCatalogo",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.ciclosEscolares.push({
+            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+            Nombre: element["002AñoDeInicio"] + '-' + element["002AñoDeTermino"]
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async getTiposDeRecargo() {
       try {
         this.isLoading = true;
@@ -252,7 +271,7 @@ export default {
           filtros.filtro.monto = Number(this.filtro_monto);
         if (this.filtro_cicloEscolar != "")
           filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
-        if (this.filtro_activo != "")
+        if (this.filtro_activo != ""  && Number(this.filtro_activo) > 0)
           filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
@@ -267,7 +286,7 @@ export default {
                 TipoDeRecargoId: element["003TipoDeRecargoId"],
                 Nombre: element["003Nombre"],
                 Monto: "$" + element["003Monto"],
-                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                TipoDeCicloEscolar: this.ciclosEscolares.find(ciclo => ciclo.TipoDeCicloEscolarId === Number(element["002TipoDeCicloEscolarId"])),
                 Activo: element["003Activo"]
               });
             });
@@ -398,7 +417,7 @@ export default {
       this.filtro_monto = "";
       this.filtro_cicloEscolar = "";
       this.filtro_cicloEscolar_key++;
-      this.filtro_activo = "";
+      this.filtro_activo = "-1";
     }
   }
 };

@@ -1,8 +1,9 @@
 <template>
   <div>
     <div class="col-12">
-      <label v-if="titulo" class="activo_label">{{ label }}</label>        
-      <select class="form-control" v-model="valor" @change="seleccionar()" :disabled="disabled">        
+      <label v-if="titulo" class="activo_label">{{ label }}</label>            
+      <select class="form-control" v-model="valor" @change="seleccionar()" :disabled="disabled"> 
+        <option value="-1">Seleccionar Especialidad</option>          
         <option v-for="(element, index) in items" :key="index" :value="element['TipoGrupoId']">{{ element["Nombre"] }}</option>
       </select>
     </div>
@@ -23,7 +24,7 @@ export default {
   },
   data() {
     return {
-      valor: String,      
+      valor: "-1",      
       isLoading: false,
       items: [],
     };
