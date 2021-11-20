@@ -95,6 +95,7 @@
         <div class="col-3">
           <label class="activo_label">Activo</label>
           <select class="form-control" v-model="filtros.filtro_activo">
+            <option value="-1">Seleccionar Activo</option>
             <option value="1">Si</option>
             <option value="0">No</option>
           </select>
@@ -408,7 +409,7 @@ export default {
         key_grupo: 0,
         filtro_especialidad: "",
         key_especialidad: 0,
-        filtro_activo: "",
+        filtro_activo: "-1",
       },
     };
   },
@@ -612,7 +613,7 @@ export default {
       this.filtros.filtro_grado = "";
       this.filtros.filtro_grupo = "";
       this.filtros.filtro_especialidad = "";
-      this.filtros.filtro_activo = "";
+      this.filtros.filtro_activo = "-1";
 
       this.filtros.key_cicloEscolar++;
       this.filtros.key_nivel++;

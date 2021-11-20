@@ -193,7 +193,7 @@ export default {
       mostrarFiltros: true,
       filtro_añoDeInicio: new Date().getFullYear() - 1,
       filtro_añoDeTermino: new Date().getFullYear(),
-      filtro_activo: 1
+      filtro_activo: "-1"
     };
   },
   created() {
