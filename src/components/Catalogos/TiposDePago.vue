@@ -206,8 +206,8 @@
           </div>
         </div>
       </transition>
-    </div>
-    <loading :active="isLoading" :can-cancel="true" :is-full-page="true" />
+    </div>    
+    <cargando v-if="isLoading"></cargando>
   </div>
 </template>
 
@@ -215,14 +215,9 @@
 // import axios
 import axios from "axios";
 import routeAPI from "@/js/api";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
   name: "ProductList",
-  components: {
-    Loading,
-  },
   data() {
     return {
       isLoading: false,

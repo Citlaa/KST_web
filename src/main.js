@@ -9,6 +9,7 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import '@fortawesome/fontawesome-free/js/all'
 
 import App from './App.vue'
+import cargando from './components/Comunes/Cargando.vue'
 import TiposModalidad from './components/Catalogos/Selects/TiposModalidad.vue'
 import TiposCicloEscolar from './components/Catalogos/Selects/TiposCicloEscolar.vue'
 import TiposGrupo from './components/Catalogos/Selects/TiposGrupo.vue'
@@ -21,6 +22,7 @@ Vue.use(VueRouter)
 Vue.use(VueSimpleAlert)
 Vue.use(BootstrapVue)
 
+Vue.component('cargando', cargando)
 Vue.component('TiposModalidad', TiposModalidad)
 Vue.component('TiposCicloEscolar', TiposCicloEscolar)
 Vue.component('TiposGrupo', TiposGrupo)

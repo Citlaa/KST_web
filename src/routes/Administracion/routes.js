@@ -1,7 +1,7 @@
 import TiposDePago from '@/components/Catalogos/TiposDePago';
 import TiposCicloEscolar from '@/components/Catalogos/TiposCicloEscolar';
 import TiposDeRecargos from '@/components/Catalogos/TiposDeRecargos'
-import Grupos from '@/components/Catalogos/Grupos'
+import Grupos from '@/components/Administracion/Grupos'
 
 const routes = [
     {

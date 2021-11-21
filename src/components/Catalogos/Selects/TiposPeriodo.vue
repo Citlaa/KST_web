@@ -6,21 +6,14 @@
         <option v-for="(element, index) in items" :key="index" :value="element['TipoPeriodoId']">{{ element["Nombre"] }}</option>
       </select>
     </div>
-    <loading :active="isLoading"
-             :can-cancel="true"                
-             :is-full-page="true"/>
+    <cargando v-if="isLoading"></cargando>
   </div>
 </template>
 <script>
 import axios from "axios";
 import routeAPI from "@/js/api";
-import Loading from "vue-loading-overlay";
-import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
-  components: {
-    Loading
-  },
   data() {
     return {
       valor: String,      
