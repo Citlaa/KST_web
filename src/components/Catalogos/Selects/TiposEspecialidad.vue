@@ -4,7 +4,7 @@
       <label v-if="titulo" class="activo_label">{{ label }}</label>            
       <select class="form-control" v-model="valor" @change="seleccionar()" :disabled="disabled"> 
         <option value="-1">Seleccionar Especialidad</option>          
-        <option v-for="(element, index) in items" :key="index" :value="element['TipoGrupoId']">{{ element["Nombre"] }}</option>
+        <option v-for="(element, index) in items" :key="index" :value="element['TipoEspecialidadId']">{{ element["Nombre"] }}</option>
       </select>
     </div>
     <cargando v-if="isLoading"></cargando>
@@ -25,15 +25,15 @@ export default {
   props: {
     label: String,
     funcion: String,
-    tipoEspecialidadId: Number,
+    TipoEspecialidadId: Number,
     titulo: { type: Boolean, required: true, default: true},
     disabled: Boolean
   },
   created() {
       this.getEspecialidades();
       
-      if(this.$props.tipoEspecialidadId > 0)
-        this.valor = this.$props.tipoEspecialidadId;
+      if(this.$props.TipoEspecialidadId > 0)
+        this.valor = this.$props.TipoEspecialidadId;
   },
   computed: {},
   methods: {
