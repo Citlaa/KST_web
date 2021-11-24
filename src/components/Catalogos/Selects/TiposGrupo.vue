@@ -2,18 +2,9 @@
   <div>
     <div class="col-12">
       <label v-if="titulo" class="activo_label">{{ label }}</label>
-      <select
-        class="form-control"
-        v-model="valor"
-        @change="seleccionar()"
-        :disabled="disabled"
-      >
-        <option
-          v-for="(element, index) in items"
-          :key="index"
-          :value="element['TipoGrupoId']"
-          >{{ element["Nombre"] }}</option
-        >
+      <select class="form-control" v-model="valor" @change="seleccionar()" :disabled="disabled">
+        <option value="-1">Seleccionar Grupo</option>   
+        <option v-for="(element, index) in items" :key="index" :value="element['TipoGrupoId']">{{ element["Nombre"] }}</option>
       </select>
     </div>
     <cargando v-if="isLoading"></cargando>

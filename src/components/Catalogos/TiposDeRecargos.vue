@@ -181,7 +181,8 @@ export default {
         {
           key: "TipoDeRecargoId",
           label: "Folio",
-          sortable: true
+          sortable: true,
+          value: "1"
         },
         {
           key: "Nombre",

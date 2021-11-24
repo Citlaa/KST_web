@@ -67,7 +67,7 @@
             />
           </div>
         </div>
-        <div class="row">
+        <div class="row m-1 mb-2 pb-5" style="border-bottom: 1px solid #ccc;">
         <div class="col-3">
           <tipos-grado
             :key="filtros.key_grado"
@@ -198,7 +198,7 @@
                 <div class="row">
                   <div class="col-4 form-group padding-model">
                     <TiposCicloEscolar
-                      :label="'Ciclo escolar'"
+                      :label="'Ciclo Escolar'"
                       :titulo="true"
                       :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
                       v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
