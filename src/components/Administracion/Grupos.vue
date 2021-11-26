@@ -268,7 +268,7 @@
                   <button
                     type="button"
                     class="button is-primary"
-                    @click="guardarTipoDeRecargo()"
+                    @click="agregarGrupo()"
                   >Guardar</button>
                   <button
                     type="button"
@@ -304,9 +304,14 @@ export default {
       especialidades: [],
       items: [],
       item: {
-        Nombre: String,
-        Monto: Number,
+        EstructuraDeGrupoId: Number,
         TipoDeCicloEscolarId: Number,
+        TiposNivelId: Number,
+        TipoModalidadId: Number,
+        TipoPeriodoId: Number,
+        TipoGradoId: Number,
+        TipoDeGrupoId: Number,
+        TipoEspecialidadId: Number,
         Activo: Boolean,
       },
       fields: [
@@ -691,36 +696,40 @@ export default {
         this.item.Monto = this.item.Monto.split("$")[1];
       this.mostrarModal = !this.mostrarModal;
     },
-    async guardarTipoDeRecargo() {
+    async guardarGrupo() {
       if (this.item.TipoDeRecargoId > 0) {
-        this.editarTipoDeRecargo();
+        this.editarGrupo();
       } else {
-        this.agregarTipoDeRecago();
+        this.agregarGrupo();
       }
     },
-    async agregarTipoDeRecago() {
+    async agregarGrupo() {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeRecargo: {
-            TipoDeRecargoId: null,
-            Nombre: this.item.Nombre,
-            Monto: Number(this.item.Monto),
+          estructuraDeGrupo: {
+            EstructuraDeGrupoId: null,
             TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            TiposNivelId: Number(this.item.TiposNivelId),
+            TipoModalidadId: Number(this.item.TipoModalidadId),
+            TipoPeriodoId: Number(this.item.TipoPeriodoId),
+            TipoGradoId: Number(this.item.TipoGradoId),
+            TipoDeGrupoId: Number(this.item.TipoDeGrupoId),
+            TipoEspecialidadId: Number(this.item.TipoEspecialidadId),
             Activo: Number(this.item.Activo),
           },
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/guardarTiposDeRecargo",
+          routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
-
+console.log(response);
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El recargo se guardó con éxito.");
-          this.getTiposDeRecargo();
+          this.getGrupos();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -729,28 +738,32 @@ export default {
         console.log(err);
       }
     },
-    async editarTipoDeRecargo() {
+    async editarGrupo() {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeRecargoId: this.item.TipoDeRecargoId,
-            Nombre: this.item.NombreRecargo,
-            Monto: Number(this.item.MontoRecargo),
+          estructuraDeGrupo: {
+            EstructuraDeGrupoId: this.item.EstructuraDeGrupoId,
             TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            TiposNivelId: Number(this.item.TiposNivelId),
+            TipoModalidadId: Number(this.item.TipoModalidadId),
+            TipoPeriodoId: Number(this.item.TipoPeriodoId),
+            TipoGradoId: Number(this.item.TipoGradoId),
+            TipoDeGrupoId: Number(this.item.TipoDeGrupoId),
+            TipoEspecialidadId: Number(this.item.TipoEspecialidadId),
             Activo: Number(this.item.Activo),
           },
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/editarTiposDeRecargo",
+          routeAPI + "administracion/editarEstructurasDeGrupo",
           data
         );
-
+console.log(response);
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se guardó con éxito.");
+          this.$alert("El grupo se guardó con éxito.");
           this.getTiposDeRecargo();
         } else {
           console.log(response);
@@ -764,14 +777,14 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: item.TipoDeCicloEscolarId,
+          estructuraDeGrupo: {
+            EstructuraDeGrupoId: item.EstructuraDeGrupoId,
             Activo: Number(0),
           },
         };
 
         const response = await axios.post(
-          routeAPI + "administracion/cancelarTiposDeRecargos",
+          routeAPI + "administracion/cancelarEstructuraDeGrupo",
           data
         );
         this.isLoading = false;
