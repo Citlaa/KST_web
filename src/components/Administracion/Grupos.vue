@@ -29,7 +29,7 @@
         </div>
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
-        <div class="row m-1 mb-2 pb-5" style="border-bottom: 1px solid #ccc;">
+        <div class="row m-1 pb-2">
           <div class="col-3">
             <tiposCicloEscolar
               :key="filtros.key_cicloEscolar"
@@ -39,7 +39,7 @@
               :funcion="'seleccionarCicloEscolar'"
             />
           </div>
-           <div class="col-3">
+          <div class="col-3">
             <tipos-nivel
               :key="filtros.key_nivel"
               :label="'Nivel'"
@@ -67,44 +67,46 @@
             />
           </div>
         </div>
-        <div class="row m-1 mb-2 pb-5" style="border-bottom: 1px solid #ccc;">
-        <div class="col-3">
-          <tipos-grado
-            :key="filtros.key_grado"
-            :label="'Grado'"
-            :titulo="true"
-            :funcion="'seleccionarGrado'"
-            @seleccionarGrado="seleccionarGrado($event)"
-          />
+        <div class="row m-1 pb-1" style="">
+          <div class="col-3">
+            <tipos-grado
+              :key="filtros.key_grado"
+              :label="'Grado'"
+              :titulo="true"
+              :funcion="'seleccionarGrado'"
+              @seleccionarGrado="seleccionarGrado($event)"
+            />
+          </div>
+          <div class="col-3">
+            <tipos-grupo
+              :key="filtros.key_grupo"
+              :label="'Grupo'"
+              :titulo="true"
+              :funcion="'seleccionarGrupo'"
+              @seleccionarGrupo="seleccionarGrupo($event)"
+            />
+          </div>
+          <div class="col-3">
+            <tipos-especialidad
+              :key="filtros.key_especialidad"
+              :label="'Especialidad'"
+              :titulo="true"
+              :funcion="'seleccionarEspecialidad'"
+              @seleccionarEspecialidad="seleccionarEspecialidad($event)"
+            />
+          </div>
+          <div class="col-3">
+            <label class="activo_label">Activo</label>
+            <select class="form-control" v-model="filtros.filtro_activo">
+              <option value="-1">Seleccionar Activo</option>
+              <option value="1">Si</option>
+              <option value="0">No</option>
+            </select>
+          </div>
         </div>
-        <div class="col-3">
-          <tipos-grupo
-            :key="filtros.key_grupo"
-            :label="'Grupo'"
-            :titulo="true"
-            :funcion="'seleccionarGrupo'"
-            @seleccionarGrupo="seleccionarGrupo($event)"
-          />
-        </div>
-        <div class="col-3">
-          <tipos-especialidad
-            :key="filtros.key_especialidad"
-            :label="'Especialidad'"
-            :titulo="true"
-            :funcion="'seleccionarEspecialidad'"
-            @seleccionarEspecialidad="seleccionarEspecialidad($event)"
-          />
-        </div>
-        <div class="col-3">
-          <label class="activo_label">Activo</label>
-          <select class="form-control" v-model="filtros.filtro_activo">
-            <option value="-1">Seleccionar Activo</option>
-            <option value="1">Si</option>
-            <option value="0">No</option>
-          </select>
-        </div>
-        </div>
-        <div class="filtro_footer">
+        
+      </div>
+      <div v-if="mostrarFiltros" class="filtro_footer">
           <button
             class="button is-default btn-sm mr-1"
             @click="limpiarFiltros()"
@@ -115,7 +117,6 @@
             Filtrar
           </button>
         </div>
-      </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
       <button
@@ -187,7 +188,9 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <div class="col-11">
-                    <h2 class="modal-title text-center">{{ titutoModal }} Grupo</h2>
+                    <h2 class="modal-title text-center">
+                      {{ titutoModal }} Grupo
+                    </h2>
                     <div class="line_red"></div>
                   </div>
                   <a class="button close_modal" @click="mostrarModal = false">
@@ -195,87 +198,109 @@
                   </a>
                 </div>
                 <div class="modal-body">
-                <div class="row">
-                  <div class="col-4 form-group padding-model">
-                    <TiposCicloEscolar
-                      :label="'Ciclo Escolar'"
-                      :titulo="true"
-                      :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                      v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
-                      :funcion="'seleccionarCicloEscolar'"
-                      />
-                  </div>                    
-                  <div class="col-4 form-group padding-model">
-                    <tipos-modalidad
-                      :key="filtros.key_modalidad"
-                      :label="'Modalidad'"
-                      :titulo="true"
-                      :funcion="'seleccionarTipoModalidad'"
-                      @seleccionarTipoModalidad="seleccionarTipoModalidad($event)"
-                    />
+                  <div class="row">
+                    <div class="row container_modal">
+                      <div class="col-3 form-group padding-model">
+                        <tipos-ciclo-escolar
+                          :label="'Ciclo Escolar'"
+                          :titulo="true"
+                          :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
+                          v-on:seleccionarCicloEscolar="
+                            seleccionarCicloEscolarItem($event)
+                          "
+                          :funcion="'seleccionarCicloEscolar'"
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <tipos-modalidad
+                          :key="filtros.key_modalidad"
+                          :label="'Modalidad'"
+                          :titulo="true"
+                          :funcion="'seleccionarTipoModalidad'"
+                          @seleccionarTipoModalidad="
+                            seleccionarTipoModalidad($event)
+                          "
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <tipos-periodo
+                          :key="filtros.key_periodo"
+                          :label="'Periodo'"
+                          :titulo="true"
+                          :funcion="'seleccionarPeriodo'"
+                          @seleccionarPeriodo="seleccionarPeriodo($event)"
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <tipos-grupo
+                          :key="filtros.key_grupo"
+                          :label="'Grupo'"
+                          :titulo="true"
+                          :funcion="'seleccionarGrupo'"
+                          @seleccionarGrupo="seleccionarGrupo($event)"
+                        />
+                      </div>
+                    </div>
+                    <div class="row container_bottom_modal">
+                      <div class="col-3 form-group padding-model">
+                        <tipos-nivel
+                          :key="filtros.key_nivel"
+                          :titulo="true"
+                          :label="'Nivel'"
+                          :funcion="'seleccionarNivel'"
+                          @seleccionarNivel="seleccionarNivel($event)"
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <tipos-grado
+                          :key="filtros.key_grado"
+                          :label="'Grado'"
+                          :titulo="true"
+                          :funcion="'seleccionarGrado'"
+                          @seleccionarGrado="seleccionarGrado($event)"
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <tipos-especialidad
+                          :key="filtros.key_especialidad"
+                          :label="'Especialidad'"
+                          :titulo="true"
+                          :funcion="'seleccionarEspecialidad'"
+                          @seleccionarEspecialidad="
+                            seleccionarEspecialidad($event)
+                          "
+                        />
+                      </div>
+                      <div class="col-3 form-group padding-model">
+                        <label class="activo_label">Activo</label>
+                        <select
+                          class="form-control"
+                          v-model="filtros.filtro_activo"
+                        >
+                          <option value="-1">Seleccionar Activo</option>
+                          <option value="1">Si</option>
+                          <option value="0">No</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                  <div class="col-4 form-group padding-model">
-                    <tipos-periodo
-                      :key="filtros.key_periodo"
-                      :label="'Periodo'"
-                      :titulo="true"
-                      :funcion="'seleccionarPeriodo'"
-                      @seleccionarPeriodo="seleccionarPeriodo($event)"
-                    />
-                  </div>
-                  <div class="col-4 form-group padding-model">
-                    <tipos-grupo
-                      :key="filtros.key_grupo"
-                      :label="'Grupo'"
-                      :titulo="true"
-                      :funcion="'seleccionarGrupo'"
-                      @seleccionarGrupo="seleccionarGrupo($event)"
-                    />  
-                  </div>
-                  <div class="col-4 form-group padding-model">
-                    <label>Nivel</label>
-                    <input type="numbwe" class="form-control" v-model="item.Nivel" />
-                  </div>
-                  <div class="col-4 form-group padding-model">
-                    <tipos-grado
-                      :key="filtros.key_grado"
-                      :label="'Grado'"
-                      :titulo="true"
-                      :funcion="'seleccionarGrado'"
-                      @seleccionarGrado="seleccionarGrado($event)"
-                    />
-                  </div>
-                  <div class="col-4 form-group padding-model">
-                    <tipos-especialidad
-                      :key="filtros.key_especialidad"
-                      :label="'Especialidad'"
-                      :titulo="true"
-                      :funcion="'seleccionarEspecialidad'"
-                      @seleccionarEspecialidad="seleccionarEspecialidad($event)"
-                    />
-                  </div>
-                  <div class="col-4 form-group padding-model">
-                    <label class="activo_label">Activo</label>
-                    <select class="form-control" v-model="filtros.filtro_activo">
-                      <option value="-1">Seleccionar Activo</option>
-                      <option value="1">Si</option>
-                      <option value="0">No</option>
-                    </select>
-                  </div>
-                 </div>
-              </div>
+                </div>
                 <div class="modal-footer">
                   <button
                     type="button"
                     class="button is-primary"
                     @click="agregarGrupo()"
-                  >Guardar</button>
+                  >
+                    Guardar
+                  </button>
                   <button
                     type="button"
                     class="btn btn-secondary"
                     data-dismiss="modal"
                     @click="mostrarModal = false"
-                  >Cancelar</button>
+                  >
+                    Cancelar
+                  </button>
                 </div>
               </div>
             </div>
@@ -290,8 +315,11 @@
 <script>
 import axios from "axios";
 import routeAPI from "@/js/api";
+import TiposCicloEscolar from "../Catalogos/Selects/TiposCicloEscolar.vue";
+import TiposNivel from "../Catalogos/Selects/TiposNivel.vue";
 
 export default {
+  components: { TiposCicloEscolar, TiposNivel },
   data() {
     return {
       isLoading: false,
@@ -724,7 +752,7 @@ export default {
           routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
-console.log(response);
+        console.log(response);
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
@@ -759,7 +787,7 @@ console.log(response);
           routeAPI + "administracion/editarEstructurasDeGrupo",
           data
         );
-console.log(response);
+        console.log(response);
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
@@ -824,4 +852,14 @@ console.log(response);
 };
 </script>
 
-<style></style>
+<style>
+.container_modal {
+  margin: 1px;
+  padding: 0px 0px 10px 0px;
+}
+
+.container_bottom_modal{
+  margin: 1px;
+  padding: 10px 0px 10px 0px;
+}
+</style>

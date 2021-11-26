@@ -17,7 +17,7 @@ import routeAPI from "@/js/api";
 export default {
   data() {
     return {
-      valor: String,
+      valor: "-1",
       isLoading: false,
       items: [],
     };

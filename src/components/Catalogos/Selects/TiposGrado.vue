@@ -30,7 +30,7 @@ export default {
     disabled: Boolean
   },
   created() {
-      // this.getTiposDeGrado();
+      this.getTiposDeGrado();
       
       if(this.$props.tipoDeGradoId > 0)
         this.valor = this.$props.tipoDeGradoId;
