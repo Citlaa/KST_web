@@ -40,7 +40,7 @@ export default {
     async getTiposDeCicloEscolar() {
       try {
         this.isLoading = true;
-        console.log(this.isLoading );        
+               
         const filtros = {
           filtro: {            
             activo: 1

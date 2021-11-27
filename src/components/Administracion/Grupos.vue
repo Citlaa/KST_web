@@ -205,79 +205,83 @@
                           :label="'Ciclo Escolar'"
                           :titulo="true"
                           :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                          v-on:seleccionarCicloEscolar="
-                            seleccionarCicloEscolarItem($event)
-                          "
-                          :funcion="'seleccionarCicloEscolar'"
+                          @:seleccionarCicloEscolarItem="seleccionarCicloEscolarItem($event)"
+                          :funcion="'seleccionarCicloEscolarItem'"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-modalidad
-                          :key="filtros.key_modalidad"
+                          :tipoDeModalidadId = "item.TipoModalidadId"
+                          :key="item.TipoModalidadId"
                           :label="'Modalidad'"
                           :titulo="true"
-                          :funcion="'seleccionarTipoModalidad'"
-                          @seleccionarTipoModalidad="
-                            seleccionarTipoModalidad($event)
+                          :funcion="'seleccionarTipoModalidadItem'"
+                          @seleccionarTipoModalidadItem="
+                            seleccionarTipoModalidadItem($event)
                           "
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-periodo
-                          :key="filtros.key_periodo"
+                          :tipoPeriodoId="item.TipoPeriodoId"
+                          :key="item.TipoPeriodoId"
                           :label="'Periodo'"
                           :titulo="true"
-                          :funcion="'seleccionarPeriodo'"
-                          @seleccionarPeriodo="seleccionarPeriodo($event)"
+                          :funcion="'seleccionarPeriodoItem'"
+                          @seleccionarPeriodoItem="seleccionarPeriodoItem($event)"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-grupo
-                          :key="filtros.key_grupo"
+                          :tipoDeGrupoId="item.TipoDeGrupoId"
+                          :key="item.TipoDeGrupoId"
                           :label="'Grupo'"
                           :titulo="true"
-                          :funcion="'seleccionarGrupo'"
-                          @seleccionarGrupo="seleccionarGrupo($event)"
+                          :funcion="'seleccionarGrupoItem'"
+                          @seleccionarGrupoItem="seleccionarGrupoItem($event)"
                         />
                       </div>
                     </div>
                     <div class="row container_bottom_modal">
                       <div class="col-3 form-group padding-model">
                         <tipos-nivel
-                          :key="filtros.key_nivel"
+                          :tipoNivelId="item.TiposNivelId"
+                          :key="item.TiposNivelId"
                           :titulo="true"
                           :label="'Nivel'"
-                          :funcion="'seleccionarNivel'"
-                          @seleccionarNivel="seleccionarNivel($event)"
+                          :funcion="'seleccionarNivelItem'"
+                          @seleccionarNivelItem="seleccionarNivelItem($event)"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-grado
-                          :key="filtros.key_grado"
+                          :tipoDeGradoId="item.TipoGradoId"
+                          :key="item.TipoGradoId"
                           :label="'Grado'"
                           :titulo="true"
-                          :funcion="'seleccionarGrado'"
-                          @seleccionarGrado="seleccionarGrado($event)"
+                          :funcion="'seleccionarGradoItem'"
+                          @seleccionarGradoItem="seleccionarGradoItem($event)"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-especialidad
-                          :key="filtros.key_especialidad"
+                          :TipoEspecialidadId="item.TipoEspecialidadId"
+                          :key="item.TipoEspecialidadId"
                           :label="'Especialidad'"
                           :titulo="true"
-                          :funcion="'seleccionarEspecialidad'"
-                          @seleccionarEspecialidad="
-                            seleccionarEspecialidad($event)
+                          :funcion="'seleccionarEspecialidadItem'"
+                          @seleccionarEspecialidadItem="
+                            seleccionarEspecialidadItem($event)
                           "
                         />
                       </div>
-                      <div class="col-3 form-group padding-model">
+                      <div class="col-3 form-group padding-model">                       
                         <label class="activo_label">Activo</label>
                         <select
                           class="form-control"
-                          v-model="filtros.filtro_activo"
+                          v-model="item.Activo"
                         >
-                          <option value="-1">Seleccionar Activo</option>
+                          <option value="-1" selected>Seleccionar Activo</option>
                           <option value="1">Si</option>
                           <option value="0">No</option>
                         </select>
@@ -289,7 +293,7 @@
                   <button
                     type="button"
                     class="button is-primary"
-                    @click="agregarGrupo()"
+                    @click="guardarGrupo()"
                   >
                     Guardar
                   </button>
@@ -340,7 +344,7 @@ export default {
         TipoGradoId: Number,
         TipoDeGrupoId: Number,
         TipoEspecialidadId: Number,
-        Activo: Boolean,
+        Activo: "-1",
       },
       fields: [
         {
@@ -696,36 +700,65 @@ export default {
         console.log(err);
       }
     },
-    seleccionarTipoModalidad: function(element) {
-      this.filtros.filtro_modalidad = element;
-    },
     seleccionarCicloEscolar: function(element) {
       this.filtros.filtro_cicloEscolar = element;
     },
+    seleccionarCicloEscolarItem: function(element) { 
+      this.item.TipoDeCicloEscolarId = element;
+    },
+    seleccionarTipoModalidad: function(element) {
+      this.filtros.filtro_modalidad = element;
+    },    
+    seleccionarTipoModalidadItem: function(element) {
+      this.item.TipoModalidadId = element;
+    },    
     seleccionarNivel: function(element) {
       this.filtros.filtro_nivel = element;
+    },
+    seleccionarNivelItem: function(element) {
+      this.item.TiposNivelId = element;
     },
     seleccionarPeriodo: function(element) {
       this.filtros.filtro_periodo = element;
     },
+    seleccionarPeriodoItem: function(element) {
+      this.item.TipoPeriodoId = element;
+    },
     seleccionarGrado: function(element) {
       this.filtros.filtro_grado = element;
+    },
+    seleccionarGradoItem: function(element) {
+      this.item.TipoGradoId = element;
     },
     seleccionarGrupo: function(element) {
       this.filtros.filtro_grupo = element;
     },
+    seleccionarGrupoItem: function(element) {
+      this.item.TipoDeGrupoId = element;
+    },
     seleccionarEspecialidad: function(element) {
       this.filtros.filtro_especialidad = element;
     },
+    seleccionarEspecialidadItem: function(element) {     
+      this.item.TipoEspecialidadId = element;
+    },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
-      this.item = item;
-      if (this.item.TipoDeRecargoId > 0)
-        this.item.Monto = this.item.Monto.split("$")[1];
+      
+      this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
+      this.item.TipoDeCicloEscolarId = item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
+      this.item.TiposNivelId= item.TiposNivel.TipoNivelId;
+      this.item.TipoModalidadId= item.TipoModalidad.TipoDeModalidadId;
+      this.item.TipoPeriodoId = item.TipoPeriodo.TipoPeriodoId;
+      this.item.TipoGradoId = item.TipoGrado.TipoGradoId;
+      this.item.TipoDeGrupoId= item.TipoDeGrupo.TipoGrupoId;
+      this.item.TipoEspecialidadId = item.Especialidad.EspecialidadId;
+      this.item.Activo = item.Activo;
+      
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarGrupo() {
-      if (this.item.TipoDeRecargoId > 0) {
+      if (this.item.EstructuraDeGrupoId > 0) {
         this.editarGrupo();
       } else {
         this.agregarGrupo();
@@ -752,11 +785,11 @@ export default {
           routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
-        console.log(response);
+        
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se guardó con éxito.");
+          this.$alert("El grupo se guardó con éxito.");
           this.getGrupos();
         } else {
           console.log(response);
@@ -787,12 +820,12 @@ export default {
           routeAPI + "administracion/editarEstructurasDeGrupo",
           data
         );
-        console.log(response);
+
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El grupo se guardó con éxito.");
-          this.getTiposDeRecargo();
+          this.getGrupos();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -817,8 +850,8 @@ export default {
         );
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El recargo se canceló correctamente.");
-          this.getTiposDeRecagos();
+          this.$alert("El grupo se canceló correctamente.");
+          this.getGrupos();
         } else {
           console.log(response);
           this.$alert("Alert Message.");
