@@ -31,11 +31,21 @@
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-3">
           <label>Nombre</label>
-          <input class="form-control" type="text" v-model="filtro_nombre" placeholder="Indicar Nombre" />
+          <input
+            class="form-control"
+            type="text"
+            v-model="filtro_nombre"
+            placeholder="Indicar Nombre"
+          />
         </div>
         <div class="col-3">
           <label>Monto</label>
-          <input class="form-control" type="text" v-model="filtro_monto" placeholder="Indicar Monto" />
+          <input
+            class="form-control"
+            type="text"
+            v-model="filtro_monto"
+            placeholder="Indicar Monto"
+          />
         </div>
         <div class="col-3">
           <tiposCicloEscolar
@@ -54,17 +64,14 @@
             <option value="0">No</option>
           </select>
         </div>
-        <div class="filtro_footer">
-          <button
-            class="button is-default btn-sm mr-1"
-            @click="limpiarFiltros()"
-          >
-            Limpiar
-          </button>
-          <button class="button is-primary btn-sm" @click="getTiposDePago()">
-            Filtrar
-          </button>
-        </div>
+      </div>
+      <div v-if="mostrarFiltros" class="filtro_footer">
+        <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
+          Limpiar
+        </button>
+        <button class="button is-primary btn-sm" @click="getTiposDePago()">
+          Filtrar
+        </button>
       </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
@@ -206,7 +213,7 @@
           </div>
         </div>
       </transition>
-    </div>    
+    </div>
     <cargando v-if="isLoading"></cargando>
   </div>
 </template>
@@ -296,7 +303,8 @@ export default {
         response.data.response.forEach((element) => {
           this.ciclosEscolares.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-            Nombre: element["002AñoDeInicio"] + '-' + element["002AñoDeTermino"]
+            Nombre:
+              element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
           });
         });
         this.isLoading = false;
@@ -328,12 +336,16 @@ export default {
 
         if (!response.data.hayError) {
           if (response.data.response.length > 0) {
-            response.data.response.forEach((element) => {              
+            response.data.response.forEach((element) => {
               this.items.push({
                 TipoDePagoId: element["001TipoDePagoId"],
                 Nombre: element["001Nombre"],
                 Monto: "$" + element["001Monto"],
-                TipoDeCicloEscolar: this.ciclosEscolares.find(ciclo => ciclo.TipoDeCicloEscolarId === Number(element["002TipoDeCicloEscolarId"])),
+                TipoDeCicloEscolar: this.ciclosEscolares.find(
+                  (ciclo) =>
+                    ciclo.TipoDeCicloEscolarId ===
+                    Number(element["002TipoDeCicloEscolarId"])
+                ),
                 Activo: element["001Activo"],
               });
             });

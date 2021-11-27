@@ -10,20 +10,40 @@
           <div class="col-10">
             <h1 class="col-10">Favor de indicar filtros</h1>
           </div>
-          <div class="col-2" @click="mostrarFiltros = !mostrarFiltros" :key="mostrarFiltros">
-            <i class="fas fa-angle-down" v-if="!mostrarFiltros" style="float: right;"></i>
-            <i class="fas fa-angle-up" v-if="mostrarFiltros" style="float: right;"></i>
+          <div
+            class="col-2"
+            @click="mostrarFiltros = !mostrarFiltros"
+            :key="mostrarFiltros"
+          >
+            <i
+              class="fas fa-angle-down"
+              v-if="!mostrarFiltros"
+              style="float: right;"
+            ></i>
+            <i
+              class="fas fa-angle-up"
+              v-if="mostrarFiltros"
+              style="float: right;"
+            ></i>
           </div>
         </div>
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-4">
           <label>Año de inicio</label>
-          <input class="form-control" type="number" v-model="filtro_añoDeInicio" />
+          <input
+            class="form-control"
+            type="number"
+            v-model="filtro_añoDeInicio"
+          />
         </div>
         <div class="col-4">
           <label>Año de termino</label>
-          <input class="form-control" type="number" v-model="filtro_añoDeTermino" />
+          <input
+            class="form-control"
+            type="number"
+            v-model="filtro_añoDeTermino"
+          />
         </div>
         <div class="col-4">
           <label class="activo_label">Activo</label>
@@ -33,20 +53,35 @@
             <option value="0">No</option>
           </select>
         </div>
-        <div class="filtro_footer">
-          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">Limpiar</button>
-          <button class="button is-primary btn-sm" @click="getTiposDeCicloEscolar()">Filtrar</button>
-        </div>
+      </div>
+      <div v-if="mostrarFiltros" class="filtro_footer">
+        <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
+          Limpiar
+        </button>
+        <button
+          class="button is-primary btn-sm"
+          @click="getTiposDeCicloEscolar()"
+        >
+          Filtrar
+        </button>
       </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
-      <button class="button is-primary mt-5 mb-1 align-left" @click="abrirModal('Agregar', {})">
+      <button
+        class="button is-primary mt-5 mb-1 align-left"
+        @click="abrirModal('Agregar', {})"
+      >
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar ciclo escolar
       </button>
       <br />
       <div id="bootstrap_table">
         <div class="col-3 mr-0 align-rigth">
-          <input class="form-control" v-model="filter" type="search" placeholder="Buscar" />
+          <input
+            class="form-control"
+            v-model="filter"
+            type="search"
+            placeholder="Buscar"
+          />
         </div>
         <b-table
           striped
@@ -59,7 +94,11 @@
           :filter="filter"
         >
           <template v-slot:cell(Activo)="data">
-            <i v-if="data.item.Activo == 1" class="far fa-check-square" style="color: green"></i>
+            <i
+              v-if="data.item.Activo == 1"
+              class="far fa-check-square"
+              style="color: green"
+            ></i>
             <i v-else class="far fa-times-circle" style="color: red"></i>
           </template>
           <template v-slot:cell(opciones)="data">
@@ -82,7 +121,11 @@
             </button>
           </template>
         </b-table>
-        <b-pagination v-model="currentPage" :total-rows="rows" :per-page="perPage"></b-pagination>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+        ></b-pagination>
       </div>
     </div>
     <div v-if="mostrarModal" class="modal_div" id="modal_div">
@@ -93,7 +136,9 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <div class="col-11">
-                    <h2 class="modal-title text-center">{{ titutoModal }} Ciclo Escolar</h2>
+                    <h2 class="modal-title text-center">
+                      {{ titutoModal }} Ciclo Escolar
+                    </h2>
                     <div class="line_red"></div>
                   </div>
                   <a class="button close_modal" @click="mostrarModal = false">
@@ -104,11 +149,19 @@
                   <div class="row">
                     <div class="col-5 form-group padding-model">
                       <label>Año de inicio</label>
-                      <input type="number" class="form-control" v-model="item.AñoDeInicio" />
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model="item.AñoDeInicio"
+                      />
                     </div>
                     <div class="col-5 form-group padding-model">
                       <label>Año de termino</label>
-                      <input type="number" class="form-control" v-model="item.AñoDeTermino" />
+                      <input
+                        type="number"
+                        class="form-control"
+                        v-model="item.AñoDeTermino"
+                      />
                     </div>
                     <div class="col-2 padding-model">
                       <label>Activo</label>
@@ -124,13 +177,17 @@
                     type="button"
                     class="button is-primary"
                     @click="guardarTipoDeCicloEscolar()"
-                  >Guardar</button>
+                  >
+                    Guardar
+                  </button>
                   <button
                     type="button"
                     class="btn btn-secondary"
                     data-dismiss="modal"
                     @click="mostrarModal = false"
-                  >Cancelar</button>
+                  >
+                    Cancelar
+                  </button>
                 </div>
               </div>
             </div>
@@ -141,7 +198,7 @@
     <cargando v-if="isLoading"></cargando>
   </div>
 </template>
- 
+
 <script>
 import axios from "axios";
 import routeAPI from "@/js/api";
@@ -155,30 +212,30 @@ export default {
       item: {
         AñoDeInicio: Number,
         AñoDeTermino: Number,
-        Activo: Boolean
+        Activo: Boolean,
       },
       fields: [
         {
           key: "TipoDeCicloEscolarId",
           label: "Folio",
-          sortable: true
+          sortable: true,
         },
         {
           key: "AñoDeInicio",
-          sortable: true
+          sortable: true,
         },
         {
           key: "AñoDeTermino",
-          sortable: true
+          sortable: true,
         },
         {
           label: "Activo",
-          key: "Activo"
+          key: "Activo",
         },
         {
           label: "Opciones",
-          key: "opciones"
-        }
+          key: "opciones",
+        },
       ],
       filter: "",
       perPage: 5,
@@ -188,7 +245,7 @@ export default {
       mostrarFiltros: true,
       filtro_añoDeInicio: new Date().getFullYear() - 1,
       filtro_añoDeTermino: new Date().getFullYear(),
-      filtro_activo: "-1"
+      filtro_activo: "-1",
     };
   },
   created() {
@@ -197,7 +254,7 @@ export default {
   computed: {
     rows() {
       return this.items.length;
-    }
+    },
   },
   methods: {
     // Obtener todos los ciclos escolares
@@ -206,7 +263,7 @@ export default {
         this.isLoading = true;
         this.limpiarVariables();
         const filtros = {
-          filtro: {}
+          filtro: {},
         };
 
         if (this.filtro_añoDeInicio != "")
@@ -223,12 +280,12 @@ export default {
 
         if (!response.data.hayError) {
           if (response.data.response.length > 0) {
-            response.data.response.forEach(element => {
+            response.data.response.forEach((element) => {
               this.items.push({
                 TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
                 AñoDeInicio: element["002AñoDeInicio"],
                 AñoDeTermino: element["002AñoDeTermino"],
-                Activo: element["002Activo"]
+                Activo: element["002Activo"],
               });
             });
           }
@@ -262,8 +319,8 @@ export default {
             TipoDeCicloEscolarId: null,
             Inicio: Number(this.item.AñoDeInicio),
             Termino: Number(this.item.AñoDeTermino),
-            Activo: Number(this.item.Activo)
-          }
+            Activo: Number(this.item.Activo),
+          },
         };
 
         const response = await axios.post(
@@ -292,8 +349,8 @@ export default {
             TipoDeCicloEscolarId: this.item.TipoDeCicloEscolarId,
             Inicio: Number(this.item.AñoDeInicio),
             Termino: Number(this.item.AñoDeTermino),
-            Activo: Number(this.item.Activo)
-          }
+            Activo: Number(this.item.Activo),
+          },
         };
 
         const response = await axios.post(
@@ -320,8 +377,8 @@ export default {
         const data = {
           tipoDeCicloEscolar: {
             TipoDeCicloEscolarId: item.TipoDeCicloEscolarId,
-            Activo: Number(0)
-          }
+            Activo: Number(0),
+          },
         };
 
         const response = await axios.post(
@@ -347,11 +404,11 @@ export default {
       this.filtro_añoDeInicio = "";
       this.filtro_añoDeTermino = "";
       this.filtro_activo = "-1";
-    }
-  }
+    },
+  },
 };
 </script>
- 
+
 <style>
 @media screen and (max-width: 600px) {
   .activo_label::before {
