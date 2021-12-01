@@ -82,10 +82,7 @@
         <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
           Limpiar
         </button>
-        <button
-          class="button is-primary btn-sm"
-          @click="getTiposDeCicloEscolar()"
-        >
+        <button class="button is-primary btn-sm" @click="getAlumnos()">
           Buscar
         </button>
       </div>
@@ -292,9 +289,17 @@
                         </button>
                       </div>
                       <div class="col-12">
-                        <div class="row" v-if="padres" style="display: grid; justify-content: center;">
+                        <div
+                          class="row"
+                          v-if="padres"
+                          style="display: grid; justify-content: center;"
+                        >
                           <div class="col-12"><p>No hay registros</p></div>
-                          <div class="col-12"><button class="button is-default">Agregar Padre/Tutor</button></div>
+                          <div class="col-12">
+                            <button class="button is-default">
+                              Agregar Padre/Tutor
+                            </button>
+                          </div>
                         </div>
                         <table v-else class="table">
                           <thead>
@@ -366,8 +371,8 @@
 </template>
 
 <script>
-// import axios from "axios";
-// import routeAPI from "@/js/api";
+import axios from "axios";
+import routeAPI from "@/js/api";
 
 export default {
   data() {
@@ -385,7 +390,36 @@ export default {
       },
       perPage: 5,
       currentPage: 1,
-      fields: [],
+      fields: [
+        {
+          key: "AlumnoId",
+          label: "Folio",
+          sortable: true,
+        },
+        {
+          key: "Nombre",
+          label: "Nombre",
+          sortable: true,
+        },
+        {
+          key: "Curp",
+          label: "CURP",
+          sortable: true,
+        },
+        {
+          key: "NumeroDeControl",
+          label: "Número de Control",
+          sortable: true,
+        },
+        {
+          key: "Genero",
+          label: "Genero",
+        },
+        {
+          key: "TipoEstadoAlumnoId",
+          label: "Estado",
+        },
+      ],
       filter: "",
       item: {
         Nombre: "",
@@ -400,7 +434,7 @@ export default {
       },
       items: [],
       titutoModal: "",
-      padres: []
+      padres: [],
     };
   },
   computed: {
@@ -408,9 +442,64 @@ export default {
       return this.items.length;
     },
   },
+  created() {
+    this.getAlumnos();
+  },
   methods: {
     abrirModal: function() {
       this.mostrarModal = !this.mostrarModal;
+    },
+    async getAlumnos() {
+      try {
+        this.isLoading = true;
+        this.items = [];
+        const filtros = {
+          filtro: {            
+          },
+        };
+
+        if (this.filtros.filtro_nombre != "")
+          filtros.filtro.nombre = Number(this.filtros.filtro_nombre);
+        if (this.filtros.filtro_apellidoPaterno != "")
+          filtros.filtro.apellidoPaterno = Number(this.filtros.filtro_apellidoPaterno);
+        if (this.filtros.filtro_apellidoMaterno != "")
+          filtros.filtro.apellidoMaterno = Number(this.filtros.filtro_apellidoMaterno);
+        if (this.filtros.filtro_curp != "")
+          filtros.filtro.curp = Number(this.filtros.filtro_curp);
+        if (this.filtros.filtro_numeroDeControl != "")
+          filtros.filtro.numeroDeControl = Number(this.filtros.filtro_numeroDeControl);
+        if (this.filtros.filtro_activo != "")
+          filtros.filtro.activo = Number(this.filtros.filtro_activo);
+
+        const response = await axios.post(
+          routeAPI + "alumnos/alumnos",
+          filtros
+        );
+        console.log(response);
+        response.data.response.forEach((element) => {
+          this.items.push({
+            AlumnoId: element["011AlumnoId"],
+            Nombre:
+              element["011Nombre"] +
+              " " +
+              element["011ApellidoPaterno"] +
+              " " +
+              element["011ApellidoMaterno"],
+            Curp: element["011CURP"],
+            FechaNacimiento: element["011FechaNacimiento"],
+            Genero: element["011Genero"],
+            NumeroDeControl: element["011NumeroDeControl"],
+            EscuelaDeProcedenciaId: element["015EscuelaDeProcedenciaId"],
+            PromedioDeProcedencia: element["011PromedioDeProcedencia"],
+            Domicilio: element["011Domicilio"],
+            TipoEstadoAlumnoId: element["014TipoEstadoAlumnoId"],
+            Activo: element["011Activo"],
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
     },
   },
 };
