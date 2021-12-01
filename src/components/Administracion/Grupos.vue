@@ -114,7 +114,7 @@
             Limpiar
           </button>
           <button class="button is-primary btn-sm" @click="getGrupos()">
-            Filtrar
+            Buscar
           </button>
         </div>
     </div>

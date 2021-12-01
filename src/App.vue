@@ -20,7 +20,7 @@
             <b-dropdown-item :to="{ name: 'TiposDeRecargos'}">Tipos de recargos</b-dropdown-item>            
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Alumnos">
-            <b-dropdown-item :to="{ name: ''}">Registro de alumnos</b-dropdown-item>          
+            <b-dropdown-item :to="{ name: 'RegistroDeAlumnos'}">Registro de alumnos</b-dropdown-item>          
             <b-dropdown-item :to="{ name: ''}">Consulta de Historial Acádemico</b-dropdown-item>            
             <b-dropdown-item :to="{ name: ''}">Registro de Padre/Tutor</b-dropdown-item>            
           </b-nav-item-dropdown>          

@@ -25,7 +25,7 @@
                 </div>
                 <div class="cuerpo_modulo">
                     <ul>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de alumnos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link to="/registroDeAlumnos">Registro de alumnos</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Consulta de Historial Acádemico</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de Padre/Tutor</router-link></li>
                     </ul> 
