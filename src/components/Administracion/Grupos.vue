@@ -104,24 +104,20 @@
             </select>
           </div>
         </div>
-        
       </div>
       <div v-if="mostrarFiltros" class="filtro_footer">
-          <button
-            class="button is-default btn-sm mr-1"
-            @click="limpiarFiltros()"
-          >
-            Limpiar
-          </button>
-          <button class="button is-primary btn-sm" @click="getGrupos()">
-            Buscar
-          </button>
-        </div>
+        <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
+          Limpiar
+        </button>
+        <button class="button is-primary btn-sm" @click="getGrupos()">
+          Buscar
+        </button>
+      </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
       <button
         class="button is-primary mt-5 mb-1 align-left"
-        @click="abrirModal('Agregar', {})"
+        @click="abrirModal('Agregar', null)"
       >
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar grupo
       </button>
@@ -205,13 +201,15 @@
                           :label="'Ciclo Escolar'"
                           :titulo="true"
                           :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                          @:seleccionarCicloEscolarItem="seleccionarCicloEscolarItem($event)"
+                          @:seleccionarCicloEscolarItem="
+                            seleccionarCicloEscolarItem($event)
+                          "
                           :funcion="'seleccionarCicloEscolarItem'"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
                         <tipos-modalidad
-                          :tipoDeModalidadId = "item.TipoModalidadId"
+                          :tipoDeModalidadId="item.TipoModalidadId"
                           :key="item.TipoModalidadId"
                           :label="'Modalidad'"
                           :titulo="true"
@@ -228,7 +226,9 @@
                           :label="'Periodo'"
                           :titulo="true"
                           :funcion="'seleccionarPeriodoItem'"
-                          @seleccionarPeriodoItem="seleccionarPeriodoItem($event)"
+                          @seleccionarPeriodoItem="
+                            seleccionarPeriodoItem($event)
+                          "
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
@@ -275,13 +275,12 @@
                           "
                         />
                       </div>
-                      <div class="col-3 form-group padding-model">                       
+                      <div class="col-3 form-group padding-model">
                         <label class="activo_label">Activo</label>
-                        <select
-                          class="form-control"
-                          v-model="item.Activo"
-                        >
-                          <option value="-1" selected>Seleccionar Activo</option>
+                        <select class="form-control" v-model="item.Activo">
+                          <option value="-1" selected
+                            >Seleccionar Activo</option
+                          >
                           <option value="1">Si</option>
                           <option value="0">No</option>
                         </select>
@@ -336,14 +335,14 @@ export default {
       especialidades: [],
       items: [],
       item: {
-        EstructuraDeGrupoId: Number,
-        TipoDeCicloEscolarId: Number,
-        TiposNivelId: Number,
-        TipoModalidadId: Number,
-        TipoPeriodoId: Number,
-        TipoGradoId: Number,
-        TipoDeGrupoId: Number,
-        TipoEspecialidadId: Number,
+        EstructuraDeGrupoId: -1,
+        TipoDeCicloEscolarId: -1,
+        TiposNivelId: -1,
+        TipoModalidadId: -1,
+        TipoPeriodoId: -1,
+        TipoGradoId: -1,
+        TipoDeGrupoId: -1,
+        TipoEspecialidadId: -1,
         Activo: "-1",
       },
       fields: [
@@ -703,15 +702,15 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtros.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem: function(element) { 
+    seleccionarCicloEscolarItem: function(element) {
       this.item.TipoDeCicloEscolarId = element;
     },
     seleccionarTipoModalidad: function(element) {
       this.filtros.filtro_modalidad = element;
-    },    
+    },
     seleccionarTipoModalidadItem: function(element) {
       this.item.TipoModalidadId = element;
-    },    
+    },
     seleccionarNivel: function(element) {
       this.filtros.filtro_nivel = element;
     },
@@ -739,22 +738,23 @@ export default {
     seleccionarEspecialidad: function(element) {
       this.filtros.filtro_especialidad = element;
     },
-    seleccionarEspecialidadItem: function(element) {     
+    seleccionarEspecialidadItem: function(element) {
       this.item.TipoEspecialidadId = element;
     },
-    abrirModal: function(tipo, item) {
+    abrirModal: function(tipo,item) {
       this.titutoModal = tipo;
       
-      this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
-      this.item.TipoDeCicloEscolarId = item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
-      this.item.TiposNivelId= item.TiposNivel.TipoNivelId;
-      this.item.TipoModalidadId= item.TipoModalidad.TipoDeModalidadId;
-      this.item.TipoPeriodoId = item.TipoPeriodo.TipoPeriodoId;
-      this.item.TipoGradoId = item.TipoGrado.TipoGradoId;
-      this.item.TipoDeGrupoId= item.TipoDeGrupo.TipoGrupoId;
-      this.item.TipoEspecialidadId = item.Especialidad.EspecialidadId;
-      this.item.Activo = item.Activo;
-      
+      if (tipo == "Editar") {
+        this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
+        this.item.TipoDeCicloEscolarId = item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
+        this.item.TiposNivelId = item.TiposNivel.TipoNivelId;
+        this.item.TipoModalidadId = item.TipoModalidad.TipoDeModalidadId;
+        this.item.TipoPeriodoId = item.TipoPeriodo.TipoPeriodoId;
+        this.item.TipoGradoId = item.TipoGrado.TipoGradoId;
+        this.item.TipoDeGrupoId = item.TipoDeGrupo.TipoGrupoId;
+        this.item.TipoEspecialidadId = item.Especialidad.EspecialidadId;
+        this.item.Activo = item.Activo;
+      }
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarGrupo() {
@@ -785,7 +785,7 @@ export default {
           routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
-        
+
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
@@ -891,7 +891,7 @@ export default {
   padding: 0px 0px 10px 0px;
 }
 
-.container_bottom_modal{
+.container_bottom_modal {
   margin: 1px;
   padding: 10px 0px 10px 0px;
 }

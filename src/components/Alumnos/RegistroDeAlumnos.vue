@@ -443,6 +443,7 @@ export default {
     },
   },
   created() {
+    this.getEstadosAlumno();
     this.getAlumnos();
   },
   methods: {
@@ -454,20 +455,22 @@ export default {
         this.isLoading = true;
         this.items = [];
         const filtros = {
-          filtro: {            
-          },
+          filtro: {},
         };
-
+        console.log(this.filtros);
+        console.log("this.filtros.filtro_curp");
         if (this.filtros.filtro_nombre != "")
-          filtros.filtro.nombre = Number(this.filtros.filtro_nombre);
+          filtros.filtro.nombre = this.filtros.filtro_nombre;
         if (this.filtros.filtro_apellidoPaterno != "")
-          filtros.filtro.apellidoPaterno = Number(this.filtros.filtro_apellidoPaterno);
+          filtros.filtro.apellidoPaterno = this.filtros.filtro_apellidoPaterno;
         if (this.filtros.filtro_apellidoMaterno != "")
-          filtros.filtro.apellidoMaterno = Number(this.filtros.filtro_apellidoMaterno);
+          filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
         if (this.filtros.filtro_curp != "")
-          filtros.filtro.curp = Number(this.filtros.filtro_curp);
+          filtros.filtro.curp = this.filtros.filtro_curp;
         if (this.filtros.filtro_numeroDeControl != "")
-          filtros.filtro.numeroDeControl = Number(this.filtros.filtro_numeroDeControl);
+          filtros.filtro.numeroDeControl = Number(
+            this.filtros.filtro_numeroDeControl
+          );
         if (this.filtros.filtro_activo != "")
           filtros.filtro.activo = Number(this.filtros.filtro_activo);
 
@@ -476,36 +479,69 @@ export default {
           filtros
         );
         console.log(response);
+        if (!response.data.hayError) {
+          response.data.response.forEach((element) => {
+            this.items.push({
+              AlumnoId: element["011AlumnoId"],
+              Nombre:
+                element["011Nombre"] +
+                " " +
+                element["011ApellidoPaterno"] +
+                " " +
+                element["011ApellidoMaterno"],
+              Curp: element["011CURP"],
+              FechaNacimiento: element["011FechaNacimiento"],
+              Genero: element["011Genero"],
+              NumeroDeControl: element["011NumeroDeControl"],
+              EscuelaDeProcedenciaId: element["015EscuelaDeProcedenciaId"],
+              PromedioDeProcedencia: element["011PromedioDeProcedencia"],
+              Domicilio: element["011Domicilio"],
+              TipoEstadoAlumnoId: element["014TipoEstadoAlumnoId"],
+              Activo: element["011Activo"],
+            });
+          });
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+        }
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getEstadosAlumno(){
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposDeModalidad",
+          filtros
+        );
+
         response.data.response.forEach((element) => {
-          this.items.push({
-            AlumnoId: element["011AlumnoId"],
-            Nombre:
-              element["011Nombre"] +
-              " " +
-              element["011ApellidoPaterno"] +
-              " " +
-              element["011ApellidoMaterno"],
-            Curp: element["011CURP"],
-            FechaNacimiento: element["011FechaNacimiento"],
-            Genero: element["011Genero"],
-            NumeroDeControl: element["011NumeroDeControl"],
-            EscuelaDeProcedenciaId: element["015EscuelaDeProcedenciaId"],
-            PromedioDeProcedencia: element["011PromedioDeProcedencia"],
-            Domicilio: element["011Domicilio"],
-            TipoEstadoAlumnoId: element["014TipoEstadoAlumnoId"],
-            Activo: element["011Activo"],
+          this.modalidades.push({
+            TipoDeModalidadId: element["004TipoModalidadId"],
+            Nombre: element["004Nombre"],
+            Activo: element["004Activo"],
           });
         });
         this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
-    },
+    }
   },
 };
 </script>
 
-<style>
+<style scoped>
 .modal-content {
   width: 1140px;
 }
