@@ -90,7 +90,7 @@
     <div class="col-12" style="margin-bottom:100px;">
       <button
         class="button is-primary mt-5 mb-1 align-left"
-        @click="abrirModal('Agregar', {})"
+        @click="abrirModal('Agregar', true, {})"
       >
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar alumno
       </button>
@@ -124,8 +124,16 @@
           </template>
           <template v-slot:cell(opciones)="data">
             <button
+              class="button is-default is-small"
+              @click="abrirModal('', false, data.item)"
+              value="Detalles"
+              title="Ver Detalles"
+            >
+              <i class="far fa-eye"></i>
+            </button>
+            <button
               class="button is-info is-small"
-              @click="abrirModal('Editar', data.item)"
+              @click="abrirModal('Editar', true, data.item)"
               value="Editar"
               title="Editar"
             >
@@ -178,6 +186,7 @@
                           type="number"
                           class="form-control"
                           v-model="item.Nombre"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -186,6 +195,7 @@
                           type="text"
                           class="form-control"
                           v-model="item.ApellidoPaterno"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -194,6 +204,7 @@
                           type="text"
                           class="form-control"
                           v-model="item.ApellidoMaterno"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -202,6 +213,7 @@
                           type="text"
                           class="form-control"
                           v-model="item.Curp"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -210,11 +222,16 @@
                           type="date"
                           class="form-control"
                           v-model="item.FechaDeNacimiento"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 padding-model">
                         <label>Genero</label>
-                        <select class="form-control" v-model="item.GeneroId">
+                        <select
+                          class="form-control"
+                          v-model="item.Genero"
+                          :disabled="inhabilitar ? disabled : ''"
+                        >
                           <option value="Femenino">Femenino</option>
                           <option value="Masculino">Masculino</option>
                         </select>
@@ -225,6 +242,7 @@
                           type="number"
                           class="form-control"
                           v-model="item.NumeroDeControl"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -233,6 +251,7 @@
                           type="text"
                           class="form-control"
                           v-model="item.Escuela"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                       <div class="col-4 form-group padding-model">
@@ -241,6 +260,7 @@
                           type="text"
                           class="form-control"
                           v-model="item.Promedio"
+                          :disabled="inhabilitar ? disabled : ''"
                         />
                       </div>
                     </div>
@@ -397,7 +417,7 @@ export default {
           sortable: true,
         },
         {
-          key: "Nombre",
+          key: "NombreCompleto",
           label: "Nombre",
           sortable: true,
         },
@@ -416,8 +436,12 @@ export default {
           label: "Genero",
         },
         {
-          key: "TipoEstadoAlumnoId",
+          key: "TipoEstadoAlumno.Nombre",
           label: "Estado",
+        },
+        {
+          label: "Opciones",
+          key: "opciones",
         },
       ],
       filter: "",
@@ -427,14 +451,16 @@ export default {
         ApellidoMaterno: "",
         Curp: "",
         FechaDeNacimiento: "",
-        GeneroId: 0,
+        Genero: "",
         NumeroDeControl: 0,
         Escuela: "",
         Promedio: 0,
       },
       items: [],
       titutoModal: "",
+      inhabilitar: true,
       padres: [],
+      estadosAlumno: [],
     };
   },
   computed: {
@@ -447,8 +473,27 @@ export default {
     this.getAlumnos();
   },
   methods: {
-    abrirModal: function() {
+    abrirModal: function(tipo, inhabilitar,item) {
+      this.titutoModal = tipo;
+      this.inhabilitar = inhabilitar;      
+      this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
+    },
+    cargarItem: function(item) {
+      console.log(item);
+      
+      this.item.AlumnoId = item.AlumnoId;
+      this.item.Nombre = item.Nombre;
+      this.item.ApellidoPaterno = item.ApellidoPaterno;
+      this.item.ApellidoMaterno = item.ApellidoMaterno;
+      this.item.Curp = item.Curp;
+      this.item.FechaDeNacimiento = item.FechaNacimiento;
+      this.item.Genero = item.Genero;
+      this.item.NumeroDeControl = item.NumeroDeControl;
+      this.item.Escuela = item.Activo;
+      this.item.Promedio = item.Activo;
+      this.item.Domicilio = item.Activo;
+      this.item.TipoEstadoAlumno = item.Activo;
     },
     async getAlumnos() {
       try {
@@ -457,8 +502,7 @@ export default {
         const filtros = {
           filtro: {},
         };
-        console.log(this.filtros);
-        console.log("this.filtros.filtro_curp");
+
         if (this.filtros.filtro_nombre != "")
           filtros.filtro.nombre = this.filtros.filtro_nombre;
         if (this.filtros.filtro_apellidoPaterno != "")
@@ -478,17 +522,19 @@ export default {
           routeAPI + "alumnos/alumnos",
           filtros
         );
-        console.log(response);
+
         if (!response.data.hayError) {
           response.data.response.forEach((element) => {
             this.items.push({
               AlumnoId: element["011AlumnoId"],
-              Nombre:
+              NombreCompleto:
                 element["011Nombre"] +
                 " " +
                 element["011ApellidoPaterno"] +
                 " " +
                 element["011ApellidoMaterno"],
+                ApellidoPaterno: element["011ApellidoPaterno"],
+                ApellidoMaterno: element["011ApellidoMaterno"],
               Curp: element["011CURP"],
               FechaNacimiento: element["011FechaNacimiento"],
               Genero: element["011Genero"],
@@ -496,7 +542,11 @@ export default {
               EscuelaDeProcedenciaId: element["015EscuelaDeProcedenciaId"],
               PromedioDeProcedencia: element["011PromedioDeProcedencia"],
               Domicilio: element["011Domicilio"],
-              TipoEstadoAlumnoId: element["014TipoEstadoAlumnoId"],
+              TipoEstadoAlumno: this.estadosAlumno.find(
+                (estado) =>
+                  estado.EstadoDeAlumnoId ===
+                  Number(element["014TipoEstadoAlumnoId"])
+              ),
               Activo: element["011Activo"],
             });
           });
@@ -511,7 +561,7 @@ export default {
         console.log(err);
       }
     },
-    async getEstadosAlumno(){
+    async getEstadosAlumno() {
       try {
         this.isLoading = true;
         const filtros = {
@@ -521,22 +571,22 @@ export default {
         };
 
         const response = await axios.post(
-          routeAPI + "catalogo/tiposDeModalidad",
+          routeAPI + "catalogo/estadosDeAlumnos",
           filtros
         );
 
         response.data.response.forEach((element) => {
-          this.modalidades.push({
-            TipoDeModalidadId: element["004TipoModalidadId"],
-            Nombre: element["004Nombre"],
-            Activo: element["004Activo"],
+          this.estadosAlumno.push({
+            EstadoDeAlumnoId: element["014TiposEstadoAlumnoId"],
+            Nombre: element["014Nombre"],
+            Activo: element["014Activo"],
           });
         });
         this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
-    }
+    },
   },
 };
 </script>

@@ -107,7 +107,11 @@
               class="far fa-check-square"
               style="color: green"
             ></i>
-            <i v-else class="far fa-times-circle" style="color: red"></i>
+            <i
+              v-else
+              class="far fa-times-circle"
+              style="color: red"
+            ></i>
           </template>
           <template v-slot:cell(opciones)="data">
             <button
@@ -164,15 +168,13 @@
                       />
                     </div>
                     <div class="col-4">
-                      <TiposCicloEscolar
+                      <tipos-ciclo-escolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
-                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                        v-on:seleccionarCicloEscolar="
-                          seleccionarCicloEscolarItem($event)
-                        "
+                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolar.TipoDeCicloEscolarId"
+                        v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
                         :funcion="'seleccionarCicloEscolar'"
-                      />
+                      ></tipos-ciclo-escolar>
                     </div>
                     <div class="col-2 form-group padding-model">
                       <label>Monto</label>
@@ -231,10 +233,10 @@ export default {
       ciclosEscolares: [],
       items: [],
       item: {
-        Nombre: Number,
-        Monto: Number,
-        TipoDeCicloEscolarId: Number,
-        Activo: Boolean,
+        Nombre: "",
+        Monto: 0,
+        TipoDeCicloEscolar: { TipoDeCicloEscolarId: -1 },
+        Activo: "-1",
       },
       fields: [
         {
@@ -326,7 +328,7 @@ export default {
           filtros.filtro.monto = Number(this.filtro_monto);
         if (this.filtro_cicloEscolar != "")
           filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
-        if (this.filtro_activo != "" && Number(this.filtro_activo) > 0)
+        if (this.filtro_activo != "" && Number(this.filtro_activo) >= 0)
           filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
@@ -364,13 +366,16 @@ export default {
       this.filtro_cicloEscolar = element;
     },
     seleccionarCicloEscolarItem(element) {
-      this.item.TipoDeCicloEscolarId = Number(element);
+      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
-      if (this.item.TipoDePagoId > 0)
-        this.item.Monto = this.item.Monto.split("$")[1];
+
+      if (item.TipoDePagoId > 0) {
+        this.item.Monto = this.item.Monto.split("$")[1];        
+      }
+      
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDePago() {
@@ -388,7 +393,9 @@ export default {
             TipoDePagoId: null,
             Nombre: this.item.Nombre,
             Monto: Number(this.item.Monto),
-            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            TipoDeCicloEscolarId: Number(
+              this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+            ),
             Activo: Number(this.item.Activo),
           },
         };
@@ -419,7 +426,9 @@ export default {
             TipoDePagoId: this.item.TipoDePagoId,
             Nombre: this.item.Nombre,
             Monto: Number(this.item.Monto),
-            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            TipoDeCicloEscolarId: Number(
+              this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+            ),
             Activo: Number(this.item.Activo),
           },
         };
