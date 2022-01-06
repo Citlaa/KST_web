@@ -289,10 +289,12 @@ export default {
               });
             });
           }
-        } else
+        } else{
+          console.log(response)
           this.$alert(
             "No se pudo obtenera información, favor de volverlo a intentar."
           );
+        }
 
         this.isLoading = false;
       } catch (err) {
