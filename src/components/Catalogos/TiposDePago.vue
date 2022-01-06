@@ -465,7 +465,7 @@ export default {
           routeAPI + "administracion/cancelarTiposDePago",
           data
         );
-        console.log(response);
+        
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El tipo de pago se canceló correctamente.");

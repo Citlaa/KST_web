@@ -132,6 +132,10 @@
 }
 
 /* modal */
+.page-item.active .page-link {
+  z-index: 0;
+}
+
 .modal-mask {
   position: fixed;
   /* z-index: 9998; */

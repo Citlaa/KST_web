@@ -11,11 +11,11 @@
                 </div>
                 <div class="cuerpo_modulo">
                     <ul>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposDePago">Tipos de pago</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/grupos">Creación de grupos</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposCicloEscolar">Ciclo Escolar</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDePago'}">Tipos de pago</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'Grupos'}">Creación de grupos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposCicloEscolar'}">Ciclo Escolar</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Control de pagos</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/tiposDeRecargos">Tipos de recargos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDeRecargos'}">Tipos de recargos</router-link></li>
                     </ul> 
                 </div>
             </div>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="cuerpo_modulo">
                     <ul>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/registroDeAlumnos">Registro de alumnos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'RegistroDeAlumnos'}">Registro de alumnos</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Consulta de Historial Acádemico</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link to="/">Registro de Padre/Tutor</router-link></li>
                     </ul> 

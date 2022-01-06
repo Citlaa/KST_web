@@ -4,76 +4,82 @@
       <h1 class="titulo_azul">Tipos de Recargo</h1>
       <div class="line_red"></div>
     </div>
-    <div class="col-12 row filtros_div" id="filtros_div">
-      <div class="col-12 filtro_titulo">
-        <div class="row">
-          <div class="col-10">
-            <h1 class="col-10">Favor de indicar filtros</h1>
+    <section id="filtros">
+      <div class="col-12 row filtros_div" id="filtros_div">
+        <div class="col-12 filtro_titulo">
+          <div class="row">
+            <div class="col-10">
+              <h1 class="col-10">Favor de indicar filtros</h1>
+            </div>
+            <div
+              class="col-2"
+              @click="mostrarFiltros = !mostrarFiltros"
+              :key="mostrarFiltros"
+            >
+              <i
+                class="fas fa-angle-down"
+                v-if="!mostrarFiltros"
+                style="float: right;"
+              ></i>
+              <i
+                class="fas fa-angle-up"
+                v-if="mostrarFiltros"
+                style="float: right;"
+              ></i>
+            </div>
           </div>
-          <div
-            class="col-2"
-            @click="mostrarFiltros = !mostrarFiltros"
-            :key="mostrarFiltros"
+        </div>
+        <div v-if="mostrarFiltros" class="col-12 row">
+          <div class="col-3">
+            <label>Nombre</label>
+            <input
+              class="form-control"
+              type="text"
+              v-model="filtro_nombre"
+              placeholder="Indicar Nombre"
+            />
+          </div>
+          <div class="col-3">
+            <label>Monto</label>
+            <input
+              class="form-control"
+              type="number"
+              v-model="filtro_monto"
+              placeholder="Indicar Monto"
+            />
+          </div>
+          <div class="col-3">
+            <tiposCicloEscolar
+              :key="filtro_cicloEscolar_key"
+              :label="'Ciclo escolar'"
+              :titulo="true"
+              v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
+              :funcion="'seleccionarCicloEscolar'"
+            />
+          </div>
+          <div class="col-3">
+            <label class="activo_label">Activo</label>
+            <select class="form-control" v-model="filtro_activo">
+              <option value="-1">Seleccionar Activo</option>
+              <option value="1">Si</option>
+              <option value="0">No</option>
+            </select>
+          </div>
+        </div>
+        <div v-if="mostrarFiltros" class="filtro_footer">
+          <button
+            class="button is-default btn-sm mr-1"
+            @click="limpiarFiltros()"
           >
-            <i
-              class="fas fa-angle-down"
-              v-if="!mostrarFiltros"
-              style="float: right;"
-            ></i>
-            <i
-              class="fas fa-angle-up"
-              v-if="mostrarFiltros"
-              style="float: right;"
-            ></i>
-          </div>
+            Limpiar
+          </button>
+          <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">
+            Filtrar
+          </button>
         </div>
       </div>
-      <div v-if="mostrarFiltros" class="col-12 row">
-        <div class="col-3">
-          <label>Nombre</label>
-          <input
-            class="form-control"
-            type="text"
-            v-model="filtro_nombre"
-            placeholder="Indicar Nombre"
-          />
-        </div>
-        <div class="col-3">
-          <label>Monto</label>
-          <input
-            class="form-control"
-            type="number"
-            v-model="filtro_monto"
-            placeholder="Indicar Monto"
-          />
-        </div>
-        <div class="col-3">
-          <tiposCicloEscolar
-            :key="filtro_cicloEscolar_key"
-            :label="'Ciclo escolar'"
-            :titulo="true"
-            v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-            :funcion="'seleccionarCicloEscolar'"
-          />
-        </div>
-        <div class="col-3">
-          <label class="activo_label">Activo</label>
-          <select class="form-control" v-model="filtro_activo">
-            <option value="-1">Seleccionar Activo</option>
-            <option value="1">Si</option>
-            <option value="0">No</option>
-          </select>
-        </div>
-      </div>
-      <div v-if="mostrarFiltros" class="filtro_footer">
-        <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
-          Limpiar
-        </button>
-        <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">
-          Filtrar
-        </button>
-      </div>
-    </div>
+    </section>
+    <section id="data_table">
     <div class="col-12" style="margin-bottom:100px;">
       <button
         class="button is-primary mt-5 mb-1 align-left"
@@ -136,6 +142,8 @@
         ></b-pagination>
       </div>
     </div>
+    </section>
+    <section id="modal">
     <div v-if="mostrarModal" class="modal_div" id="modal_div">
       <transition name="modal">
         <div class="modal-mask">
@@ -167,7 +175,9 @@
                       <TiposCicloEscolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
-                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
+                        :tipoDeCicloEscolarId="
+                          item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+                        "
                         v-on:seleccionarCicloEscolar="
                           seleccionarCicloEscolarItem($event)
                         "
@@ -214,6 +224,7 @@
         </div>
       </transition>
     </div>
+    </section>
     <cargando v-if="isLoading"></cargando>
   </div>
 </template>
@@ -232,7 +243,9 @@ export default {
       item: {
         Nombre: String,
         Monto: Number,
-        TipoDeCicloEscolarId: Number,
+        TipoDeCicloEscolar: {
+          TipoDeCicloEscolarId: Number,
+        },
         Activo: Boolean,
       },
       fields: [
@@ -326,7 +339,7 @@ export default {
           filtros.filtro.monto = Number(this.filtro_monto);
         if (this.filtro_cicloEscolar != "")
           filtros.filtro.cicloEscolarId = Number(this.filtro_cicloEscolar);
-        if (this.filtro_activo != "" && Number(this.filtro_activo) > 0)
+        if (this.filtro_activo != "" && Number(this.filtro_activo) >= 0)
           filtros.filtro.activo = Number(this.filtro_activo);
 
         const response = await axios.post(
@@ -364,7 +377,7 @@ export default {
       this.filtro_cicloEscolar = element;
     },
     seleccionarCicloEscolarItem(element) {
-      this.item.TipoDeCicloEscolarId = Number(element);
+      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
@@ -388,7 +401,9 @@ export default {
             TipoDeRecargoId: null,
             Nombre: this.item.Nombre,
             Monto: Number(this.item.Monto),
-            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            TipoDeCicloEscolarId: Number(
+              this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+            ),
             Activo: Number(this.item.Activo),
           },
         };
@@ -415,11 +430,13 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
+          tipoDeRecargo: {
             TipoDeRecargoId: this.item.TipoDeRecargoId,
-            Nombre: this.item.NombreRecargo,
-            Monto: Number(this.item.MontoRecargo),
-            TipoDeCicloEscolarId: Number(this.item.TipoDeCicloEscolarId),
+            Nombre: this.item.Nombre,
+            Monto: Number(this.item.Monto),
+            TipoDeCicloEscolarId: Number(
+              this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+            ),
             Activo: Number(this.item.Activo),
           },
         };
@@ -446,8 +463,8 @@ export default {
       try {
         this.isLoading = true;
         const data = {
-          tipoDeCicloEscolar: {
-            TipoDeCicloEscolarId: item.TipoDeCicloEscolarId,
+          tipoDeRecargo: {
+            TipoDeRecargoId: item.TipoDeCicloEscolar.TipoDeCicloEscolarId,
             Activo: Number(0),
           },
         };

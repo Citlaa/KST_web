@@ -14,10 +14,9 @@ const baseRoutes = [
     path: "/",
     component: Index,
   },
-  { path:'/:notFound(.*)', component: NotFound }
+  { path: "/:notFound(.*)", component: NotFound },
 ];
 
 var routes = baseRoutes.concat(administracionRoutes).concat(alumnosRoutes);
-// var routes = baseRoutes.concat(alumnosRoutes);
 
 export default routes;

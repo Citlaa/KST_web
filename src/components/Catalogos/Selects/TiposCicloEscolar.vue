@@ -25,6 +25,7 @@ import axios from "axios";
 import routeAPI from "@/js/api";
 
 export default {
+  emits: ['seleccionarCicloEscolar'],
   data() {
     return {
       valor: "-1",
