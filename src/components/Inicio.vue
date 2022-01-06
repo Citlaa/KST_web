@@ -56,9 +56,6 @@ export default {
       }         
     }
   },
-  props: {
-    
-  }
 }
 </script>
 <style scoped>

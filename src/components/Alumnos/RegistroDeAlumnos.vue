@@ -481,7 +481,7 @@
                                         :funcion="'seleccionarParentesco'"
                                       ></tipos-parentesco>
                                     </td>
-                                    <td>                                      
+                                    <td>
                                       <button
                                         class="btn btn-default"
                                         @click="agregarTutor(tutor)"
@@ -503,30 +503,38 @@
                                 <h3>Padres o Tutores del alumno</h3>
                               </div>
                               <div class="col-12">
-                              <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th>Folio</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido Paterno</th>
-                                    <th>Apellido Materno</th>
-                                    <th>Parentesco</th>
-                                    <th></th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr v-for="tutor in item.tutores.val" :key="tutor.tutorId">
-                                    <td> {{tutor.tutor.PadreId}}</td>
-                                    <td> {{tutor.tutor.Nombre}}</td>
-                                    <td> {{tutor.tutor.ApellidoPaterno}} </td>
-                                    <td> {{tutor.tutor.ApellidoMaterno}} </td>
-                                    <td> {{tutor.parentesco.nombre}}</td>
-                                    <td>
-                                      <button class="btn btn-default" @click="eliminarTutor(tutor)"><i class="fas fa-trash-alt"></i></button>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th>Folio</th>
+                                      <th>Nombre</th>
+                                      <th>Apellido Paterno</th>
+                                      <th>Apellido Materno</th>
+                                      <th>Parentesco</th>
+                                      <th></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="tutor in item.tutores.val"
+                                      :key="tutor.tutorId"
+                                    >
+                                      <td>{{ tutor.tutor.PadreId }}</td>
+                                      <td>{{ tutor.tutor.Nombre }}</td>
+                                      <td>{{ tutor.tutor.ApellidoPaterno }}</td>
+                                      <td>{{ tutor.tutor.ApellidoMaterno }}</td>
+                                      <td>{{ tutor.parentesco.nombre }}</td>
+                                      <td>
+                                        <button
+                                          class="btn btn-default"
+                                          @click="eliminarTutor(tutor)"
+                                        >
+                                          <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
                               </div>
                             </div>
                           </div>
@@ -538,7 +546,7 @@
                     <button
                       type="button"
                       class="button is-primary"
-                      @click="guardarTutores()"
+                      @click="guardarAlumno()"
                     >
                       Guardar
                     </button>
@@ -724,48 +732,71 @@ export default {
         this.item.tutores.val.push({
           parentesco: {
             parentesoId: this.item.parentesco.val.TipoParentescoId,
-            nombre: this.item.parentesco.val.Nombre
+            nombre: this.item.parentesco.val.Nombre,
           },
           tutor: tutor,
         });
       }
     },
-    eliminarTutor(tutor){      
-      const index = this.item.tutores.val.indexOf( this.item.tutores.val.find(
-        (i) => i.tutor.padreId === tutor.PadreId
-      ));
+    eliminarTutor(tutor) {
+      const index = this.item.tutores.val.indexOf(
+        this.item.tutores.val.find((i) => i.tutor.padreId === tutor.PadreId)
+      );
       this.item.tutores.val.splice(index, 1);
       console.log(index);
     },
     limpiarValidez(input) {
       this.item[input].isValid = true;
     },
-    async guardarTutores() {
-      this.isLoading = true;
-      try {
-        console.log(this.item.tutores.val);
+    async guardarTutores(alumnoId) {
+      // this.isLoading = true;
+      try {        
+        // eliminarTutoresDeAlumno
+        const data = {
+          alumnoId: alumnoId,
+        };
+
+        const responseDelete = await axios.post(
+          routeAPI + "alumnos/eliminarTutoresDeAlumno",
+          data
+        );
+
+        if (!responseDelete.data.hayError) {
+          console.log("Los tutores se eliminaron con éxito.");
+        } else {
+          console.log(responseDelete);
+          this.$alert(
+            "Los tutores no se pudieron eliminar, favor de volverlo a intentar."
+          );
+          return;
+        }
+
         this.item.tutores.val.forEach(async (tutor) => {
           const data = {
-            tutorId: tutor.tutor.padreId,
-            parentesoId:tutor.parentesco.parentesoId
+            alumno: {
+              alumnoId: alumnoId,
+              tutorId: tutor.tutor.PadreId,
+              parentescoId: tutor.parentesco.parentesoId,
+            },
           };
-          console.log(data);
-          // const response = await axios.post(
-          //   routeAPI + "alumnos/agregarAlumno",
-          //   data
-          // );
-
-          // this.isLoading = false;
-          // if (!response.data.hayError) {
-          //   this.$alert("El alumno se guardó con éxito.");
-          //   this.getTiposDePago();
-          // } else {
-          //   console.log(response);
-          //   this.$alert(
-          //     "El alumno se guardó con éxito pero no se pudo guardar el(los) tutor(es), favor de volverlo a intentar."
-          //   );
-          // }
+         
+          const response = await axios.post(
+            routeAPI + "alumnos/agregarTutoresDeAlumno",
+            data
+          );
+          
+          if (!response.data.hayError) {
+            console.log("El alumno se guardó con éxito.");            
+          } else {
+            console.log(response);
+            this.$alert(
+              "El alumno se guardó con éxito pero no se pudo guardar el(los) tutor(es), favor de volverlo a intentar."
+            );
+          }
         });
+
+        this.$alert("Los tutores se guardaron con éxito.");
+        this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
@@ -823,7 +854,7 @@ export default {
     },
     async guardarAlumno() {
       this.validarAlumno();
-      console.log(this.item);
+      
       if (this.itemIsValid) {
         //Guardamos
         const data = {
@@ -856,13 +887,14 @@ export default {
           );
 
           this.isLoading = false;
+          console.log("agregarAlumno");
+          console.log(response);
 
           if (!response.data.hayError) {
             // this.$alert("El alumno se guardó con éxito.");
             this.mostrarModal = false;
             console.log("El alumno se guardó con éxito.");
-            this.guardarTutores();
-            // this.getTiposDePago();
+            this.guardarTutores(response.data.response.insertId);            
           } else {
             console.log(response);
             this.$alert("No se pudo guardar, favor de volverlo a intentar.");
