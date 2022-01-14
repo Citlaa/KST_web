@@ -412,10 +412,10 @@ export default {
           routeAPI + "administracion/guardarTiposDeRecargo",
           data
         );
-
-        this.mostrarModal = false;
+        
         this.isLoading = false;
         if (!response.data.hayError) {
+          this.mostrarModal = false;
           this.$alert("El recargo se guardó con éxito.");
           this.getTiposDeRecargo();
         } else {

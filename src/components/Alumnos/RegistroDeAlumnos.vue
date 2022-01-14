@@ -685,6 +685,9 @@ export default {
           val: 0,
           isValid: true,
         },
+        TipoEstadoAlumno: {
+          val: true
+        }
       },
       items: [],
       itemIsValid: true,
@@ -750,7 +753,7 @@ export default {
     },
     async guardarTutores(alumnoId) {
       // this.isLoading = true;
-      try {        
+      try {
         // eliminarTutoresDeAlumno
         const data = {
           alumnoId: alumnoId,
@@ -779,14 +782,14 @@ export default {
               parentescoId: tutor.parentesco.parentesoId,
             },
           };
-         
+
           const response = await axios.post(
             routeAPI + "alumnos/agregarTutoresDeAlumno",
             data
           );
-          
+
           if (!response.data.hayError) {
-            console.log("El alumno se guardó con éxito.");            
+            console.log("El alumno se guardó con éxito.");
           } else {
             console.log(response);
             this.$alert(
@@ -854,7 +857,7 @@ export default {
     },
     async guardarAlumno() {
       this.validarAlumno();
-      
+
       if (this.itemIsValid) {
         //Guardamos
         const data = {
@@ -894,7 +897,7 @@ export default {
             // this.$alert("El alumno se guardó con éxito.");
             this.mostrarModal = false;
             console.log("El alumno se guardó con éxito.");
-            this.guardarTutores(response.data.response.insertId);            
+            this.guardarTutores(response.data.response.insertId);
           } else {
             console.log(response);
             this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -949,10 +952,10 @@ export default {
         console.log(err);
       }
     },
-    abrirModal: function(tipo, inhabilitar, item) {
+    abrirModal: function(tipo, inhabilitar, item) {      
       this.titutoModal = tipo;
       this.inhabilitar = inhabilitar;
-      if (item.AlumnoId && item.AlumnoId > 0) this.cargarItem(item);
+      if (item.AlumnoId.val && item.AlumnoId.val > 0) this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
     },
     cargarItem: function(item) {
@@ -967,7 +970,7 @@ export default {
       this.item.Genero.val = item.Genero.val;
       this.item.NumeroDeControl.val = item.NumeroDeControl.val;
       this.item.EscuelaId.val = item.EscuelaDeProcedenciaId.val;
-      this.item.Promedio.val = item.Promedio.val;
+      this.item.Promedio.val = item.PromedioDeProcedencia.val;
       this.item.Domicilio.val = item.Domicilio.val;
       this.item.TipoEstadoAlumno.val = item.Activo.val;
     },
@@ -1004,6 +1007,9 @@ export default {
             this.items.push({
               AlumnoId: {
                 val: element["011AlumnoId"],
+              },
+              Nombre:{
+                val: element["011Nombre"]
               },
               NombreCompleto: {
                 val:

@@ -36,6 +36,7 @@
             type="text"
             v-model="filtro_nombre"
             placeholder="Indicar Nombre"
+            @keypress.enter="getTiposDePago"
           />
         </div>
         <div class="col-3">
@@ -45,6 +46,7 @@
             type="text"
             v-model="filtro_monto"
             placeholder="Indicar Monto"
+            @keypress.enter="getTiposDePago"
           />
         </div>
         <div class="col-3">
@@ -53,7 +55,7 @@
             :label="'Ciclo escolar'"
             :titulo="true"
             v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-            :funcion="'seleccionarCicloEscolar'"
+            :funcion="'seleccionarCicloEscolar'"          
           />
         </div>
         <div class="col-3">
@@ -171,7 +173,7 @@
                       <tipos-ciclo-escolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
-                        :tipoDeCicloEscolarId="item.TipoDeCicloEscolar.TipoDeCicloEscolarId"
+                        :tipoDeCicloEscolarId="item ? item.TipoDeCicloEscolar.TipoDeCicloEscolarId : -1"
                         v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
                         :funcion="'seleccionarCicloEscolar'"
                       ></tipos-ciclo-escolar>
@@ -363,7 +365,7 @@ export default {
       }
     },
     seleccionarCicloEscolar: function(element) {
-      this.filtro_cicloEscolar = element;
+      this.filtro_cicloEscolar = element;      
     },
     seleccionarCicloEscolarItem(element) {
       this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
@@ -374,6 +376,8 @@ export default {
 
       if (item.TipoDePagoId > 0) {
         this.item.Monto = this.item.Monto.split("$")[1];        
+      }else{
+        this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
       }
       
       this.mostrarModal = !this.mostrarModal;
@@ -404,11 +408,12 @@ export default {
           routeAPI + "administracion/guardarTiposDePago",
           data
         );
-
-        this.mostrarModal = false;
+        
         this.isLoading = false;
         if (!response.data.hayError) {
+          this.mostrarModal = false;
           this.$alert("El tipo de pago se guardó con éxito.");
+          this.limpiarVariables();
           this.getTiposDePago();
         } else {
           console.log(response);
@@ -437,10 +442,10 @@ export default {
           routeAPI + "administracion/editarTiposDePago",
           data
         );
-
-        this.mostrarModal = false;
+        
         this.isLoading = false;
         if (!response.data.hayError) {
+          this.mostrarModal = false;
           this.$alert("El tipo de pago se guardó con éxito.");
           this.getTiposDePago();
         } else {
@@ -480,6 +485,13 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+
+      this.item = {
+        Nombre: "",
+        Monto: 0,
+        TipoDeCicloEscolar: { TipoDeCicloEscolarId: -1 },
+        Activo: "-1",
+      }
     },
     limpiarFiltros() {
       this.filtro_nombre = "";
@@ -487,6 +499,7 @@ export default {
       this.filtro_cicloEscolar = "";
       this.filtro_cicloEscolar_key++;
       this.filtro_activo = "-1";
+      this.getTiposDePago();
     },
   },
 };

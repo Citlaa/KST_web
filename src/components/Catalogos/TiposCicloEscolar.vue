@@ -243,7 +243,7 @@ export default {
       mostrarModal: false,
       titutoModal: "",
       mostrarFiltros: true,
-      filtro_añoDeInicio: new Date().getFullYear() - 1,
+      filtro_añoDeInicio: new Date().getFullYear() - 5,
       filtro_añoDeTermino: new Date().getFullYear(),
       filtro_activo: "-1",
     };
@@ -290,7 +290,7 @@ export default {
             });
           }
         } else{
-          console.log(response)
+          console.log(response);
           this.$alert(
             "No se pudo obtenera información, favor de volverlo a intentar."
           );

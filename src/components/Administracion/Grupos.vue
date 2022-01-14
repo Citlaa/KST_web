@@ -201,10 +201,8 @@
                           :label="'Ciclo Escolar'"
                           :titulo="true"
                           :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                          @:seleccionarCicloEscolarItem="
-                            seleccionarCicloEscolarItem($event)
-                          "
-                          :funcion="'seleccionarCicloEscolarItem'"
+                          v-on:seleccionarCicloEscolarItem="seleccionarCicloEscolarItem($event)"
+                          :funcion="'seleccionarCicloEscolarItem'"                          
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
@@ -702,7 +700,8 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtros.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem: function(element) {
+    seleccionarCicloEscolarItem: function(element) { 
+      console.log(element);
       this.item.TipoDeCicloEscolarId = element;
     },
     seleccionarTipoModalidad: function(element) {
@@ -762,7 +761,7 @@ export default {
         this.editarGrupo();
       } else {
         this.agregarGrupo();
-      }
+      }      
     },
     async agregarGrupo() {
       try {
@@ -780,16 +779,18 @@ export default {
             Activo: Number(this.item.Activo),
           },
         };
-
+console.log(this.item);
         const response = await axios.post(
           routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
 
-        this.mostrarModal = false;
+        
         this.isLoading = false;
         if (!response.data.hayError) {
+          this.mostrarModal = false;
           this.$alert("El grupo se guardó con éxito.");
+          this.limpiarVariables();
           this.getGrupos();
         } else {
           console.log(response);
@@ -821,10 +822,12 @@ export default {
           data
         );
 
-        this.mostrarModal = false;
+        
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El grupo se guardó con éxito.");
+          this.mostrarModal = false;
+          this.limpiarVariables();
           this.getGrupos();
         } else {
           console.log(response);
@@ -862,6 +865,18 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+
+      this.item = {
+        EstructuraDeGrupoId: -1,
+        TipoDeCicloEscolarId: -1,
+        TiposNivelId: -1,
+        TipoModalidadId: -1,
+        TipoPeriodoId: -1,
+        TipoGradoId: -1,
+        TipoDeGrupoId: -1,
+        TipoEspecialidadId: -1,
+        Activo: "-1",
+      }
     },
     limpiarFiltros() {
       this.filtros.filtro_cicloEscolar = "";
@@ -880,6 +895,7 @@ export default {
       this.filtros.key_grado++;
       this.filtros.key_grupo++;
       this.filtros.key_especialidad++;
+      this.getGrupos();
     },
   },
 };
