@@ -62,8 +62,9 @@ export default {
           routeAPI + "administracion/tiposDeCicloEscolarCatalogo",
           filtros
         );
-
-        response.data.response.forEach((element) => {
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+          response.data.response.forEach((element) => {
           this.items.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
             AñoDeInicio: element["002AñoDeInicio"],
@@ -71,6 +72,13 @@ export default {
             Activo: element["002Activo"],
           });
         });
+        }
+      }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
         this.isLoading = false;
       } catch (err) {
         console.log(err);

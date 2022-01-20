@@ -61,14 +61,23 @@ export default {
           filtros
         );
 
-        response.data.response.forEach((element) => {
-          this.items.push({
-            TipoEspecialidadId: element["009TipoEspecialidadId"],
-            Nombre: element["009Nombre"],
-            Activo: element["009Activo"],
-          });
-        });
-        this.isLoading = false;
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+              response.data.response.forEach((element) => {
+              this.items.push({
+                TipoEspecialidadId: element["009TipoEspecialidadId"],
+                Nombre: element["009Nombre"],
+                Activo: element["009Activo"],
+              });
+             });
+          }
+        }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
+      this.isLoading = false;
       } catch (err) {
         console.log(err);
       }

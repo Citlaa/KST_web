@@ -51,13 +51,22 @@ export default {
           filtros
         );
 
-        response.data.response.forEach(element => {            
-          this.items.push({
-            TipoDeModalidadId: element["004TipoModalidadId"],
-            Nombre: element["004Nombre"],
-            Activo: element["004Activo"]
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+            response.data.response.forEach(element => {            
+            this.items.push({
+              TipoDeModalidadId: element["004TipoModalidadId"],
+              Nombre: element["004Nombre"],
+              Activo: element["004Activo"]
+            });
           });
-        });
+         }
+        }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
         this.isLoading = false;
       } catch (err) {
         console.log(err);

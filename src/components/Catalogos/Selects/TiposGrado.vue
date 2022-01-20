@@ -50,15 +50,23 @@ export default {
           routeAPI + "catalogo/tiposGrado",
           filtros
         );
-        
-        response.data.response.forEach(element => {            
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+          response.data.response.forEach(element => {            
           this.items.push({
             TipoGradoId: element["008TipoGradoId"],
             Nombre: element["008Nombre"],
             Activo: element["008Activo"]
           });
         });
-        this.isLoading = false;
+          }
+        }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        );
+      }
+      this.isLoading = false;
       } catch (err) {
         console.log(err);
       }

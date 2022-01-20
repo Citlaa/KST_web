@@ -62,13 +62,22 @@ export default {
           filtros
         );
 
-        response.data.response.forEach((element) => {
-          this.items.push({
-            EscuelaId: element["015EscuelaDeProcedenciaId"],
-            Nombre: element["015Nombre"],
-            Activo: element["015Activo"],
-          });
-        });
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+            response.data.response.forEach((element) => {
+            this.items.push({
+              EscuelaId: element["015EscuelaDeProcedenciaId"],
+              Nombre: element["015Nombre"],
+              Activo: element["015Activo"],
+            });
+           });
+          }
+        }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
         this.isLoading = false;
       } catch (err) {
         console.log(err);
