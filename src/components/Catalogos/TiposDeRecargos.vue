@@ -171,7 +171,8 @@
                         v-model="item.Nombre"
                       />
                     </div>
-                    <div class="col-4">
+                    <div class="col-4">      
+                      {{item}}                
                       <TiposCicloEscolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
@@ -244,7 +245,7 @@ export default {
         Nombre: String,
         Monto: Number,
         TipoDeCicloEscolar: {
-          TipoDeCicloEscolarId: Number,
+          TipoDeCicloEscolarId: -1,
         },
         Activo: Boolean,
       },
@@ -384,6 +385,8 @@ export default {
       this.item = item;
       if (this.item.TipoDeRecargoId > 0)
         this.item.Monto = this.item.Monto.split("$")[1];
+      else        
+        this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDeRecargo() {
@@ -407,7 +410,7 @@ export default {
             Activo: Number(this.item.Activo),
           },
         };
-
+console.log(data);
         const response = await axios.post(
           routeAPI + "administracion/guardarTiposDeRecargo",
           data
