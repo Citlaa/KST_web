@@ -171,8 +171,7 @@
                         v-model="item.Nombre"
                       />
                     </div>
-                    <div class="col-4">      
-                      {{item}}                
+                    <div class="col-4">                                          
                       <TiposCicloEscolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
@@ -377,8 +376,8 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem(element) {
-      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
+    seleccionarCicloEscolarItem(element) {      
+      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);      
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
@@ -465,9 +464,10 @@ console.log(data);
     async cancelar(item) {
       try {
         this.isLoading = true;
+        
         const data = {
           tipoDeRecargo: {
-            TipoDeRecargoId: item.TipoDeCicloEscolar.TipoDeCicloEscolarId,
+            TipoDeRecargoId: item.TipoDeRecargoId,
             Activo: Number(0),
           },
         };
@@ -479,7 +479,7 @@ console.log(data);
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El recargo se canceló correctamente.");
-          this.getTiposDeRecagos();
+          this.getTiposDeRecargo();          
         } else {
           console.log(response);
           this.$alert("Alert Message.");
