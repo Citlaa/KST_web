@@ -84,7 +84,10 @@
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar Tipo de pago
       </button>
       <br />
-      <div id="bootstrap_table">
+      <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+        <p>No se encontraron registros</p>
+       </div>
+      <div id="bootstrap_table" v-else>
         <div class="col-3 mr-0 align-rigth">
           <input
             class="form-control"
@@ -307,18 +310,29 @@ export default {
           filtros
         );
 
-        response.data.response.forEach((element) => {
-          this.ciclosEscolares.push({
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+          response.data.response.forEach((element) => {
+          this.items.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-            Nombre:
-              element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
+            AñoDeInicio: element["002AñoDeInicio"],
+            AñoDeTermino: element["002AñoDeTermino"],
+            Activo: element["002Activo"],
           });
         });
-        this.isLoading = false;
+        }
+      }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
+              this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
     },
+
     async getTiposDePago() {
       try {
         this.isLoading = true;

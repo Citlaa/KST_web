@@ -88,7 +88,10 @@
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar tipo de recargo
       </button>
       <br />
-      <div id="bootstrap_table">
+      <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+        <p>No se encontraron registros</p>
+      </div>
+      <div id="bootstrap_table" v-else>
         <div class="col-3 mr-0 align-rigth">
           <input
             class="form-control"
@@ -108,12 +111,15 @@
           :filter="filter"
         >
           <template v-slot:cell(Activo)="data">
+            <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.TipoDeRecargoId" style="cursor: default;">     
             <i
-              v-if="data.item.Activo == 1"
               class="far fa-check-square"
               style="color: green"
             ></i>
-            <i v-else class="far fa-times-circle" style="color: red"></i>
+            </button>
+            <button class="btn btn-default" v-else :key="data.item.TipoDeRecargoId" style="cursor: default;">
+            <i class="far fa-times-circle" style="color: red"></i>
+            </button>
           </template>
           <template v-slot:cell(opciones)="data">
             <button
@@ -313,14 +319,23 @@ export default {
           filtros
         );
 
-        response.data.response.forEach((element) => {
-          this.ciclosEscolares.push({
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
+          response.data.response.forEach((element) => {
+          this.items.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
             Nombre:
               element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
           });
         });
-        this.isLoading = false;
+        }
+      }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
+      this.isLoading = false;
       } catch (err) {
         console.log(err);
       }

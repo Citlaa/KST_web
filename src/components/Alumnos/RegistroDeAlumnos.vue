@@ -124,12 +124,15 @@
             :filter="filter"
           >
             <template v-slot:cell(Activo)="data">
+              <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.AlumnoId" style="cursor: default;">     
               <i
-                v-if="data.item.Activo == 1"
                 class="far fa-check-square"
                 style="color: green"
               ></i>
-              <i v-else class="far fa-times-circle" style="color: red"></i>
+              </button>
+              <button class="btn btn-default" v-else :key="data.item.AlumnoId" style="cursor: default;">
+              <i class="far fa-times-circle" style="color: red"></i>
+              </button>
             </template>
             <template v-slot:cell(opciones)="data">
               <button
@@ -997,23 +1000,25 @@ console.log(this.item.parentesco.val);
           filtros
         );
 
-        if (!response.data.hayError) {
+        if (!response.data.hayError){
+          if (response.data.response.length > 0){
           response.data.response.forEach((element) => {
-            this.tutores.push({
+          this.items.push({
               PadreId: element["012PadreId"],
               Nombre: element["012Nombre"],
               ApellidoPaterno: element["012ApellidoPaterno"],
               ApellidoMaterno: element["012ApellidoMaterno"],
               Activo: element["012Activo"],
               Domicilio: element["012Domicilio"],
-            });
           });
-        } else {
-          console.log(response);
-          this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
-          );
+        });
         }
+      }else{
+        console.log(response);
+        this.$alert(
+          "No se pudo obtenera información, favor de volverlo a intentar."
+        ); 
+      }
         this.isLoading = false;
       } catch (err) {
         console.log(err);
