@@ -103,17 +103,20 @@
           :current-page="currentPage"
           :filter="filter"
         >
-          <template v-slot:cell(Activo)="data">
-            <i
-              v-if="data.item.Activo == 1"
+          <template v-slot:cell(Activo)="data">      
+            <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.TipoDePagoId" style="cursor: default;">     
+            <i              
               class="far fa-check-square"
               style="color: green"
+              
             ></i>
-            <i
-              v-else
+            </button>
+            <button class="btn btn-default" v-else :key="data.item.TipoDePagoId" style="cursor: default;">
+            <i             
               class="far fa-times-circle"
-              style="color: red"
+              style="color: red"              
             ></i>
+            </button>            
           </template>
           <template v-slot:cell(opciones)="data">
             <button
@@ -339,7 +342,7 @@ export default {
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {
+          if (response.data.response.length > 0) {           
             response.data.response.forEach((element) => {
               this.items.push({
                 TipoDePagoId: element["001TipoDePagoId"],

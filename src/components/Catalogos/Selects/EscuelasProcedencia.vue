@@ -43,7 +43,7 @@ export default {
     this.getEscuelas();
 
     if (this.$props.escuelaId > 0)
-      this.valor = this.$props.tipoDeCicloEscolarId;
+      this.valor = this.$props.escuelaId;
   },
   computed: {},
   methods: {

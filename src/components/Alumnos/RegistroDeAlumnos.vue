@@ -34,7 +34,7 @@
             <label>Nombre</label>
             <input
               class="form-control"
-              type="text"
+              type="search"
               v-model="filtros.filtro_nombre"
             />
           </div>
@@ -42,7 +42,7 @@
             <label>Apellido Paterno</label>
             <input
               class="form-control"
-              type="text"
+              type="search"
               v-model="filtros.filtro_apellidoPaterno"
             />
           </div>
@@ -50,7 +50,7 @@
             <label>Apellido Materno</label>
             <input
               class="form-control"
-              type="text"
+              type="search"
               v-model="filtros.filtro_apellidoMaterno"
             />
           </div>
@@ -58,7 +58,7 @@
             <label>CURP</label>
             <input
               class="form-control"
-              type="text"
+              type="search"
               v-model="filtros.filtro_curp"
             />
           </div>
@@ -101,7 +101,10 @@
           <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar alumno
         </button>
         <br />
-        <div id="bootstrap_table">
+        <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+          <p>No se encontraron registros</p>
+        </div>
+        <div id="bootstrap_table" v-else>
           <div class="col-3 mr-0 align-rigth">
             <input
               class="form-control"
@@ -292,6 +295,7 @@
                               :disabled="!inhabilitar"
                               @blur="limpiarValidez('Genero')"
                             >
+                              <option value="-1" selected>Seleccionar Género</option>
                               <option value="Femenino">Femenino</option>
                               <option value="Masculino">Masculino</option>
                             </select>
@@ -323,10 +327,11 @@
                               ></i>
                             </p>
                           </div>
-                          <div class="col-4 form-group padding-model">
+                          <div class="col-4 form-group padding-model">                            
                             <escuela
                               :label="'Escuela de procedencia'"
                               :escuelaId="item.EscuelaId.val"
+                              :key="item.EscuelaId.val"
                               :titulo="true"
                               :disabled="!inhabilitar"
                               @seleccionarEscuela="seleccionarEscuela($event)"
@@ -387,6 +392,7 @@
                       </section>
                       <section id="data_tutor">
                         <div class="row seccion_modal">
+                          <div class="row col-12" v-if="inhabilitar">
                           <div class="col-12 seccion_titulo_modal">
                             <h3>Buscar Padre o Tutor</h3>
                             <p v-if="!item.tutores.isValid" style="color: red">
@@ -440,13 +446,13 @@
                               Buscar
                             </button>
                           </div>
-                          <div class="col-12">
+                          <div class="col-12" >
                             <div
                               v-if="tutores.length <= 0"
                               class="row"
                               style="display: grid; justify-content: center;"
                             >
-                              <div class="col-12"><p>No hay registros</p></div>
+                              <div class="col-12"><p>No hay registros de búsqueda</p></div>
                             </div>
                             <div v-else>
                               <table class="table">
@@ -494,6 +500,7 @@
                               </table>
                             </div>
                           </div>
+                          </div>
                           <div class="col-12">
                             <div
                               v-if="this.item.tutores.val.length > 0"
@@ -511,7 +518,7 @@
                                       <th>Apellido Paterno</th>
                                       <th>Apellido Materno</th>
                                       <th>Parentesco</th>
-                                      <th></th>
+                                      <th v-if="inhabilitar"></th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -524,10 +531,10 @@
                                       <td>{{ tutor.tutor.ApellidoPaterno }}</td>
                                       <td>{{ tutor.tutor.ApellidoMaterno }}</td>
                                       <td>{{ tutor.parentesco.nombre }}</td>
-                                      <td>
+                                      <td v-if="inhabilitar">
                                         <button
                                           class="btn btn-default"
-                                          @click="eliminarTutor(tutor)"
+                                          @click="eliminarTutor(tutor)"                                          
                                         >
                                           <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -546,6 +553,7 @@
                     <button
                       type="button"
                       class="button is-primary"
+                      v-if="inhabilitar"
                       @click="guardarAlumno()"
                     >
                       Guardar
@@ -555,8 +563,18 @@
                       class="btn btn-secondary"
                       data-dismiss="modal"
                       @click="mostrarModal = false"
+                      v-if="inhabilitar"
                     >
                       Cancelar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click="mostrarModal = false"
+                      v-if="!inhabilitar"
+                    >
+                      Cerrar
                     </button>
                   </div>
                 </div>
@@ -658,7 +676,7 @@ export default {
           isValid: true,
         },
         Genero: {
-          val: "",
+          val: "-1",
           isValid: true,
         },
         NumeroDeControl: {
@@ -728,7 +746,7 @@ export default {
       const selected = this.item.tutores.val.find(
         (i) => i.tutor.padreId === tutor.PadreId
       );
-
+console.log(this.item.parentesco.val);
       if (selected) {
         this.$alert("El padre/tutor ya esta agregado.");
       } else {
@@ -745,8 +763,7 @@ export default {
       const index = this.item.tutores.val.indexOf(
         this.item.tutores.val.find((i) => i.tutor.padreId === tutor.PadreId)
       );
-      this.item.tutores.val.splice(index, 1);
-      console.log(index);
+      this.item.tutores.val.splice(index, 1);      
     },
     limpiarValidez(input) {
       this.item[input].isValid = true;
@@ -758,7 +775,7 @@ export default {
         const data = {
           alumnoId: alumnoId,
         };
-
+        
         const responseDelete = await axios.post(
           routeAPI + "alumnos/eliminarTutoresDeAlumno",
           data
@@ -789,7 +806,8 @@ export default {
           );
 
           if (!response.data.hayError) {
-            console.log("El alumno se guardó con éxito.");
+            console.log("El tutor se guardó con éxito.");
+            this.getAlumnos();
           } else {
             console.log(response);
             this.$alert(
@@ -798,10 +816,22 @@ export default {
           }
         });
 
-        this.$alert("Los tutores se guardaron con éxito.");
+        this.$alert("El alumno se guardó con éxito.");
         this.isLoading = false;
       } catch (err) {
         console.log(err);
+      }
+    },
+    async guardarAlumno() {
+      this.validarAlumno();
+
+      if (this.itemIsValid) {        
+        if(this.item.AlumnoId.val > 0)
+          this.editarAlumno();
+        else
+          this.agregarAlumno();
+      } else {
+        this.$alert("Favor de completar los datos.");
       }
     },
     async validarAlumno() {
@@ -855,10 +885,7 @@ export default {
         this.itemIsValid = false;
       }
     },
-    async guardarAlumno() {
-      this.validarAlumno();
-
-      if (this.itemIsValid) {
+    async agregarAlumno() {      
         //Guardamos
         const data = {
           alumno: {
@@ -889,26 +916,66 @@ export default {
             data
           );
 
-          this.isLoading = false;
-          console.log("agregarAlumno");
-          console.log(response);
+          this.isLoading = false;          
 
           if (!response.data.hayError) {
             // this.$alert("El alumno se guardó con éxito.");
             this.mostrarModal = false;
             console.log("El alumno se guardó con éxito.");
-            this.guardarTutores(response.data.response.insertId);
+            this.guardarTutores(response.data.response.insertId);            
           } else {
             console.log(response);
             this.$alert("No se pudo guardar, favor de volverlo a intentar.");
           }
         } catch (err) {
           console.log(err);
-        }
-        console.log(data);
-      } else {
-        this.$alert("Favor de completar los datos.");
-      }
+        }              
+    },
+    async editarAlumno() {      
+        //Guardamos        
+        const data = {
+          alumno: {
+            AlumnoId: this.item.AlumnoId.val,
+            Nombre: this.item.Nombre.val,
+            ApellidoPaterno: this.item.ApellidoPaterno.val,
+            ApellidoMaterno: this.item.ApellidoMaterno.val,
+            Curp: this.item.Curp.val,
+            FechaDeNacimiento: this.item.FechaDeNacimiento.val,
+            Genero: this.item.Genero.val,
+            NumeroDeControl: this.item.NumeroDeControl.val,
+            EscuelaId: this.item.EscuelaId.val,
+            Promedio: this.item.Promedio.val,
+            Domicilio: this.item.Domicilio.val,
+            TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+            FechaRegistro: new Date()
+              .toISOString()
+              .slice(0, 19)
+              .replace("T", " "),
+            Activo: Enum.EstatusGeneral.Activo,
+          },
+        };
+
+        try {
+          this.isLoading = true;
+
+          const response = await axios.post(
+            routeAPI + "alumnos/editarAlumno",
+            data
+          );
+
+          this.isLoading = false;          
+
+          if (!response.data.hayError) {            
+            this.mostrarModal = false;
+            console.log("El alumno se editó con éxito.");                        
+            this.guardarTutores( this.item.AlumnoId.val);
+          } else {
+            console.log(response);
+            this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+          }
+        } catch (err) {
+          console.log(err);
+        }              
     },
     async buscarTutor() {
       try {
@@ -955,24 +1022,74 @@ export default {
     abrirModal: function(tipo, inhabilitar, item) {      
       this.titutoModal = tipo;
       this.inhabilitar = inhabilitar;
-      if (item.AlumnoId.val && item.AlumnoId.val > 0) this.cargarItem(item);
+      
+      if (item && item.AlumnoId && item.AlumnoId.val && item.AlumnoId.val > 0) this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
     },
-    cargarItem: function(item) {
-      console.log(item);
+    limpiarModal (){
+      this.tutores = []; 
+      this.item = {};
 
+    },
+    cargarItem: function(item) {      
       this.item.AlumnoId.val = item.AlumnoId.val;
       this.item.Nombre.val = item.Nombre.val;
       this.item.ApellidoPaterno.val = item.ApellidoPaterno.val;
       this.item.ApellidoMaterno.val = item.ApellidoMaterno.val;
       this.item.Curp.val = item.Curp.val;
-      this.item.FechaDeNacimiento.val = item.FechaNacimiento.val;
+      this.item.FechaDeNacimiento.val = new Date(item.FechaNacimiento.val).toISOString().slice(0, 10);      
       this.item.Genero.val = item.Genero.val;
       this.item.NumeroDeControl.val = item.NumeroDeControl.val;
       this.item.EscuelaId.val = item.EscuelaDeProcedenciaId.val;
       this.item.Promedio.val = item.PromedioDeProcedencia.val;
       this.item.Domicilio.val = item.Domicilio.val;
       this.item.TipoEstadoAlumno.val = item.Activo.val;
+
+      //cargar Tutores      
+      this.getTutores();
+
+    },
+    async getTutores(){
+      try {
+        this.isLoading = true;        
+        this.item.tutores.val = [];
+        const data = {
+          alumnoId: this.item.AlumnoId.val,
+        };        
+
+        const response = await axios.post(
+          routeAPI + "alumnos/tutoresDeAlumno",
+          data
+        );
+
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {                  
+            response.data.response.forEach((element) => {  
+              var tutor = {
+                PadreId: element["012PadreId"],
+                Nombre: element["012Nombre"],
+                ApellidoPaterno: element["012ApellidoPaterno"],
+                ApellidoMaterno: element["012ApellidoMaterno"],  
+              }                    
+              var parentesco = {
+                parentesoId: element["016TipoParentescoId"],
+                nombre: element["016Nombre"]
+              }    
+              this.item.tutores.val.push({
+                tutor: tutor,                       
+                parentesco:parentesco,                                                          
+              });
+            });
+          }          
+        } else
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
     },
     async getAlumnos() {
       try {
@@ -1095,7 +1212,14 @@ export default {
         console.log(err);
       }
     },
-  },
+    limpiarFiltros() {
+      this.filtros.filtro_nombre = "";
+      this.filtros.filtro_apellidoPaterno = "";      
+      this.filtros.filtro_apellidoMaterno = "";      
+      this.filtros.filtro_curp = "";            
+      this.filtros.filtro_activo = "-1";
+    },
+  },  
 };
 </script>
 
