@@ -313,13 +313,12 @@ export default {
         if (!response.data.hayError){
           if (response.data.response.length > 0){
           response.data.response.forEach((element) => {
-          this.items.push({
-            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-            AñoDeInicio: element["002AñoDeInicio"],
-            AñoDeTermino: element["002AñoDeTermino"],
-            Activo: element["002Activo"],
+            this.ciclosEscolares.push({
+              TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+              Nombre: element["002AñoDeInicio"] + " - " + element["002AñoDeTermino"],
+              Activo: element["002Activo"],
+            });
           });
-        });
         }
       }else{
         console.log(response);
@@ -356,6 +355,8 @@ export default {
         );
 
         if (!response.data.hayError) {
+          console.log(this.items);
+          console.log(response.data.response);
           if (response.data.response.length > 0) {           
             response.data.response.forEach((element) => {
               this.items.push({
@@ -370,6 +371,7 @@ export default {
                 Activo: element["001Activo"],
               });
             });
+            console.log(this.items);
           }
         } else
           this.$alert(
@@ -500,7 +502,7 @@ export default {
         console.log(err);
       }
     },
-    limpiarVariables: function() {
+    async limpiarVariables () {
       this.items = [];
 
       this.item = {
