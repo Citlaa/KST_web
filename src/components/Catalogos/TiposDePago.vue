@@ -354,9 +354,7 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError) {
-          console.log(this.items);
-          console.log(response.data.response);
+        if (!response.data.hayError) {        
           if (response.data.response.length > 0) {           
             response.data.response.forEach((element) => {
               this.items.push({
@@ -371,7 +369,6 @@ export default {
                 Activo: element["001Activo"],
               });
             });
-            console.log(this.items);
           }
         } else
           this.$alert(

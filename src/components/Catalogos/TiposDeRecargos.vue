@@ -322,7 +322,7 @@ export default {
         if (!response.data.hayError){
           if (response.data.response.length > 0){
           response.data.response.forEach((element) => {
-          this.items.push({
+          this.ciclosEscolares.push({
             TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
             Nombre:
               element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
