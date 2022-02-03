@@ -294,7 +294,7 @@ export default {
       filtro_cicloEscolar_key: 0,
       filtro_activo: "-1",
     };
-  },
+  },  
   created() {
     this.getTipoDeCicloEscolar();
     this.getTiposDeRecargo();
@@ -303,14 +303,13 @@ export default {
     rows() {
       return this.items.length;
     },
-  },
+  },  
   methods: {
     async getTipoDeCicloEscolar() {
       try {
         this.isLoading = true;
         const filtros = {
           filtro: {
-            activo: 1,
           },
         };
 
@@ -363,7 +362,7 @@ export default {
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {
+          if (response.data.response.length > 0) {            
             response.data.response.forEach((element) => {
               this.items.push({
                 TipoDeRecargoId: element["003TipoDeRecargoId"],
@@ -397,6 +396,7 @@ export default {
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
       this.item = item;
+      console.log(this.item);
       if (this.item.TipoDeRecargoId > 0)
         this.item.Monto = this.item.Monto.split("$")[1];
       else        

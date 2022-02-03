@@ -723,6 +723,13 @@ export default {
       },
     };
   },
+  watch:{
+    mostrarModal: function(newVal){      
+      if(!newVal){
+        this.limpiarVariables();
+      }
+    }
+  },
   computed: {
     rows() {
       return this.items.length;
@@ -811,6 +818,7 @@ console.log(this.item.parentesco.val);
           if (!response.data.hayError) {
             console.log("El tutor se guardó con éxito.");
             this.getAlumnos();
+            this.limpiarVariables();
           } else {
             console.log(response);
             this.$alert(
@@ -1031,11 +1039,6 @@ console.log(this.item.parentesco.val);
       if (item && item.AlumnoId && item.AlumnoId.val && item.AlumnoId.val > 0) this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
     },
-    limpiarModal (){
-      this.tutores = []; 
-      this.item = {};
-
-    },
     cargarItem: function(item) {      
       this.item.AlumnoId.val = item.AlumnoId.val;
       this.item.Nombre.val = item.Nombre.val;
@@ -1092,6 +1095,33 @@ console.log(this.item.parentesco.val);
           );
 
         this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async cancelar(item) {
+      try {
+        this.isLoading = true;
+        
+        const data = {
+          alumno: {
+            id: item.AlumnoId.val,
+            Activo: Number(0),
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "alumnos/cancelarAlumno",
+          data
+        );
+        this.isLoading = false;
+        if (!response.data.hayError) {
+          this.$alert("El alumno se canceló correctamente.");
+          this.getAlumnos();          
+        } else {
+          console.log(response);
+          this.$alert("Sucedio un error, favor de volver a intentarlo.");
+        }
       } catch (err) {
         console.log(err);
       }
@@ -1224,6 +1254,22 @@ console.log(this.item.parentesco.val);
       this.filtros.filtro_curp = "";            
       this.filtros.filtro_activo = "-1";
     },
+    limpiarVariables(){      
+      this.item.AlumnoId.val = null;        
+      this.item.Nombre.val = "",
+      this.item.ApellidoPaterno. val = ""
+      this.item.ApellidoMaterno.val = ""
+      this.item.Curp.val = "";
+      this.item.FechaDeNacimiento.val = new Date().toISOString().slice(0, 10);      
+      this.item.Genero.val = "-1";
+      this.item.NumeroDeControl.val = 0;
+      this.item.EscuelaId.val = 0;
+      this.item.Promedio.val = 0;
+      this.item.Domicilio.val= "";
+      this.item.tutores.val = [];
+      this.item.parentesco.val = 0;
+      this.item.TipoEstadoAlumno.val = true;
+    }
   },  
 };
 </script>
