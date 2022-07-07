@@ -234,7 +234,6 @@ import axios from "axios";
 import routeAPI from "@/js/api";
 
 export default {
-  name: "ProductList",
   data() {
     return {
       isLoading: false,

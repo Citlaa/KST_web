@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Vue2Filters from 'vue2-filters'
 import { BootstrapVue } from 'bootstrap-vue'
 import VueSimpleAlert from "vue-simple-alert";
 
@@ -19,6 +20,7 @@ import TiposGrado from './components/Catalogos/Selects/TiposGrado.vue'
 import TiposEspecialidad from './components/Catalogos/Selects/TiposEspecialidad.vue'
 
 Vue.use(VueRouter)
+Vue.use(Vue2Filters)
 Vue.use(VueSimpleAlert)
 Vue.use(BootstrapVue)
 

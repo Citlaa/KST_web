@@ -1,7 +1,8 @@
 import TiposDePago from '@/components/Catalogos/TiposDePago';
 import TiposCicloEscolar from '@/components/Catalogos/TiposCicloEscolar';
-import TiposDeRecargos from '@/components/Catalogos/TiposDeRecargos'
-import Grupos from '@/components/Administracion/Grupos'
+import TiposDeRecargos from '@/components/Catalogos/TiposDeRecargos';
+import TiposDePagos from '@/components/Administracion/ControlPagos';
+import Grupos from '@/components/Administracion/Grupos';
 
 const routes = [
     {
@@ -23,6 +24,11 @@ const routes = [
         name: 'Grupos',
         path: '/grupos',
         component: Grupos
+    },
+    {
+        name: 'TiposDePagos',
+        path: '/tiposDePagos',
+        component: TiposDePagos
     },
 ]
 

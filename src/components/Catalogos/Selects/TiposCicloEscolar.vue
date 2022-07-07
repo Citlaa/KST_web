@@ -39,12 +39,13 @@ export default {
     tipoDeCicloEscolarId: Number,
     titulo: { type: Boolean, required: true, default: true },
     disabled: Boolean,
+    actual: { type: Boolean, default: false }
   },
   created() {
     this.getTiposDeCicloEscolar();
 
     if (this.$props.tipoDeCicloEscolarId > 0)
-      this.valor = this.$props.tipoDeCicloEscolarId;
+      this.valor = this.$props.tipoDeCicloEscolarId;    
   },
   computed: {},
   methods: {
@@ -80,6 +81,9 @@ export default {
         ); 
       }
         this.isLoading = false;
+        if (this.$props.actual > 0)
+          this.seleccionarActual();
+
       } catch (err) {
         console.log(err);
       }
@@ -87,6 +91,13 @@ export default {
     seleccionar: function() {
       this.valor > 0 ? this.$emit(this.$props.funcion, this.valor) : this.$emit(this.$props.funcion, null);
     },
+    seleccionarActual: function(){
+      const year = new Date().getFullYear();      
+      var options = this.items.filter(i => i.AñoDeInicio == year || i.AñoDeTermino == year);
+      this.valor = options[options.length - 1].TipoDeCicloEscolarId;     
+      
+      this.seleccionar();
+    }
   },
 };
 </script>

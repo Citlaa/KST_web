@@ -101,7 +101,11 @@
           <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar alumno
         </button>
         <br />
-        <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+        <div
+          class="row col-12"
+          v-if="items.length <= 0"
+          style="display: grid; justify-content: center;"
+        >
           <p>No se encontraron registros</p>
         </div>
         <div id="bootstrap_table" v-else>
@@ -124,14 +128,21 @@
             :filter="filter"
           >
             <template v-slot:cell(Activo)="data">
-              <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.AlumnoId" style="cursor: default;">     
-              <i
-                class="far fa-check-square"
-                style="color: green"
-              ></i>
+              <button
+                class="btn btn-default"
+                v-if="data.item.Activo == 1"
+                :key="data.item.AlumnoId"
+                style="cursor: default;"
+              >
+                <i class="far fa-check-square" style="color: green"></i>
               </button>
-              <button class="btn btn-default" v-else :key="data.item.AlumnoId" style="cursor: default;">
-              <i class="far fa-times-circle" style="color: red"></i>
+              <button
+                class="btn btn-default"
+                v-else
+                :key="data.item.AlumnoId"
+                style="cursor: default;"
+              >
+                <i class="far fa-times-circle" style="color: red"></i>
               </button>
             </template>
             <template v-slot:cell(opciones)="data">
@@ -298,7 +309,9 @@
                               :disabled="!inhabilitar"
                               @blur="limpiarValidez('Genero')"
                             >
-                              <option value="-1" selected>Seleccionar Género</option>
+                              <option value="-1" selected
+                                >Seleccionar Género</option
+                              >
                               <option value="Femenino">Femenino</option>
                               <option value="Masculino">Masculino</option>
                             </select>
@@ -311,13 +324,12 @@
                             </p>
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <label>Número de control*</label>
+                            <label>Número de control</label>
                             <input
                               type="number"
                               class="form-control"
                               v-model="item.NumeroDeControl.val"
                               :disabled="!inhabilitar"
-                              @blur="limpiarValidez('NumeroDeControl')"
                             />
                             <p
                               v-if="!item.NumeroDeControl.isValid"
@@ -330,9 +342,9 @@
                               ></i>
                             </p>
                           </div>
-                          <div class="col-4 form-group padding-model">                            
+                          <div class="col-4 form-group padding-model">
                             <escuela
-                              :label="'Escuela de procedencia'"
+                              :label="'Escuela de procedencia*'"
                               :escuelaId="item.EscuelaId.val"
                               :key="item.EscuelaId.val"
                               :titulo="true"
@@ -354,13 +366,12 @@
                             </p>
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <label>Promedio de procedencia*</label>
+                            <label>Promedio de procedencia</label>
                             <input
                               type="text"
                               class="form-control"
                               v-model="item.Promedio.val"
                               :disabled="!inhabilitar"
-                              @blur="limpiarValidez('Promedio')"
                             />
                             <p v-if="!item.Promedio.isValid" style="color: red">
                               Favor de ingresar promedio
@@ -369,6 +380,24 @@
                                 style="color: red"
                               ></i>
                             </p>
+                          </div>
+                          <div class="col-4 form-group padding-model">
+                            <label>Beca de incripción</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              v-model="item.BecaInscripcion.val"
+                              :disabled="!inhabilitar"
+                            />
+                          </div>
+                          <div class="col-4 form-group padding-model">
+                            <label>Beca de mensualidad</label>
+                            <input
+                              type="number"
+                              class="form-control"
+                              v-model="item.BecaMensualidad.val"
+                              :disabled="!inhabilitar"
+                            />
                           </div>
                           <div class="col-12 form-group padding-model">
                             <label>Domicilio*</label>
@@ -391,118 +420,178 @@
                               ></i>
                             </p>
                           </div>
-                        </div>
-                      </section>
-                      <section id="data_tutor">
-                        <div class="row seccion_modal">
-                          <div class="row col-12" v-if="inhabilitar">
                           <div class="col-12 seccion_titulo_modal">
-                            <h3>Buscar Padre o Tutor</h3>
-                            <p v-if="!item.tutores.isValid" style="color: red">
-                              Favor de seleccionar al menos un padre/tutor
+                            <h3>Grupo</h3>
+                          </div>
+                          <div class="col-4 form-group padding-model">
+                            <TiposCicloEscolar
+                              :key="item.CicloEscolar.key"
+                              :titulo="true"
+                              :label="'Ciclo Escolar*'"
+                              :actual="true"
+                              :tipoDeCicloEscolarId="
+                                item ? item.CicloEscolar.val : -1
+                              "
+                              v-on:seleccionarCicloEscolar="
+                                seleccionarCicloEscolar($event)
+                              "
+                              :funcion="'seleccionarCicloEscolar'"
+                            />
+                            <p
+                              v-if="!item.CicloEscolar.isValid"
+                              style="color: red"
+                            >
+                              Favor de ingresar ciclo escolar
                               <i
                                 class="far fa-times-circle"
                                 style="color: red"
                               ></i>
                             </p>
-                            <p class="mt-1" style="color: red">
-                              Favor de buscar el nombre del padre o tutor, si no
-                              existe agregarlo.
-                            </p>
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <label>Nombre</label>
-                            <input
-                              type="search"
-                              class="form-control"
-                              v-model="filtro_tutores.filtro_nombre"
-                              @keypress.enter="buscarTutor"
+                            <tipos-nivel
+                              :tipoNivelId="item.TiposNivelId"
+                              :key="item.TiposNivelId"
+                              :titulo="true"
+                              :label="'Nivel'"
+                              :funcion="'seleccionarNivelItem'"
+                              @seleccionarNivelItem="
+                                seleccionarNivelItem($event)
+                              "
                             />
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <label>Apellido Paterno</label>
-                            <input
-                              type="search"
-                              class="form-control"
-                              v-model="filtro_tutores.filtro_apellidoPaterno"
-                              @keypress.enter="buscarTutor"
+                            <grupos
+                              :label="'Grupo'"
+                              :tipoDeGrupoId="item.EstrucuraGrupoId.val"
+                              :key="item.EstrucuraGrupoId.key"
+                              :titulo="true"
+                              :disabled="!inhabilitar"
+                              :filtrosEstablecidos="{}"
+                              @seleccionarEstructuraGrupo="
+                                seleccionarEstructuraGrupo($event)
+                              "
+                              :funcion="'seleccionarEstructuraGrupo'"
+                              @blur="limpiarValidez('EstrucuraGrupoId')"
                             />
                           </div>
-                          <div class="col-4 form-group padding-model">
-                            <label>Apellido Materno</label>
-                            <input
-                              type="search"
-                              class="form-control"
-                              v-model="filtro_tutores.filtro_apellidoMaterno"
-                              @keypress.enter="buscarTutor"
-                            />
-                          </div>
-                          <div
-                            class="mt-2"
-                            style="display:flex; justify-content: flex-end;"
-                          >
-                            <button
-                              type="button"
-                              class="button is-primary"
-                              @click="buscarTutor()"
-                            >
-                              Buscar
-                            </button>
-                          </div>
-                          <div class="col-12" >
+                        </div>
+                      </section>
+                      <section id="data_tutor">
+                        <div class="row seccion_modal">
+                          <div class="row col-12" v-if="inhabilitar">
+                            <div class="col-12 seccion_titulo_modal">
+                              <h3>Buscar Padre o Tutor</h3>
+                              <p
+                                v-if="!item.tutores.isValid"
+                                style="color: red"
+                              >
+                                Favor de seleccionar al menos un padre/tutor
+                                <i
+                                  class="far fa-times-circle"
+                                  style="color: red"
+                                ></i>
+                              </p>
+                              <p class="mt-1" style="color: red">
+                                Favor de buscar el nombre del padre o tutor, si
+                                no existe agregarlo.
+                              </p>
+                            </div>
+                            <div class="col-4 form-group padding-model">
+                              <label>Nombre</label>
+                              <input
+                                type="search"
+                                class="form-control"
+                                v-model="filtro_tutores.filtro_nombre"
+                                @keypress.enter="buscarTutor"
+                              />
+                            </div>
+                            <div class="col-4 form-group padding-model">
+                              <label>Apellido Paterno</label>
+                              <input
+                                type="search"
+                                class="form-control"
+                                v-model="filtro_tutores.filtro_apellidoPaterno"
+                                @keypress.enter="buscarTutor"
+                              />
+                            </div>
+                            <div class="col-4 form-group padding-model">
+                              <label>Apellido Materno</label>
+                              <input
+                                type="search"
+                                class="form-control"
+                                v-model="filtro_tutores.filtro_apellidoMaterno"
+                                @keypress.enter="buscarTutor"
+                              />
+                            </div>
                             <div
-                              v-if="tutores.length <= 0"
-                              class="row"
-                              style="display: grid; justify-content: center;"
+                              class="mt-2"
+                              style="display:flex; justify-content: flex-end;"
                             >
-                              <div class="col-12"><p>No hay registros de búsqueda</p></div>
+                              <button
+                                type="button"
+                                class="button is-primary"
+                                @click="buscarTutor()"
+                              >
+                                Buscar
+                              </button>
                             </div>
-                            <div v-else>
-                              <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th>Folio</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido Paterno</th>
-                                    <th>Apellido Materno</th>
-                                    <th>Domicilio</th>
-                                    <th></th>
-                                    <th></th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr
-                                    v-for="tutor in tutores"
-                                    :key="tutor.PadreId"
-                                  >
-                                    <td>{{ tutor.PadreId }}</td>
-                                    <td>{{ tutor.Nombre }}</td>
-                                    <td>{{ tutor.ApellidoPaterno }}</td>
-                                    <td>{{ tutor.ApellidoMaterno }}</td>
-                                    <td>{{ tutor.Domicilio }}</td>
-                                    <td>
-                                      <tipos-parentesco
-                                        :titulo="false"
-                                        :disabled="!inhabilitar"
-                                        @seleccionarParentesco="
-                                          seleccionarParentesco($event)
-                                        "
-                                        :funcion="'seleccionarParentesco'"
-                                      ></tipos-parentesco>
-                                    </td>
-                                    <td>
-                                      <button
-                                        class="btn btn-default"
-                                        @click="agregarTutor(tutor)"
-                                      >
-                                        <i class="fas fa-plus"></i>
-                                      </button>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                            <div class="col-12">
+                              <div
+                                v-if="tutores.length <= 0"
+                                class="row"
+                                style="display: grid; justify-content: center;"
+                              >
+                                <div class="col-12">
+                                  <p>No hay registros de búsqueda</p>
+                                </div>
+                              </div>
+                              <div v-else>
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                      <th>Folio</th>
+                                      <th>Nombre</th>
+                                      <th>Apellido Paterno</th>
+                                      <th>Apellido Materno</th>
+                                      <th>Domicilio</th>
+                                      <th></th>
+                                      <th></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <tr
+                                      v-for="tutor in tutores"
+                                      :key="tutor.PadreId"
+                                    >
+                                      <td>{{ tutor.PadreId }}</td>
+                                      <td>{{ tutor.Nombre }}</td>
+                                      <td>{{ tutor.ApellidoPaterno }}</td>
+                                      <td>{{ tutor.ApellidoMaterno }}</td>
+                                      <td>{{ tutor.Domicilio }}</td>
+                                      <td>
+                                        <tipos-parentesco
+                                          :titulo="false"
+                                          :disabled="!inhabilitar"
+                                          @seleccionarParentesco="
+                                            seleccionarParentesco($event)
+                                          "
+                                          :funcion="'seleccionarParentesco'"
+                                        ></tipos-parentesco>
+                                      </td>
+                                      <td>
+                                        <button
+                                          class="btn btn-default"
+                                          @click="agregarTutor(tutor)"
+                                        >
+                                          <i class="fas fa-plus"></i>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
-                          </div>
                           </div>
                           <div class="col-12">
                             <div
@@ -537,7 +626,7 @@
                                       <td v-if="inhabilitar">
                                         <button
                                           class="btn btn-default"
-                                          @click="eliminarTutor(tutor)"                                          
+                                          @click="eliminarTutor(tutor)"
                                         >
                                           <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -597,11 +686,15 @@ import routeAPI from "@/js/api";
 import Enum from "@/js/enum";
 import escuela from "../../components/Catalogos/Selects/EscuelasProcedencia.vue";
 import tiposParentesco from "../../components/Catalogos/Selects/TiposParentesco.vue";
+import grupos from "../../components/Catalogos/Selects/EstructurasGrupos.vue";
+import TiposCicloEscolar from "../Catalogos/Selects/TiposCicloEscolar.vue";
 
 export default {
   components: {
     escuela,
     tiposParentesco,
+    grupos,
+    TiposCicloEscolar,
   },
   data() {
     return {
@@ -615,6 +708,13 @@ export default {
         filtro_curp: "",
         filtro_numeroDeControl: "",
         filtro_activo: "-1",
+      },
+      filtrosEstructuraGrupo: {
+        filtro_cicloEscolar: "",
+        filtro_nivel: "",
+        filtro_modalidad: "",
+        filtro_periodo: "",
+        filtro_grado: "",
       },
       perPage: 5,
       currentPage: 1,
@@ -698,6 +798,26 @@ export default {
           val: "",
           isValid: true,
         },
+        BecaInscripcion: {
+          val: 0,
+        },
+        BecaMensualidad: {
+          val: 0,
+        },
+        CicloEscolar: {
+          val: 0,
+          isValid: true,
+          key: '' 
+        },
+        TiposNivelId: {
+          val: 0,
+          isValid: true,
+        },
+        EstrucuraGrupoId: {
+          val: 0,
+          isValid: true,
+          key: 'EstructuraGrupoId'
+        },
         tutores: {
           val: [],
           isValid: true,
@@ -707,8 +827,8 @@ export default {
           isValid: true,
         },
         TipoEstadoAlumno: {
-          val: true
-        }
+          val: true,
+        },
       },
       items: [],
       itemIsValid: true,
@@ -723,12 +843,12 @@ export default {
       },
     };
   },
-  watch:{
-    mostrarModal: function(newVal){      
-      if(!newVal){
+  watch: {
+    mostrarModal: function(newVal) {
+      if (!newVal) {
         this.limpiarVariables();
       }
-    }
+    },
   },
   computed: {
     rows() {
@@ -744,6 +864,25 @@ export default {
       this.item.EscuelaId.val = Number(element);
       this.item.EscuelaId.isValid = true;
     },
+    seleccionarEstructuraGrupo(element) {
+      this.item.EstrucuraGrupoId.val = Number(element);
+      this.item.EstrucuraGrupoId.isValid = true;
+    },
+    seleccionarNivelItem(element) {
+      this.item.TiposNivelId.val = Number(element);
+      this.item.TiposNivelId.isValid = true;
+
+      this.filtrosEstructuraGrupo.filtro_nivel = Number(element);
+      this.item.EstrucuraGrupoId.key = 'filtro_nivel' + element;
+      console.log(this.item.EstrucuraGrupoId.key);
+    },
+    seleccionarCicloEscolar(element) {
+      this.item.CicloEscolar.val = Number(element);
+      this.item.CicloEscolar.isValid = true;
+
+      this.filtrosEstructuraGrupo.filtro_cicloEscolar = Number(element);      
+      this.item.EstrucuraGrupoId.key = 'filtro_cicloEscolar' + element;
+    },
     seleccionarParentesco(parentesco) {
       this.item.parentesco.val = parentesco;
     },
@@ -756,7 +895,7 @@ export default {
       const selected = this.item.tutores.val.find(
         (i) => i.tutor.padreId === tutor.PadreId
       );
-console.log(this.item.parentesco.val);
+
       if (selected) {
         this.$alert("El padre/tutor ya esta agregado.");
       } else {
@@ -773,7 +912,7 @@ console.log(this.item.parentesco.val);
       const index = this.item.tutores.val.indexOf(
         this.item.tutores.val.find((i) => i.tutor.padreId === tutor.PadreId)
       );
-      this.item.tutores.val.splice(index, 1);      
+      this.item.tutores.val.splice(index, 1);
     },
     limpiarValidez(input) {
       this.item[input].isValid = true;
@@ -785,7 +924,7 @@ console.log(this.item.parentesco.val);
         const data = {
           alumnoId: alumnoId,
         };
-        
+
         const responseDelete = await axios.post(
           routeAPI + "alumnos/eliminarTutoresDeAlumno",
           data
@@ -836,11 +975,9 @@ console.log(this.item.parentesco.val);
     async guardarAlumno() {
       this.validarAlumno();
 
-      if (this.itemIsValid) {        
-        if(this.item.AlumnoId.val > 0)
-          this.editarAlumno();
-        else
-          this.agregarAlumno();
+      if (this.itemIsValid) {
+        if (this.item.AlumnoId.val > 0) this.editarAlumno();
+        else this.agregarAlumno();
       } else {
         this.$alert("Favor de completar los datos.");
       }
@@ -875,16 +1012,8 @@ console.log(this.item.parentesco.val);
         this.item.Genero.isValid = false;
         this.itemIsValid = false;
       }
-      if (Number(this.item.NumeroDeControl.val) <= 0) {
-        this.item.NumeroDeControl.isValid = false;
-        this.itemIsValid = false;
-      }
       if (Number(this.item.EscuelaId.val) <= 0) {
         this.item.EscuelaId.isValid = false;
-        this.itemIsValid = false;
-      }
-      if (this.item.Promedio.val <= 0) {
-        this.item.Promedio.isValid = false;
         this.itemIsValid = false;
       }
       if (this.item.Domicilio.val === "") {
@@ -896,97 +1025,97 @@ console.log(this.item.parentesco.val);
         this.itemIsValid = false;
       }
     },
-    async agregarAlumno() {      
-        //Guardamos
-        const data = {
-          alumno: {
-            Nombre: this.item.Nombre.val,
-            ApellidoPaterno: this.item.ApellidoPaterno.val,
-            ApellidoMaterno: this.item.ApellidoMaterno.val,
-            Curp: this.item.Curp.val,
-            FechaDeNacimiento: this.item.FechaDeNacimiento.val,
-            Genero: this.item.Genero.val,
-            NumeroDeControl: this.item.NumeroDeControl.val,
-            EscuelaId: this.item.EscuelaId.val,
-            Promedio: this.item.Promedio.val,
-            Domicilio: this.item.Domicilio.val,
-            TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
-            FechaRegistro: new Date()
-              .toISOString()
-              .slice(0, 19)
-              .replace("T", " "),
-            Activo: Enum.EstatusGeneral.Activo,
-          },
-        };
+    async agregarAlumno() {
+      //Guardamos
+      const data = {
+        alumno: {
+          Nombre: this.item.Nombre.val,
+          ApellidoPaterno: this.item.ApellidoPaterno.val,
+          ApellidoMaterno: this.item.ApellidoMaterno.val,
+          Curp: this.item.Curp.val,
+          FechaDeNacimiento: this.item.FechaDeNacimiento.val,
+          Genero: this.item.Genero.val,
+          NumeroDeControl: this.item.NumeroDeControl.val,
+          EscuelaId: this.item.EscuelaId.val,
+          Promedio: this.item.Promedio.val,
+          Domicilio: this.item.Domicilio.val,
+          TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+          FechaRegistro: new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " "),
+          Activo: Enum.EstatusGeneral.Activo,
+        },
+      };
 
-        try {
-          this.isLoading = true;
+      try {
+        this.isLoading = true;
 
-          const response = await axios.post(
-            routeAPI + "alumnos/agregarAlumno",
-            data
-          );
+        const response = await axios.post(
+          routeAPI + "alumnos/agregarAlumno",
+          data
+        );
 
-          this.isLoading = false;          
+        this.isLoading = false;
 
-          if (!response.data.hayError) {
-            // this.$alert("El alumno se guardó con éxito.");
-            this.mostrarModal = false;
-            console.log("El alumno se guardó con éxito.");
-            this.guardarTutores(response.data.response.insertId);            
-          } else {
-            console.log(response);
-            this.$alert("No se pudo guardar, favor de volverlo a intentar.");
-          }
-        } catch (err) {
-          console.log(err);
-        }              
+        if (!response.data.hayError) {
+          // this.$alert("El alumno se guardó con éxito.");
+          this.mostrarModal = false;
+          console.log("El alumno se guardó con éxito.");
+          this.guardarTutores(response.data.response.insertId);
+        } else {
+          console.log(response);
+          this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
-    async editarAlumno() {      
-        //Guardamos        
-        const data = {
-          alumno: {
-            AlumnoId: this.item.AlumnoId.val,
-            Nombre: this.item.Nombre.val,
-            ApellidoPaterno: this.item.ApellidoPaterno.val,
-            ApellidoMaterno: this.item.ApellidoMaterno.val,
-            Curp: this.item.Curp.val,
-            FechaDeNacimiento: this.item.FechaDeNacimiento.val,
-            Genero: this.item.Genero.val,
-            NumeroDeControl: this.item.NumeroDeControl.val,
-            EscuelaId: this.item.EscuelaId.val,
-            Promedio: this.item.Promedio.val,
-            Domicilio: this.item.Domicilio.val,
-            TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
-            FechaRegistro: new Date()
-              .toISOString()
-              .slice(0, 19)
-              .replace("T", " "),
-            Activo: Enum.EstatusGeneral.Activo,
-          },
-        };
+    async editarAlumno() {
+      //Guardamos
+      const data = {
+        alumno: {
+          AlumnoId: this.item.AlumnoId.val,
+          Nombre: this.item.Nombre.val,
+          ApellidoPaterno: this.item.ApellidoPaterno.val,
+          ApellidoMaterno: this.item.ApellidoMaterno.val,
+          Curp: this.item.Curp.val,
+          FechaDeNacimiento: this.item.FechaDeNacimiento.val,
+          Genero: this.item.Genero.val,
+          NumeroDeControl: this.item.NumeroDeControl.val,
+          EscuelaId: this.item.EscuelaId.val,
+          Promedio: this.item.Promedio.val,
+          Domicilio: this.item.Domicilio.val,
+          TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+          FechaRegistro: new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " "),
+          Activo: Enum.EstatusGeneral.Activo,
+        },
+      };
 
-        try {
-          this.isLoading = true;
+      try {
+        this.isLoading = true;
 
-          const response = await axios.post(
-            routeAPI + "alumnos/editarAlumno",
-            data
-          );
+        const response = await axios.post(
+          routeAPI + "alumnos/editarAlumno",
+          data
+        );
 
-          this.isLoading = false;          
+        this.isLoading = false;
 
-          if (!response.data.hayError) {            
-            this.mostrarModal = false;
-            console.log("El alumno se editó con éxito.");                        
-            this.guardarTutores( this.item.AlumnoId.val);
-          } else {
-            console.log(response);
-            this.$alert("No se pudo guardar, favor de volverlo a intentar.");
-          }
-        } catch (err) {
-          console.log(err);
-        }              
+        if (!response.data.hayError) {
+          this.mostrarModal = false;
+          console.log("El alumno se editó con éxito.");
+          this.guardarTutores(this.item.AlumnoId.val);
+        } else {
+          console.log(response);
+          this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
     },
     async buscarTutor() {
       try {
@@ -1008,44 +1137,47 @@ console.log(this.item.parentesco.val);
           filtros
         );
 
-        if (!response.data.hayError){
-          if (response.data.response.length > 0){
-          response.data.response.forEach((element) => {
-          this.items.push({
-              PadreId: element["012PadreId"],
-              Nombre: element["012Nombre"],
-              ApellidoPaterno: element["012ApellidoPaterno"],
-              ApellidoMaterno: element["012ApellidoMaterno"],
-              Activo: element["012Activo"],
-              Domicilio: element["012Domicilio"],
-          });
-        });
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              this.items.push({
+                PadreId: element["012PadreId"],
+                Nombre: element["012Nombre"],
+                ApellidoPaterno: element["012ApellidoPaterno"],
+                ApellidoMaterno: element["012ApellidoMaterno"],
+                Activo: element["012Activo"],
+                Domicilio: element["012Domicilio"],
+              });
+            });
+          }
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
         }
-      }else{
-        console.log(response);
-        this.$alert(
-          "No se pudo obtenera información, favor de volverlo a intentar."
-        ); 
-      }
         this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
     },
-    abrirModal: function(tipo, inhabilitar, item) {      
+    abrirModal: function(tipo, inhabilitar, item) {
       this.titutoModal = tipo;
       this.inhabilitar = inhabilitar;
-      
-      if (item && item.AlumnoId && item.AlumnoId.val && item.AlumnoId.val > 0) this.cargarItem(item);
+
+      if (item && item.AlumnoId && item.AlumnoId.val && item.AlumnoId.val > 0)
+        this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
     },
-    cargarItem: function(item) {      
+    cargarItem: function(item) {
       this.item.AlumnoId.val = item.AlumnoId.val;
       this.item.Nombre.val = item.Nombre.val;
       this.item.ApellidoPaterno.val = item.ApellidoPaterno.val;
       this.item.ApellidoMaterno.val = item.ApellidoMaterno.val;
       this.item.Curp.val = item.Curp.val;
-      this.item.FechaDeNacimiento.val = new Date(item.FechaNacimiento.val).toISOString().slice(0, 10);      
+      this.item.FechaDeNacimiento.val = new Date(item.FechaNacimiento.val)
+        .toISOString()
+        .slice(0, 10);
       this.item.Genero.val = item.Genero.val;
       this.item.NumeroDeControl.val = item.NumeroDeControl.val;
       this.item.EscuelaId.val = item.EscuelaDeProcedenciaId.val;
@@ -1053,17 +1185,16 @@ console.log(this.item.parentesco.val);
       this.item.Domicilio.val = item.Domicilio.val;
       this.item.TipoEstadoAlumno.val = item.Activo.val;
 
-      //cargar Tutores      
+      //cargar Tutores
       this.getTutores();
-
     },
-    async getTutores(){
+    async getTutores() {
       try {
-        this.isLoading = true;        
+        this.isLoading = true;
         this.item.tutores.val = [];
         const data = {
           alumnoId: this.item.AlumnoId.val,
-        };        
+        };
 
         const response = await axios.post(
           routeAPI + "alumnos/tutoresDeAlumno",
@@ -1071,24 +1202,24 @@ console.log(this.item.parentesco.val);
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {                  
-            response.data.response.forEach((element) => {  
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
               var tutor = {
                 PadreId: element["012PadreId"],
                 Nombre: element["012Nombre"],
                 ApellidoPaterno: element["012ApellidoPaterno"],
-                ApellidoMaterno: element["012ApellidoMaterno"],  
-              }                    
+                ApellidoMaterno: element["012ApellidoMaterno"],
+              };
               var parentesco = {
                 parentesoId: element["016TipoParentescoId"],
-                nombre: element["016Nombre"]
-              }    
+                nombre: element["016Nombre"],
+              };
               this.item.tutores.val.push({
-                tutor: tutor,                       
-                parentesco:parentesco,                                                          
+                tutor: tutor,
+                parentesco: parentesco,
               });
             });
-          }          
+          }
         } else
           this.$alert(
             "No se pudo obtenera información, favor de volverlo a intentar."
@@ -1102,7 +1233,7 @@ console.log(this.item.parentesco.val);
     async cancelar(item) {
       try {
         this.isLoading = true;
-        
+
         const data = {
           alumno: {
             id: item.AlumnoId.val,
@@ -1117,7 +1248,7 @@ console.log(this.item.parentesco.val);
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El alumno se canceló correctamente.");
-          this.getAlumnos();          
+          this.getAlumnos();
         } else {
           console.log(response);
           this.$alert("Sucedio un error, favor de volver a intentarlo.");
@@ -1160,8 +1291,8 @@ console.log(this.item.parentesco.val);
               AlumnoId: {
                 val: element["011AlumnoId"],
               },
-              Nombre:{
-                val: element["011Nombre"]
+              Nombre: {
+                val: element["011Nombre"],
               },
               NombreCompleto: {
                 val:
@@ -1249,28 +1380,27 @@ console.log(this.item.parentesco.val);
     },
     limpiarFiltros() {
       this.filtros.filtro_nombre = "";
-      this.filtros.filtro_apellidoPaterno = "";      
-      this.filtros.filtro_apellidoMaterno = "";      
-      this.filtros.filtro_curp = "";            
+      this.filtros.filtro_apellidoPaterno = "";
+      this.filtros.filtro_apellidoMaterno = "";
+      this.filtros.filtro_curp = "";
       this.filtros.filtro_activo = "-1";
     },
-    limpiarVariables(){      
-      this.item.AlumnoId.val = null;        
-      this.item.Nombre.val = "",
-      this.item.ApellidoPaterno. val = ""
-      this.item.ApellidoMaterno.val = ""
+    limpiarVariables() {
+      this.item.AlumnoId.val = null;
+      (this.item.Nombre.val = ""), (this.item.ApellidoPaterno.val = "");
+      this.item.ApellidoMaterno.val = "";
       this.item.Curp.val = "";
-      this.item.FechaDeNacimiento.val = new Date().toISOString().slice(0, 10);      
+      this.item.FechaDeNacimiento.val = new Date().toISOString().slice(0, 10);
       this.item.Genero.val = "-1";
       this.item.NumeroDeControl.val = 0;
       this.item.EscuelaId.val = 0;
       this.item.Promedio.val = 0;
-      this.item.Domicilio.val= "";
+      this.item.Domicilio.val = "";
       this.item.tutores.val = [];
       this.item.parentesco.val = 0;
       this.item.TipoEstadoAlumno.val = true;
-    }
-  },  
+    },
+  },
 };
 </script>
 
