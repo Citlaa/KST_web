@@ -390,7 +390,7 @@ export default {
       this.item = item;
 
       if (item.TipoDePagoId > 0) {
-        this.item.Monto = this.item.Monto.split("$")[1];        
+        // this.item.Monto = this.item.Monto.split("$")[1];        
       }else{
         this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
       }

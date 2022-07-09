@@ -450,8 +450,8 @@
                           </div>
                           <div class="col-4 form-group padding-model">
                             <tipos-nivel
-                              :tipoNivelId="item.TiposNivelId"
-                              :key="item.TiposNivelId"
+                              :tipoNivelId="item.TiposNivelId.val"
+                              :key="item.TiposNivelId.key"
                               :titulo="true"
                               :label="'Nivel'"
                               :funcion="'seleccionarNivelItem'"
@@ -461,19 +461,18 @@
                             />
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <grupos
-                              :label="'Grupo'"
-                              :tipoDeGrupoId="item.EstrucuraGrupoId.val"
-                              :key="item.EstrucuraGrupoId.key"
-                              :titulo="true"
-                              :disabled="!inhabilitar"
-                              :filtrosEstablecidos="{}"
-                              @seleccionarEstructuraGrupo="
-                                seleccionarEstructuraGrupo($event)
-                              "
-                              :funcion="'seleccionarEstructuraGrupo'"
-                              @blur="limpiarValidez('EstrucuraGrupoId')"
-                            />
+                            <grupos :label="'Grupo'"
+                            :tipoDeGrupoId="item.EstrucuraGrupoId.val"
+                            :key="item.EstrucuraGrupoId.key" :titulo="true"
+                            :disabled="!inhabilitar"
+                            :filtrosEstablecidos="filtrosEstructuraGrupo"
+                            :modalidades = modalidades
+                            :tiposDeGrado= tiposDeGrado
+                            :tiposDeGrupos = tiposDeGrupos
+                            @seleccionarEstructuraGrupo="
+                            seleccionarEstructuraGrupo($event) "
+                            :funcion="'seleccionarEstructuraGrupo'"
+                            @blur="limpiarValidez('EstrucuraGrupoId')" />
                           </div>
                         </div>
                       </section>
@@ -701,6 +700,9 @@ export default {
       isLoading: false,
       mostrarFiltros: true,
       mostrarModal: false,
+      modalidades: [],
+      tiposDeGrado: [],
+      tiposDeGrupos:[],
       filtros: {
         filtro_nombre: "",
         filtro_apellidoPaterno: "",
@@ -807,16 +809,17 @@ export default {
         CicloEscolar: {
           val: 0,
           isValid: true,
-          key: '' 
+          key: "",
         },
         TiposNivelId: {
           val: 0,
           isValid: true,
+          key: "",
         },
         EstrucuraGrupoId: {
           val: 0,
           isValid: true,
-          key: 'EstructuraGrupoId'
+          key: "EstructuraGrupoId",
         },
         tutores: {
           val: [],
@@ -858,8 +861,89 @@ export default {
   created() {
     this.getEstadosAlumno();
     this.getAlumnos();
+    this.getTiposDeGrado();
+    this.getTiposDeModalidad();
+    this.getTiposDeGrupo();
   },
   methods: {
+    async getTiposDeGrupo() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposDeGrupo",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.tiposDeGrupos.push({
+            TipoGrupoId: element["006TipoDeGrupoId"],
+            Nombre: element["006Nombre"],
+            Activo: element["006Activo"],
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposDeGrado() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposGrado",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.tiposDeGrado.push({
+            TipoGradoId: element["008TipoGradoId"],
+            Nombre: element["008Nombre"],
+            Activo: element["008Activo"],
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getTiposDeModalidad() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/tiposDeModalidad",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.modalidades.push({
+            TipoDeModalidadId: element["004TipoModalidadId"],
+            Nombre: element["004Nombre"],
+            Activo: element["004Activo"],
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     seleccionarEscuela(element) {
       this.item.EscuelaId.val = Number(element);
       this.item.EscuelaId.isValid = true;
@@ -873,15 +957,14 @@ export default {
       this.item.TiposNivelId.isValid = true;
 
       this.filtrosEstructuraGrupo.filtro_nivel = Number(element);
-      this.item.EstrucuraGrupoId.key = 'filtro_nivel' + element;
-      console.log(this.item.EstrucuraGrupoId.key);
+      this.item.EstrucuraGrupoId.key = "filtro_nivel" + element;
     },
     seleccionarCicloEscolar(element) {
       this.item.CicloEscolar.val = Number(element);
       this.item.CicloEscolar.isValid = true;
 
-      this.filtrosEstructuraGrupo.filtro_cicloEscolar = Number(element);      
-      this.item.EstrucuraGrupoId.key = 'filtro_cicloEscolar' + element;
+      this.filtrosEstructuraGrupo.filtro_cicloEscolar = Number(element);
+      this.item.EstrucuraGrupoId.key = "filtro_cicloEscolar" + element;
     },
     seleccionarParentesco(parentesco) {
       this.item.parentesco.val = parentesco;
@@ -1020,10 +1103,10 @@ export default {
         this.item.Domicilio.isValid = false;
         this.itemIsValid = false;
       }
-      if (this.item.tutores.val.length <= 0) {
-        this.item.tutores.isValid = false;
-        this.itemIsValid = false;
-      }
+      // if (this.item.tutores.val.length <= 0) {
+      //   this.item.tutores.isValid = false;
+      //   this.itemIsValid = false;
+      // }
     },
     async agregarAlumno() {
       //Guardamos
@@ -1040,6 +1123,9 @@ export default {
           Promedio: this.item.Promedio.val,
           Domicilio: this.item.Domicilio.val,
           TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+          EstructuraGrupo: this.item.EstrucuraGrupoId.val,
+          BecaInscripcion: this.item.BecaInscripcion.val,
+          BecaMensualidad: this.item.BecaMensualidad.val,
           FechaRegistro: new Date()
             .toISOString()
             .slice(0, 19)
@@ -1062,7 +1148,11 @@ export default {
           // this.$alert("El alumno se guardó con éxito.");
           this.mostrarModal = false;
           console.log("El alumno se guardó con éxito.");
-          this.guardarTutores(response.data.response.insertId);
+          if(this.item.tutores.length > 0)
+            this.guardarTutores(response.data.response.insertId);
+          else
+            this.getAlumnos();
+
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
