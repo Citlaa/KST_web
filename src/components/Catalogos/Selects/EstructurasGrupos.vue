@@ -13,7 +13,7 @@
           v-for="(element, index) in items"
           :key="index"
           :value="element['EstructuraDeGrupoId']"
-          >{{element["TipoGrado"]["Nombre"]}} {{element["TipoDeGrupo"]["Nombre"]}} - {{element["TipoModalidad"]["Nombre"]}}</option
+          >{{element["TipoGrado"]}} {{element["TipoDeGrupo"]}} - {{element["TipoModalidad"]}}</option
         >
       </select>
     </div>
@@ -36,10 +36,7 @@ export default {
     funcion: String,
     tipoDeGrupoId: Number,
     titulo: { type: Boolean, required: true, default: true },
-    filtrosEstablecidos: {},
-    modalidades: [],
-    tiposDeGrupos: [],
-    tiposDeGrado: [],
+    filtrosEstablecidos: {},    
     disabled: Boolean,
   },
   created() {
@@ -52,6 +49,7 @@ export default {
     async getGrupos() {
       try {
         this.isLoading = true;
+        this.items = [];
         const filtros = {
           filtro: {
             activo: 1,
@@ -74,53 +72,22 @@ export default {
           filtros.filtro.grado = Number(this.filtrosEstablecidos.filtro_grado);
 
         const response = await axios.post(
-          routeAPI + "administracion/estructurasDeGrupo",
+          routeAPI + "administracion/estructurasDeGrupoNombres",
           filtros
         );
-        console.log("this.modalidades");
-        console.log(this.modalidades);
+        
         if (!response.data.hayError) {
           if (response.data.response.length > 0) {
             response.data.response.forEach((element) => {
               this.items.push({
                 EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],
-                // TipoDeCicloEscolar: this.ciclosEscolares.find(
-                //   (ciclo) =>
-                //     ciclo.TipoDeCicloEscolarId ===
-                //     Number(element["002TipoDeCicloEscolarId"])
-                // ),
-                TipoModalidad: this.modalidades.find(
-                  (modalidad) =>
-                    modalidad.TipoDeModalidadId ===
-                    Number(element["004TipoModalidadId"])
-                ),
-                // TipoPeriodo: this.periodos.find(
-                //   (per) =>
-                //     per.TipoPeriodoId === Number(element["005TipoPeriodoId"])
-                // ),
-                TipoDeGrupo: this.tiposDeGrupos.find(
-                  (grupo) =>
-                    grupo.TipoGrupoId === Number(element["006TipoDeGrupoId"])
-                ),
-                // TiposNivel: this.tiposDeNivel.find(
-                //   (nivel) =>
-                //     nivel.TipoNivelId === Number(element["007TiposNivelId"])
-                // ),
-                TipoGrado: this.tiposDeGrado.find(
-                  (grado) =>
-                    grado.TipoGradoId === Number(element["008TipoGradoId"])
-                ),
-                // Especialidad: this.especialidades.find(
-                //   (especialidad) =>
-                //     especialidad.EspecialidadId ===
-                //     Number(element["009TipoEspecialidadId"])
-                // ),
+                TipoModalidad: element["004NombreModalidad"],
+                TipoDeGrupo: element["006NombreGrupo"],
+                TipoGrado: element["008NombreGrado"],
                 Activo: element["010Activo"],
               });
             });
           }
-          console.log("this.items");
-          console.log(this.items);
         } else
           this.$alert(
             "No se pudo obtenera información, favor de volverlo a intentar."

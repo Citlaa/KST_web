@@ -647,7 +647,13 @@ export default {
           isValid: true,
         },
         Fecha: {
-          val: moment().format("yyyy-MM-DD"),
+          val: moment(
+            moment()
+              .add(1, "M")
+              .month() +
+              "-5-" +
+              moment().year()
+          ).format("yyyy-MM-DD"),
           isValid: true,
         },
         Autoriza: {
@@ -672,8 +678,7 @@ export default {
       this.newCantidadTipoPago = newValue;
     },
   },
-  created(){
-  },
+  created() {},
   methods: {
     actualizarCantidadTotal() {
       this.pago_item.Cantidad.val -= this.pago_item.TipoDePago.val.Monto;
@@ -683,7 +688,6 @@ export default {
     async guardarPago() {
       this.actualizarCantidadTotal();
       this.validarPago();
-      console.log(this.pago_item);
       if (this.itemIsValid) {
         this.pago_item.Recargos = this.itemsRecargo;
         //Guardar pago
@@ -743,20 +747,23 @@ export default {
         if (!response.data.hayError) {
           this.mostrarModal = false;
           console.log("El pago se guardó con éxito.");
-          console.log(this.pago_item.Recargos);
 
-          this.pago_item.Recargos.forEach(async (recargo) => {
-            const data = {
-              recargo: {
-                PagoId: response.data.response.insertId,
-                Monto: Number(recargo.Monto.split("$")[1]),
-                TipoDeRecargoId: recargo.TipoRecargo.Id,
-                DiasRetraso: recargo.DiasRetraso,
-                TotalAPagar: recargo.TotalAPagar,
-              },
-            };
-            this.agregarRecargoBD(data);
-          });
+          if (this.pago_item.Recargos.length > 0) {
+            this.pago_item.Recargos.forEach(async (recargo) => {
+              const data = {
+                recargo: {
+                  PagoId: response.data.response.insertId,
+                  Monto: Number(recargo.Monto.split("$")[1]),
+                  TipoDeRecargoId: recargo.TipoRecargo.Id,
+                  DiasRetraso: recargo.DiasRetraso,
+                  TotalAPagar: recargo.TotalAPagar,
+                },
+              };
+              this.agregarRecargoBD(data);
+            });
+          }else{
+            this.$alert("El pago se guardó con éxito.");
+          }
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -776,6 +783,7 @@ export default {
 
         if (!responseDelete.data.hayError) {
           console.log("El recargo se guardó con éxito.");
+          this.$alert("El pago y recargo(s) se guardaron con éxito.");
         } else {
           console.log(responseDelete);
           this.$alert(
@@ -921,21 +929,21 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError) {          
+        if (!response.data.hayError) {
           this.isLoading = false;
           let alumno = response.data.response[0];
-console.log(alumno);
-          this.alumno_item.Nombre = alumno['011Nombre'];
-          this.alumno_item.ApellidoPaterno = alumno['012ApellidoPaterno'];
-          this.alumno_item.ApellidoMaterno = alumno['012ApellidoMaterno'];
-          this.alumno_item.Curp = alumno['011CURP'];
-          this.alumno_item.NumeroDeControl = alumno['011NumeroDeControl'];
-// response.data.response.forEach((element) => {
+          console.log(alumno);
+          this.alumno_item.Nombre = alumno["011Nombre"];
+          this.alumno_item.ApellidoPaterno = alumno["011ApellidoPaterno"];
+          this.alumno_item.ApellidoMaterno = alumno["011ApellidoMaterno"];
+          this.alumno_item.Curp = alumno["011CURP"];
+          this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
+          this.alumno_item.Grupo = alumno["010EstructuraDeGrupoId"];
+          // response.data.response.forEach((element) => {
 
           // });
           // this.alumno_item
         }
-
       } catch (err) {
         console.log(err);
       }

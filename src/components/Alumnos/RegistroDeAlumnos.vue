@@ -465,10 +465,7 @@
                             :tipoDeGrupoId="item.EstrucuraGrupoId.val"
                             :key="item.EstrucuraGrupoId.key" :titulo="true"
                             :disabled="!inhabilitar"
-                            :filtrosEstablecidos="filtrosEstructuraGrupo"
-                            :modalidades = modalidades
-                            :tiposDeGrado= tiposDeGrado
-                            :tiposDeGrupos = tiposDeGrupos
+                            :filtrosEstablecidos="filtrosEstructuraGrupo"                            
                             @seleccionarEstructuraGrupo="
                             seleccionarEstructuraGrupo($event) "
                             :funcion="'seleccionarEstructuraGrupo'"
@@ -699,10 +696,7 @@ export default {
     return {
       isLoading: false,
       mostrarFiltros: true,
-      mostrarModal: false,
-      modalidades: [],
-      tiposDeGrado: [],
-      tiposDeGrupos:[],
+      mostrarModal: false,      
       filtros: {
         filtro_nombre: "",
         filtro_apellidoPaterno: "",
@@ -860,90 +854,9 @@ export default {
   },
   created() {
     this.getEstadosAlumno();
-    this.getAlumnos();
-    this.getTiposDeGrado();
-    this.getTiposDeModalidad();
-    this.getTiposDeGrupo();
+    this.getAlumnos();   
   },
-  methods: {
-    async getTiposDeGrupo() {
-      try {
-        this.isLoading = true;
-        const filtros = {
-          filtro: {
-            activo: 1,
-          },
-        };
-
-        const response = await axios.post(
-          routeAPI + "catalogo/tiposDeGrupo",
-          filtros
-        );
-
-        response.data.response.forEach((element) => {
-          this.tiposDeGrupos.push({
-            TipoGrupoId: element["006TipoDeGrupoId"],
-            Nombre: element["006Nombre"],
-            Activo: element["006Activo"],
-          });
-        });
-        this.isLoading = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getTiposDeGrado() {
-      try {
-        this.isLoading = true;
-        const filtros = {
-          filtro: {
-            activo: 1,
-          },
-        };
-
-        const response = await axios.post(
-          routeAPI + "catalogo/tiposGrado",
-          filtros
-        );
-
-        response.data.response.forEach((element) => {
-          this.tiposDeGrado.push({
-            TipoGradoId: element["008TipoGradoId"],
-            Nombre: element["008Nombre"],
-            Activo: element["008Activo"],
-          });
-        });
-        this.isLoading = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    async getTiposDeModalidad() {
-      try {
-        this.isLoading = true;
-        const filtros = {
-          filtro: {
-            activo: 1,
-          },
-        };
-
-        const response = await axios.post(
-          routeAPI + "catalogo/tiposDeModalidad",
-          filtros
-        );
-
-        response.data.response.forEach((element) => {
-          this.modalidades.push({
-            TipoDeModalidadId: element["004TipoModalidadId"],
-            Nombre: element["004Nombre"],
-            Activo: element["004Activo"],
-          });
-        });
-        this.isLoading = false;
-      } catch (err) {
-        console.log(err);
-      }
-    },
+  methods: {            
     seleccionarEscuela(element) {
       this.item.EscuelaId.val = Number(element);
       this.item.EscuelaId.isValid = true;
