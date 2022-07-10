@@ -114,7 +114,8 @@
               
             ></i>
             </button>
-            <button class="btn btn-default" v-else :key="data.item.TipoDePagoId" style="cursor: default;">
+            <button class="btn btn-default" 
+            :key="data.item.TipoDePagoId" style="cursor: default;">
             <i             
               class="far fa-times-circle"
               style="color: red"              
