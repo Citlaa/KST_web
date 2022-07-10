@@ -43,7 +43,8 @@
           <label>Cantidad</label>
           <input
             class="form-control"
-            type="text"
+            type="number"
+            min="0"
             v-model="filtro_monto"
             placeholder="Indicar Cantidad"
             @keypress.enter="getTiposDePago"

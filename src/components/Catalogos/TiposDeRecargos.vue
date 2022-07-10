@@ -44,6 +44,7 @@
             <input
               class="form-control"
               type="number"
+              min="0"
               v-model="filtro_monto"
               placeholder="Indicar Cantidad"
             />
