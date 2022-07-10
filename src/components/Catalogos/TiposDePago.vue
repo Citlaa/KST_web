@@ -69,11 +69,11 @@
       </div>
       <div v-if="mostrarFiltros" class="filtro_footer">
         <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
-          Limpiar
+          Mostrar Todo
         </button>
         <button class="button is-primary btn-sm" @click="getTiposDePago()">
           Filtrar
-        </button>
+        </button>  
       </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">

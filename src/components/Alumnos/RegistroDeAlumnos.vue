@@ -84,10 +84,10 @@
             class="button is-default btn-sm mr-1"
             @click="limpiarFiltros()"
           >
-            Limpiar
+            Mostrar Todo
           </button>
           <button class="button is-primary btn-sm" @click="getAlumnos()">
-            Buscar
+            Filtrar
           </button>
         </div>
       </div>
@@ -1384,6 +1384,7 @@ export default {
       this.filtros.filtro_apellidoMaterno = "";
       this.filtros.filtro_curp = "";
       this.filtros.filtro_activo = "-1";
+      this.getAlumnos();
     },
     limpiarVariables() {
       this.item.AlumnoId.val = null;
