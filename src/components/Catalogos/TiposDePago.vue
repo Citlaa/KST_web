@@ -30,22 +30,22 @@
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-3">
-          <label>Nombre</label>
+          <label>Concepto</label>
           <input
             class="form-control"
             type="text"
             v-model="filtro_nombre"
-            placeholder="Indicar Nombre"
+            placeholder="Indicar Concepto"
             @keypress.enter="getTiposDePago"
           />
         </div>
         <div class="col-3">
-          <label>Monto</label>
+          <label>Cantidad</label>
           <input
             class="form-control"
             type="text"
             v-model="filtro_monto"
-            placeholder="Indicar Monto"
+            placeholder="Indicar Cantidad"
             @keypress.enter="getTiposDePago"
           />
         </div>
@@ -111,11 +111,9 @@
             <i              
               class="far fa-check-square"
               style="color: green"
-              
             ></i>
             </button>
-            <button class="btn btn-default" 
-            :key="data.item.TipoDePagoId" style="cursor: default;">
+            <button class="btn btn-default" v-else :key="data.item.TipoDePagoId" style="cursor: default;">
             <i             
               class="far fa-times-circle"
               style="color: red"              
@@ -169,7 +167,7 @@
                 <div class="modal-body">
                   <div class="row">
                     <div class="col-4 form-group padding-model">
-                      <label>Nombre</label>
+                      <label>Concepto</label>
                       <input
                         type="text"
                         class="form-control"
@@ -186,7 +184,7 @@
                       ></tipos-ciclo-escolar>
                     </div>
                     <div class="col-2 form-group padding-model">
-                      <label>Monto</label>
+                      <label>Cantidad</label>
                       <input
                         type="number"
                         class="form-control"
@@ -323,7 +321,7 @@ export default {
       }else{
         console.log(response);
         this.$alert(
-          "No se pudo obtenera información, favor de volverlo a intentar."
+          "No se pudo obtener información, favor de volverlo a intentar."
         ); 
       }
               this.isLoading = false;
@@ -372,7 +370,7 @@ export default {
           }
         } else
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
 
         this.isLoading = false;

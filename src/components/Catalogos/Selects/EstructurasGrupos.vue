@@ -90,7 +90,7 @@ export default {
           }
         } else
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
 
         this.isLoading = false;

@@ -31,21 +31,21 @@
         </div>
         <div v-if="mostrarFiltros" class="col-12 row">
           <div class="col-3">
-            <label>Nombre</label>
+            <label>Concepto</label>
             <input
               class="form-control"
               type="text"
               v-model="filtro_nombre"
-              placeholder="Indicar Nombre"
+              placeholder="Indicar Concepto"
             />
           </div>
           <div class="col-3">
-            <label>Monto</label>
+            <label>Cantidad</label>
             <input
               class="form-control"
               type="number"
               v-model="filtro_monto"
-              placeholder="Indicar Monto"
+              placeholder="Indicar Cantidad"
             />
           </div>
           <div class="col-3">
@@ -331,7 +331,7 @@ export default {
       }else{
         console.log(response);
         this.$alert(
-          "No se pudo obtenera información, favor de volverlo a intentar."
+          "No se pudo obtener información, favor de volverlo a intentar."
         ); 
       }
       this.isLoading = false;
@@ -379,7 +379,7 @@ export default {
           }
         } else
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
 
         this.isLoading = false;

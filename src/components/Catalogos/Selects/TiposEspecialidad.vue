@@ -74,7 +74,7 @@ export default {
         }else{
         console.log(response);
         this.$alert(
-          "No se pudo obtenera información, favor de volverlo a intentar."
+          "No se pudo obtener información, favor de volverlo a intentar."
         ); 
       }
       this.isLoading = false;
