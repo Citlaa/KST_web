@@ -263,24 +263,27 @@ export default {
           value: "1",
         },
         {
-          key: "Nombre",
+          key: "Concepto",
           sortable: true,
         },
         {
-          key: "Monto",
+          key: "Cantidad",
           sortable: true,
         },
         {
           key: "TipoDeCicloEscolar.Nombre",
           label: "Ciclo Escolar",
+          sortable: true,
         },
         {
           label: "Activo",
           key: "Activo",
+          sortable: true,
         },
         {
           label: "Opciones",
           key: "opciones",
+          
         },
       ],
       filter: "",

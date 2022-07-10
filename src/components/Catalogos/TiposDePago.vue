@@ -252,20 +252,22 @@ export default {
           sortable: true,
         },
         {
-          key: "Nombre",
+          key: "Concepto",
           sortable: true,
         },
         {
-          key: "Monto",
+          key: "Cantidad",
           sortable: true,
         },
         {
           key: "TipoDeCicloEscolar.Nombre",
           label: "Ciclo Escolar",
+          sortable: true,
         },
         {
           label: "Activo",
           key: "Activo",
+          sortable: true,
         },
         {
           label: "Opciones",
@@ -452,7 +454,6 @@ export default {
             Activo: Number(this.item.Activo),
           },
         };
-
         const response = await axios.post(
           routeAPI + "administracion/editarTiposDePago",
           data
