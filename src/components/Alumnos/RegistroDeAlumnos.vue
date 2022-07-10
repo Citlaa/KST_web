@@ -138,7 +138,6 @@
               </button>
               <button
                 class="btn btn-default"
-                v-else
                 :key="data.item.AlumnoId"
                 style="cursor: default;"
               >
