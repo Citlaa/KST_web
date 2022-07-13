@@ -34,14 +34,18 @@
           <input
             class="form-control"
             type="number"
+            min="0"
             v-model="filtro_añoDeInicio"
+            
           />
         </div>
+            
         <div class="col-4">
           <label>Año de termino</label>
           <input
             class="form-control"
             type="number"
+            min="0"
             v-model="filtro_añoDeTermino"
           />
         </div>
@@ -157,6 +161,7 @@
                       <label>Año de inicio</label>
                       <input
                         type="number"
+                        min="0"
                         class="form-control"
                         v-model="item.AñoDeInicio"
                       />
@@ -165,8 +170,10 @@
                       <label>Año de termino</label>
                       <input
                         type="number"
+                        min = '0'
                         class="form-control"
                         v-model="item.AñoDeTermino"
+                        
                       />
                     </div>
                     <div class="col-2 padding-model">
@@ -183,6 +190,7 @@
                     type="button"
                     class="button is-primary"
                     @click="guardarTipoDeCicloEscolar()"
+                    
                   >
                     Guardar
                   </button>
@@ -326,8 +334,9 @@ export default {
           tipoDeCicloEscolar: {
             TipoDeCicloEscolarId: null,
             Inicio: Number(this.item.AñoDeInicio),
-            Termino: Number(this.item.AñoDeTermino),
+            Termino: Number(this.item.AñoDeTermino), 
             Activo: Number(this.item.Activo),
+            
           },
         };
 
