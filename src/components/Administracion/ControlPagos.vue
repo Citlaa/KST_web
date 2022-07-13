@@ -93,7 +93,7 @@
       </div>
     </section>
     <br />
-    <section id="data_alumnos">
+    <section id="data_alumnos" v-if="mostrarAlumno">
       <div class="row col-12 seccion_data">
         <div class="col-12 seccion_titulo_first">
           <h3>Datos del alumno</h3>
@@ -146,7 +146,7 @@
         <div class="col-4 form-group padding-model">
           <label>Grupo</label>
           <input
-            type="number"
+            type="text"
             class="form-control"
             v-model="alumno_item.Grupo"
             :disabled="true"
@@ -159,19 +159,19 @@
           <div class="col-12" style="margin-bottom:100px;">
             <button
               class="button is-primary mt-5 mb-1 align-left"
-              @click="abrirModal('Agregar')"
+              @click="abrirModal('Agregar', true)"
             >
               <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar pago
             </button>
             <br />
-            <!-- <div
+            <div
               class="row col-12"
               v-if="pagos_items.length <= 0"
               style="display: grid; justify-content: center;"
             >
-              <p>No se encontraron registros</p>
-            </div> -->
-            <div id="bootstrap_table">
+              <p>No se encontraron pagos</p>
+            </div>
+            <div id="bootstrap_table" v-else>
               <div class="col-3 mr-0 align-rigth">
                 <input
                   class="form-control"
@@ -194,7 +194,7 @@
                   <button
                     class="btn btn-default"
                     v-if="data.item.Activo == 1"
-                    :key="data.item.AlumnoId"
+                    :key="data.item.PagoId"
                     style="cursor: default;"
                   >
                     <i class="far fa-check-square" style="color: green"></i>
@@ -202,7 +202,7 @@
                   <button
                     class="btn btn-default"
                     v-else
-                    :key="data.item.AlumnoId"
+                    :key="data.item.PagoId"
                     style="cursor: default;"
                   >
                     <i class="far fa-times-circle" style="color: red"></i>
@@ -211,7 +211,7 @@
                 <template v-slot:cell(opciones)="data">
                   <button
                     class="button is-default is-small"
-                    @click="abrirModal('')"
+                    @click="abrirModal('Ver', false, data.item)"
                     value="Detalles"
                     title="Ver Detalles"
                   >
@@ -219,7 +219,7 @@
                   </button>
                   <button
                     class="button is-info is-small"
-                    @click="abrirModal('Editar')"
+                    @click="abrirModal('Editar', true, data.item)"
                     value="Editar"
                     title="Editar"
                   >
@@ -274,6 +274,10 @@
                               :key="pago_item.TipoDePago.key"
                               :titulo="true"
                               :label="'Tipo de pago*'"
+                              :disabled="!inhabilitar"
+                              :tipoDePagoId="
+                                pago_item.TipoDePago.val.TipoDePagoId
+                              "
                               :TipoDeCicloEscolarId="
                                 pago_item.TipoDePago.tipoDeCicloEscolar > 0
                                   ? pago_item.TipoDePago.tipoDeCicloEscolar
@@ -313,6 +317,7 @@
                                   class="btn btn-outline-secondary"
                                   type="button"
                                   @click="actualizarCantidadTotal()"
+                                  :disabled="!inhabilitar"
                                 >
                                   <i class="fas fa-redo"></i>
                                 </button>
@@ -335,6 +340,7 @@
                               :titulo="true"
                               :label="'Ciclo Escolar*'"
                               :actual="true"
+                              :disabled="!inhabilitar"
                               :tipoDeCicloEscolarId="
                                 pago_item ? pago_item.CicloEscolar.val : -1
                               "
@@ -359,6 +365,7 @@
                             <input
                               type="date"
                               class="form-control"
+                              :disabled="!inhabilitar"
                               v-model="pago_item.FechaDePago.val"
                             />
                           </div>
@@ -376,6 +383,7 @@
                               "
                               :label="'Recargo'"
                               :titulo="true"
+                              :disabled="!inhabilitar"
                               :tipoDeRecargoId="
                                 pago_item
                                   ? recargo_item.TipoRecargo.val.TipoDeRecargoId
@@ -394,7 +402,10 @@
                               class="form-control"
                               :value="currencyFormat(recargo_item.Monto.val)"
                               :key="recargo_item.Monto.val"
-                              :disabled="mostrarEditarRecargo.desabledMonto"
+                              :disabled="
+                                mostrarEditarRecargo.desabledMonto ||
+                                  !inhabilitar
+                              "
                             />
                           </div>
                           <div class="col-4 form-group padding-model">
@@ -466,6 +477,7 @@
                                       <button
                                         class="btn btn-default"
                                         @click="eliminarRecargo(item)"
+                                        v-show="inhabilitar"
                                       >
                                         <i class="fas fa-trash-alt"></i>
                                       </button>
@@ -572,22 +584,22 @@ export default {
       itemsRecargo: [],
       fields: [
         {
-          key: "AlumnoId.val",
+          key: "PagoId",
           label: "Folio",
           sortable: true,
         },
         {
-          key: "NombreCompleto.val",
+          key: "TipoDePago",
           label: "Tipo de pago",
           sortable: true,
         },
         {
-          key: "Curp.val",
+          key: "Monto",
           label: "Cantidad",
           sortable: true,
         },
         {
-          key: "NumeroDeControl.val",
+          key: "FechaPago",
           label: "Fecha de pago",
           sortable: true,
         },
@@ -666,6 +678,7 @@ export default {
       indexRecargos: 0,
       cantidadTipoPago: 0,
       newCantidadTipoPago: 0,
+      mostrarAlumno: false
     };
   },
   computed: {
@@ -690,8 +703,11 @@ export default {
       this.validarPago();
       if (this.itemIsValid) {
         this.pago_item.Recargos = this.itemsRecargo;
-        //Guardar pago
-        this.agregarPago();
+        if (this.pago_item.PagoId && this.pago_item.PagoId.val > 0)
+          this.editarPago();//Editar pago
+        else this.agregarPago(); //Guardar pago
+      } else {
+        this.$alert("Favor de completar los datos.");
       }
     },
     validarPago() {
@@ -722,6 +738,86 @@ export default {
         this.itemIsValid = false;
       }
     },
+    async editarPago() {
+      const data = {
+        pago: {
+          PagoId: this.pago_item.PagoId.val,
+          FechaPago: this.pago_item.FechaDePago.val,
+          Monto: this.pago_item.Cantidad.val,
+          TipoDePagoId: this.pago_item.TipoDePago.val.TipoDePagoId,
+          FechaRegistro: new Date()
+            .toISOString()
+            .slice(0, 19)
+            .replace("T", " "),
+          Activo: Enum.EstatusGeneral.Activo,
+        },
+      };
+
+      try {
+        this.isLoading = true;
+
+        const response = await axios.post(
+          routeAPI + "administracion/editarPago",
+          data
+        );
+
+        this.isLoading = false;
+
+        if (!response.data.hayError) {
+          this.mostrarModal = false;
+          console.log("El pago se editó con éxito.");
+          if (this.pago_item.Recargos.length > 0) {            
+            this.guardarRecargos(this.pago_item.PagoId.val);
+          }
+        } else {
+          console.log(response);
+          this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async guardarRecargos(pagoId) {
+      try {        
+        // eliminar recargos del pago
+        const data = {
+          pagoId: pagoId,
+        };
+
+        const responseDelete = await axios.post(
+          routeAPI + "administracion/eliminarRecargosDelPago",
+          data
+        );
+
+        if (!responseDelete.data.hayError) {
+          console.log("Los recargos se eliminaron con éxito.");
+        } else {
+          console.log(responseDelete);
+          this.$alert(
+            "Los recargos no se pudieron eliminar, favor de volverlo a intentar."
+          );
+          return;
+        }
+        
+        this.pago_item.Recargos.forEach(async (recargo) => {
+          
+          const data = {
+            recargo: {
+              PagoId: pagoId,
+              Monto: typeof(recargo.Monto) ==  'string' ? Number(recargo.Monto.split("$")[1]): recargo.Monto,
+              TipoDeRecargoId: recargo.TipoRecargo.Id,
+              DiasRetraso: recargo.DiasRetraso,
+              TotalAPagar: recargo.TotalAPagar,
+              Activo: Enum.EstatusGeneral.Activo
+            },
+          };
+
+          this.agregarRecargoBD(data);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
     async agregarPago() {
       const data = {
         pago: {
@@ -732,6 +828,7 @@ export default {
             .toISOString()
             .slice(0, 19)
             .replace("T", " "),
+          AlumnoId: this.alumno_item.AlumnoId,
           Activo: Enum.EstatusGeneral.Activo,
         },
       };
@@ -750,19 +847,11 @@ export default {
 
           if (this.pago_item.Recargos.length > 0) {
             this.pago_item.Recargos.forEach(async (recargo) => {
-              const data = {
-                recargo: {
-                  PagoId: response.data.response.insertId,
-                  Monto: Number(recargo.Monto.split("$")[1]),
-                  TipoDeRecargoId: recargo.TipoRecargo.Id,
-                  DiasRetraso: recargo.DiasRetraso,
-                  TotalAPagar: recargo.TotalAPagar,
-                },
-              };
-              this.agregarRecargoBD(data);
+              this.guardarRecargos(response.data.response.insertId);
             });
-          }else{
+          } else {
             this.$alert("El pago se guardó con éxito.");
+            this.getAlumnoConPagos();
           }
         } else {
           console.log(response);
@@ -784,6 +873,7 @@ export default {
         if (!responseDelete.data.hayError) {
           console.log("El recargo se guardó con éxito.");
           this.$alert("El pago y recargo(s) se guardaron con éxito.");
+          this.getAlumnoConPagos();
         } else {
           console.log(responseDelete);
           this.$alert(
@@ -848,12 +938,40 @@ export default {
       this.mostrarEditarRecargo.desabledMonto = false;
       this.mostrarEditarRecargo.displayRecargoBtn = false;
     },
-    abrirModal: function(tipo) {
+    abrirModal: function(tipo, inhabilitar, item) {
       this.titutoModal = tipo;
       this.mostrarModal = !this.mostrarModal;
+      this.inhabilitar = inhabilitar;
 
-      //Cargar ciclo escolar
-      this.pago_item.CicloEscolar.val = 1;
+      this.limpiarModal();
+      if (item && item.PagoId && item.PagoId > 0) this.cargarItem(item);
+    },
+    limpiarModal() {
+      this.pago_item.PagoId.val = null;
+      this.cantidadTipoPago = 0;
+      this.pago_item.Cantidad.val = 0;
+      this.pago_item.FechaDePago.val = moment().format("yyyy-MM-DD");
+
+      this.pago_item.TipoDePago.val.TipoDePagoId = -1;
+      this.pago_item.TipoDePago.key = "edit_" + -1;
+
+      this.pago_item.CicloEscolar.val = -1;
+      this.pago_item.CicloEscolar.key = "edit_" + -1;
+      this.itemsRecargo = [];
+    },
+    async cargarItem(item) {      
+      let recargos = await this.getRecargos(item.PagoId);
+      
+      this.pago_item.PagoId.val = item.PagoId;
+      this.cantidadTipoPago = item.Monto;
+      this.pago_item.Cantidad.val = item.Monto;
+      this.pago_item.FechaDePago.val = item.FechaPago;
+
+      this.pago_item.TipoDePago.val.TipoDePagoId = Number(item.TipoDePagoId);
+      this.pago_item.TipoDePago.key = "edit_" + item.TipoDePagoId;
+
+      this.pago_item.CicloEscolar.val = item.CicloEscolar;
+      this.pago_item.CicloEscolar.key = "edit_" + item.CicloEscolar;
     },
     limpiarValidez(input) {
       switch (input) {
@@ -888,6 +1006,7 @@ export default {
     },
     seleccionarTipoDePago(item) {
       if (item != null) {
+        
         this.pago_item.TipoDePago.val.Monto = item.monto;
         this.cantidadTipoPago = item.monto;
         this.pago_item.TipoDePago.val.TipoDePagoId = item.id;
@@ -931,18 +1050,182 @@ export default {
 
         if (!response.data.hayError) {
           this.isLoading = false;
+          this.mostrarAlumno = true;
           let alumno = response.data.response[0];
-          console.log(alumno);
+
+          this.getGrupos(Number(alumno["010EstructuraDeGrupoId"]));
+
+          this.alumno_item.AlumnoId = alumno["011AlumnoId"];
           this.alumno_item.Nombre = alumno["011Nombre"];
           this.alumno_item.ApellidoPaterno = alumno["011ApellidoPaterno"];
           this.alumno_item.ApellidoMaterno = alumno["011ApellidoMaterno"];
           this.alumno_item.Curp = alumno["011CURP"];
           this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
-          this.alumno_item.Grupo = alumno["010EstructuraDeGrupoId"];
-          // response.data.response.forEach((element) => {
+          this.getPagos(Number(alumno["011AlumnoId"]));
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getGrupos(grupoId) {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
 
-          // });
-          // this.alumno_item
+        if (grupoId != "") filtros.filtro.estructuraDeGrupoId = grupoId;
+
+        const response = await axios.post(
+          routeAPI + "administracion/estructurasDeGrupoNombres",
+          filtros
+        );
+
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              let grupo = {
+                EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],
+                TipoModalidad: element["004NombreModalidad"],
+                TipoDeGrupo: element["006NombreGrupo"],
+                TipoGrado: element["008NombreGrado"],
+                Activo: element["010Activo"],
+              };
+
+              this.alumno_item.Grupo =
+                grupo.TipoGrado +
+                " " +
+                grupo.TipoDeGrupo +
+                " - " +
+                grupo.TipoModalidad;
+            });
+          }
+        } else
+          this.$alert(
+            "No se pudo obtenera información, favor de volverlo a intentar."
+          );
+
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getPagos(alumnoId) {
+      try {
+        if (alumnoId <= 0) {
+          alert("No hay alumno Id");
+        } else {
+          this.isLoading = true;
+          this.pagos_items = [];
+          const filtros = {
+            filtro: {
+              activo: 1,
+              alumnoId: alumnoId,
+            },
+          };
+
+          const response = await axios.post(
+            routeAPI + "administracion/pagos",
+            filtros
+          );
+
+          if (!response.data.hayError) {
+            if (response.data.response.length > 0) {
+              response.data.response.forEach((element) => {
+                this.pagos_items.push({
+                  PagoId: element["017PagoId"],
+                  Monto: element["017Monto"],
+                  TipoDePagoId: element["001TipoDePagoId"],
+                  TipoDePago: element["001TiposDePagoNombre"],
+                  CicloEscolar: element["002TipoDeCicloEscolarId"],
+                  FechaPago: moment(element["017FechaPago"]).format(
+                    "yyyy-MM-DD"
+                  ),
+                  Activo: element["017Activo"],
+                });
+              });
+            }
+          } else
+            this.$alert(
+              "No se pudo obtenera información, favor de volverlo a intentar."
+            );
+
+          this.isLoading = false;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getRecargos(pagoId) {
+      try {        
+        if (pagoId <= 0) {
+          alert("No hay pago Id");
+        } else {
+          this.isLoading = true;
+          const filtros = {
+            filtro: {
+              activo: 1,
+              pagoId: pagoId,
+            },
+          };
+
+          const response = await axios.post(
+            routeAPI + "administracion/recargos",
+            filtros
+          );
+
+          if (!response.data.hayError) {
+            if (response.data.response.length > 0) {
+              response.data.response.forEach((element) => {
+                this.itemsRecargo.push({
+                  Id: element["003TipoDeRecargoId"],
+                  TipoRecargo: {
+                    Id: element["003TipoDeRecargoId"],
+                    Nombre: element["003NombreTipoRecargo"],
+                  },
+                  Monto: element["018Monto"],
+                  DiasRetraso: element["018DiasDeRetraso"],
+                  TotalAPagar: element["018MontoTotal"],
+                });
+                this.indexRecargos++;
+              });
+            }
+          } else
+            this.$alert(
+              "No se pudo obtenera información, favor de volverlo a intentar."
+            );
+
+          this.isLoading = false;
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async cancelar(item) {
+      try {
+        this.isLoading = true;
+
+        const data = {
+          pago: {
+            id: item.PagoId,
+            Activo: Number(0),
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/cancelarPago",
+          data
+        );
+        this.isLoading = false;
+        
+        if (!response.data.hayError) {
+          this.$alert("El pago se canceló correctamente.");
+          this.getPagos(Number(this.pagos_items.PagoId));
+        } else {
+          console.log(response);
+          this.$alert("Sucedio un error, favor de volver a intentarlo.");
         }
       } catch (err) {
         console.log(err);

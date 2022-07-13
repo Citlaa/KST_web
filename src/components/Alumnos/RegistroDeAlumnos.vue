@@ -1111,7 +1111,8 @@ export default {
         if (!response.data.hayError) {
           this.mostrarModal = false;
           console.log("El alumno se editó con éxito.");
-          this.guardarTutores(this.item.AlumnoId.val);
+          if(this.item.tutores.val.length > 0)
+            this.guardarTutores(this.item.AlumnoId.val);
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
