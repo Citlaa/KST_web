@@ -30,22 +30,23 @@
       </div>
       <div v-if="mostrarFiltros" class="col-12 row">
         <div class="col-3">
-          <label>Nombre</label>
+          <label>Concepto</label>
           <input
             class="form-control"
             type="text"
             v-model="filtro_nombre"
-            placeholder="Indicar Nombre"
+            placeholder="Indicar Concepto"
             @keypress.enter="getTiposDePago"
           />
         </div>
         <div class="col-3">
-          <label>Monto</label>
+          <label>Cantidad</label>
           <input
             class="form-control"
-            type="text"
+            type="number"
+            min="0"
             v-model="filtro_monto"
-            placeholder="Indicar Monto"
+            placeholder="Indicar Cantidad"
             @keypress.enter="getTiposDePago"
           />
         </div>
@@ -69,11 +70,11 @@
       </div>
       <div v-if="mostrarFiltros" class="filtro_footer">
         <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
-          Limpiar
+          Mostrar Todo
         </button>
         <button class="button is-primary btn-sm" @click="getTiposDePago()">
           Filtrar
-        </button>
+        </button>  
       </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
@@ -111,7 +112,6 @@
             <i              
               class="far fa-check-square"
               style="color: green"
-              
             ></i>
             </button>
             <button class="btn btn-default" v-else :key="data.item.TipoDePagoId" style="cursor: default;">
@@ -168,7 +168,7 @@
                 <div class="modal-body">
                   <div class="row">
                     <div class="col-4 form-group padding-model">
-                      <label>Nombre</label>
+                      <label>Concepto</label>
                       <input
                         type="text"
                         class="form-control"
@@ -185,7 +185,7 @@
                       ></tipos-ciclo-escolar>
                     </div>
                     <div class="col-2 form-group padding-model">
-                      <label>Monto</label>
+                      <label>Cantidad</label>
                       <input
                         type="number"
                         class="form-control"
@@ -252,20 +252,22 @@ export default {
           sortable: true,
         },
         {
-          key: "Nombre",
+          key: "Concepto",
           sortable: true,
         },
         {
-          key: "Monto",
+          key: "Cantidad",
           sortable: true,
         },
         {
           key: "TipoDeCicloEscolar.Nombre",
           label: "Ciclo Escolar",
+          sortable: true,
         },
         {
           label: "Activo",
           key: "Activo",
+          sortable: true,
         },
         {
           label: "Opciones",
@@ -322,7 +324,7 @@ export default {
       }else{
         console.log(response);
         this.$alert(
-          "No se pudo obtenera información, favor de volverlo a intentar."
+          "No se pudo obtener información, favor de volverlo a intentar."
         ); 
       }
               this.isLoading = false;
@@ -371,7 +373,7 @@ export default {
           }
         } else
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
 
         this.isLoading = false;
@@ -390,7 +392,7 @@ export default {
       this.item = item;
 
       if (item.TipoDePagoId > 0) {
-        // this.item.Monto = this.item.Monto.split("$")[1];        
+        this.item.Monto = this.item.Monto.includes('$') ? this.item.Monto.split("$")[1] : this.item.Monto;        
       }else{
         this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
       }
@@ -452,7 +454,6 @@ export default {
             Activo: Number(this.item.Activo),
           },
         };
-
         const response = await axios.post(
           routeAPI + "administracion/editarTiposDePago",
           data

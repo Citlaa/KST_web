@@ -845,10 +845,8 @@ export default {
           this.mostrarModal = false;
           console.log("El pago se guardó con éxito.");
 
-          if (this.pago_item.Recargos.length > 0) {
-            this.pago_item.Recargos.forEach(async (recargo) => {
-              this.guardarRecargos(response.data.response.insertId);
-            });
+          if (this.pago_item.Recargos.length > 0) {            
+              this.guardarRecargos(response.data.response.insertId);            
           } else {
             this.$alert("El pago se guardó con éxito.");
             this.getAlumnoConPagos();
@@ -961,7 +959,7 @@ export default {
     },
     async cargarItem(item) {      
       let recargos = await this.getRecargos(item.PagoId);
-      
+      console.log(recargos);
       this.pago_item.PagoId.val = item.PagoId;
       this.cantidadTipoPago = item.Monto;
       this.pago_item.Cantidad.val = item.Monto;

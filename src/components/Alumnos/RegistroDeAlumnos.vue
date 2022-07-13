@@ -84,10 +84,10 @@
             class="button is-default btn-sm mr-1"
             @click="limpiarFiltros()"
           >
-            Limpiar
+            Mostrar Todo
           </button>
           <button class="button is-primary btn-sm" @click="getAlumnos()">
-            Buscar
+            Filtrar
           </button>
         </div>
       </div>
@@ -138,7 +138,6 @@
               </button>
               <button
                 class="btn btn-default"
-                v-else
                 :key="data.item.AlumnoId"
                 style="cursor: default;"
               >
@@ -1157,7 +1156,7 @@ export default {
         } else {
           console.log(response);
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
         }
         this.isLoading = false;
@@ -1226,7 +1225,7 @@ export default {
           }
         } else
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
 
         this.isLoading = false;
@@ -1348,7 +1347,7 @@ export default {
         } else {
           console.log(response);
           this.$alert(
-            "No se pudo obtenera información, favor de volverlo a intentar."
+            "No se pudo obtener información, favor de volverlo a intentar."
           );
         }
         this.isLoading = false;
@@ -1388,6 +1387,7 @@ export default {
       this.filtros.filtro_apellidoMaterno = "";
       this.filtros.filtro_curp = "";
       this.filtros.filtro_activo = "-1";
+      this.getAlumnos();
     },
     limpiarVariables() {
       this.item.AlumnoId.val = null;
