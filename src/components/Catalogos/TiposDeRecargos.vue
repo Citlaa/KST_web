@@ -103,6 +103,7 @@
               v-model="filter"
               type="search"
               placeholder="Buscar"
+              @blur="currentPage = 1"
             />
           </div>
           <b-table
