@@ -170,7 +170,7 @@
                       <label>Año de termino</label>
                       <input
                         type="number"
-                        min = '0'
+                        min = "0"
                         class="form-control"
                         v-model="item.AñoDeTermino"
                         
@@ -348,8 +348,15 @@ export default {
         this.mostrarModal = false;
         this.isLoading = false;
         if (!response.data.hayError) {
-          this.$alert("El ciclo escolar se guardó con éxito.");
-          this.getTiposDeCicloEscolar();
+          if(this.item.AñoDeTermino>this.item.AñoDeInicio)
+          {
+           this.$alert("El ciclo escolar se guardó con éxito.");
+           this.getTiposDeCicloEscolar();
+          }
+          else
+          {
+            this.$alert("El año de Termino no puede ser anterior al año de inicio");
+          }
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
