@@ -447,7 +447,6 @@ export default {
         this.isLoading = true;
         const filtros = {
           filtro: {
-            activo: 1,
           },
         };
 

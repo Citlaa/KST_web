@@ -384,7 +384,7 @@ export default {
                 Activo: element["001Activo"],
               });
             });
-            console.log(this.items);
+            
           }
         } else
           this.$alert(
@@ -402,8 +402,7 @@ export default {
           ciclo.TipoDeCicloEscolarId ===
           Number(element["002TipoDeCicloEscolarId"])
       );
-      console.log(element["002TipoDeCicloEscolarId"]);
-      console.log(ciclo);
+      console.log(element["002TipoDeCicloEscolarId"]);      
       return ciclo;
     },
     seleccionarCicloEscolar: function(element) {
