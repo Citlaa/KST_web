@@ -81,156 +81,167 @@
       </div>
     </section>
     <section id="data_table">
-    <div class="col-12" style="margin-bottom:100px;">
-      <button
-        class="button is-primary mt-5 mb-1 align-left"
-        @click="abrirModal('Agregar', {})"
-      >
-        <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar tipo de recargo
-      </button>
-      <br />
-      <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
-        <p>No se encontraron registros</p>
-      </div>
-      <div id="bootstrap_table" v-else>
-        <div class="col-3 mr-0 align-rigth">
-          <input
-            class="form-control"
-            v-model="filter"
-            type="search"
-            placeholder="Buscar"
-          />
-        </div>
-        <b-table
-          striped
-          hover
-          outlined
-          :items="items"
-          :fields="fields"
-          :per-page="perPage"
-          :current-page="currentPage"
-          :filter="filter"
+      <div class="col-12" style="margin-bottom:100px;">
+        <button
+          class="button is-primary mt-5 mb-1 align-left"
+          @click="abrirModal('Agregar', {})"
         >
-          <template v-slot:cell(Activo)="data">
-            <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.TipoDeRecargoId" style="cursor: default;">     
-            <i
-              class="far fa-check-square"
-              style="color: green"
-            ></i>
-            </button>
-            <button class="btn btn-default" v-else :key="data.item.TipoDeRecargoId" style="cursor: default;">
-            <i class="far fa-times-circle" style="color: red"></i>
-            </button>
-          </template>
-          <template v-slot:cell(opciones)="data">
-            <button
-              class="button is-info is-small"
-              @click="abrirModal('Editar', data.item)"
-              value="Editar"
-              title="Editar"
-            >
-              <i class="far fa-edit"></i>
-            </button>
-            <button
-              class="button is-danger is-small"
-              :disabled="data.item.Activo == 0"
-              @click="cancelar(data.item)"
-              value="Eliminar"
-              title="Cancelar"
-            >
-              <i class="fas fa-ban"></i>
-            </button>
-          </template>
-        </b-table>
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="rows"
-          :per-page="perPage"
-        ></b-pagination>
+          <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar tipo de recargo
+        </button>
+        <br />
+        <div
+          class="row col-12"
+          v-if="items.length <= 0"
+          style="display: grid; justify-content: center;"
+        >
+          <p>No se encontraron registros</p>
+        </div>
+        <div id="bootstrap_table" v-else>
+          <div class="col-3 mr-0 align-rigth">
+            <input
+              class="form-control"
+              v-model="filter"
+              type="search"
+              placeholder="Buscar"
+            />
+          </div>
+          <b-table
+            striped
+            hover
+            outlined
+            :items="items"
+            :fields="fields"
+            :per-page="perPage"
+            :current-page="currentPage"
+            :filter="filter"
+          >
+            <template v-slot:cell(Activo)="data">
+              <button
+                class="btn btn-default"
+                v-if="data.item.Activo == 1"
+                :key="data.item.TipoDeRecargoId"
+                style="cursor: default;"
+              >
+                <i class="far fa-check-square" style="color: green"></i>
+              </button>
+              <button
+                class="btn btn-default"
+                v-else
+                :key="data.item.TipoDeRecargoId"
+                style="cursor: default;"
+              >
+                <i class="far fa-times-circle" style="color: red"></i>
+              </button>
+            </template>
+            <template v-slot:cell(opciones)="data">
+              <button
+                class="button is-info is-small"
+                @click="abrirModal('Editar', data.item)"
+                value="Editar"
+                title="Editar"
+              >
+                <i class="far fa-edit"></i>
+              </button>
+              <button
+                class="button is-danger is-small"
+                :disabled="data.item.Activo == 0"
+                @click="cancelar(data.item)"
+                value="Eliminar"
+                title="Cancelar"
+              >
+                <i class="fas fa-ban"></i>
+              </button>
+            </template>
+          </b-table>
+          <b-pagination
+            v-model="currentPage"
+            :total-rows="rows"
+            :per-page="perPage"
+          ></b-pagination>
+        </div>
       </div>
-    </div>
     </section>
     <section id="modal">
-    <div v-if="mostrarModal" class="modal_div" id="modal_div">
-      <transition name="modal">
-        <div class="modal-mask">
-          <div class="modal-wrapper">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <div class="col-11">
-                    <h2 class="modal-title text-center">
-                      {{ titutoModal }} Tipo de Recargo
-                    </h2>
-                    <div class="line_red"></div>
+      <div v-if="mostrarModal" class="modal_div" id="modal_div">
+        <transition name="modal">
+          <div class="modal-mask">
+            <div class="modal-wrapper">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <div class="col-11">
+                      <h2 class="modal-title text-center">
+                        {{ titutoModal }} Tipo de Recargo
+                      </h2>
+                      <div class="line_red"></div>
+                    </div>
+                    <a class="button close_modal" @click="mostrarModal = false">
+                      <span aria-hidden="true">&times;</span>
+                    </a>
                   </div>
-                  <a class="button close_modal" @click="mostrarModal = false">
-                    <span aria-hidden="true">&times;</span>
-                  </a>
-                </div>
-                <div class="modal-body">
-                  <div class="row">
-                    <div class="col-4 form-group padding-model">
-                      <label>Nombre</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        v-model="item.Nombre"
-                      />
-                    </div>
-                    <div class="col-4">                                          
-                      <TiposCicloEscolar
-                        :label="'Ciclo escolar'"
-                        :titulo="true"
-                        :tipoDeCicloEscolarId="
-                          item.TipoDeCicloEscolar.TipoDeCicloEscolarId
-                        "
-                        v-on:seleccionarCicloEscolar="
-                          seleccionarCicloEscolarItem($event)
-                        "
-                        :funcion="'seleccionarCicloEscolar'"
-                      />
-                    </div>
-                    <div class="col-2 form-group padding-model">
-                      <label>Monto</label>
-                      <input
-                        type="number"
-                        class="form-control"
-                        v-model="item.Monto"
-                      />
-                    </div>
-                    <div class="col-2 padding-model">
-                      <label>Activo</label>
-                      <select class="form-control" v-model="item.Activo">
-                        <option value="1">Si</option>
-                        <option value="0">No</option>
-                      </select>
+                  <div class="modal-body">
+                    <div class="row">
+                      <div class="col-4 form-group padding-model">
+                        <label>Nombre</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          v-model="item.Nombre"
+                        />
+                      </div>
+                      <div class="col-4">
+                        <TiposCicloEscolar
+                          :label="'Ciclo escolar'"
+                          :titulo="true"
+                          :tipoDeCicloEscolarId="
+                            item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+                          "
+                          v-on:seleccionarCicloEscolar="
+                            seleccionarCicloEscolarItem($event)
+                          "
+                          :funcion="'seleccionarCicloEscolar'"
+                        />
+                      </div>
+                      <div class="col-2 form-group padding-model">
+                        <label>Monto</label>
+                        <input
+                          type="number"
+                          class="form-control"
+                          v-model="item.Monto"
+                        />
+                      </div>
+                      <div class="col-2 padding-model">
+                        <label>Activo</label>
+                        <select class="form-control" v-model="item.Activo">
+                          <option value="1">Si</option>
+                          <option value="0">No</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="button is-primary"
-                    @click="guardarTipoDeRecargo()"
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                    @click="mostrarModal = false"
-                  >
-                    Cancelar
-                  </button>
+                  <div class="modal-footer">
+                    <button
+                      type="button"
+                      class="button is-primary"
+                      @click="guardarTipoDeRecargo()"
+                    >
+                      Guardar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click="mostrarModal = false"
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </transition>
-    </div>
+        </transition>
+      </div>
     </section>
     <cargando v-if="isLoading"></cargando>
   </div>
@@ -263,11 +274,13 @@ export default {
           value: "1",
         },
         {
-          key: "Concepto",
+          key: "Nombre",
+          label: "Concepto",
           sortable: true,
         },
         {
-          key: "Cantidad",
+          key: "Monto",
+          label: "Cantidad",
           sortable: true,
         },
         {
@@ -283,7 +296,6 @@ export default {
         {
           label: "Opciones",
           key: "opciones",
-          
         },
       ],
       filter: "",
@@ -298,7 +310,7 @@ export default {
       filtro_cicloEscolar_key: 0,
       filtro_activo: "-1",
     };
-  },  
+  },
   created() {
     this.getTipoDeCicloEscolar();
     this.getTiposDeRecargo();
@@ -307,14 +319,13 @@ export default {
     rows() {
       return this.items.length;
     },
-  },  
+  },
   methods: {
     async getTipoDeCicloEscolar() {
       try {
         this.isLoading = true;
         const filtros = {
-          filtro: {
-          },
+          filtro: {},
         };
 
         const response = await axios.post(
@@ -322,23 +333,23 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError){
-          if (response.data.response.length > 0){
-          response.data.response.forEach((element) => {
-          this.ciclosEscolares.push({
-            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-            Nombre:
-              element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
-          });
-        });
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              this.ciclosEscolares.push({
+                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                Nombre:
+                  element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
+              });
+            });
+          }
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtener información, favor de volverlo a intentar."
+          );
         }
-      }else{
-        console.log(response);
-        this.$alert(
-          "No se pudo obtener información, favor de volverlo a intentar."
-        ); 
-      }
-      this.isLoading = false;
+        this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
@@ -366,7 +377,7 @@ export default {
         );
 
         if (!response.data.hayError) {
-          if (response.data.response.length > 0) {            
+          if (response.data.response.length > 0) {
             response.data.response.forEach((element) => {
               this.items.push({
                 TipoDeRecargoId: element["003TipoDeRecargoId"],
@@ -394,8 +405,8 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem(element) {      
-      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);      
+    seleccionarCicloEscolarItem(element) {
+      this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
@@ -403,8 +414,7 @@ export default {
       console.log(this.item);
       if (this.item.TipoDeRecargoId > 0)
         this.item.Monto = this.item.Monto.split("$")[1];
-      else        
-        this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
+      else this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1 };
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDeRecargo() {
@@ -428,12 +438,12 @@ export default {
             Activo: Number(this.item.Activo),
           },
         };
-console.log(data);
+
         const response = await axios.post(
           routeAPI + "administracion/guardarTiposDeRecargo",
           data
         );
-        
+
         this.isLoading = false;
         if (!response.data.hayError) {
           this.mostrarModal = false;
@@ -483,7 +493,7 @@ console.log(data);
     async cancelar(item) {
       try {
         this.isLoading = true;
-        
+
         const data = {
           tipoDeRecargo: {
             TipoDeRecargoId: item.TipoDeRecargoId,
@@ -498,7 +508,7 @@ console.log(data);
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El recargo se canceló correctamente.");
-          this.getTiposDeRecargo();          
+          this.getTiposDeRecargo();
         } else {
           console.log(response);
           this.$alert("Alert Message.");
@@ -516,6 +526,7 @@ console.log(data);
       this.filtro_cicloEscolar = "";
       this.filtro_cicloEscolar_key++;
       this.filtro_activo = "-1";
+      this.getTiposDeRecargo();
     },
   },
 };
