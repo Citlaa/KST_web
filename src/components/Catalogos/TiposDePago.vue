@@ -56,7 +56,7 @@
             :label="'Ciclo escolar'"
             :titulo="true"
             v-on:seleccionarCicloEscolar="seleccionarCicloEscolar($event)"
-            :funcion="'seleccionarCicloEscolar'"          
+            :funcion="'seleccionarCicloEscolar'"
           />
         </div>
         <div class="col-3">
@@ -74,7 +74,7 @@
         </button>
         <button class="button is-primary btn-sm" @click="getTiposDePago()">
           Filtrar
-        </button>  
+        </button>
       </div>
     </div>
     <div class="col-12" style="margin-bottom:100px;">
@@ -85,9 +85,13 @@
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar Tipo de pago
       </button>
       <br />
-      <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+      <div
+        class="row col-12"
+        v-if="items.length <= 0"
+        style="display: grid; justify-content: center;"
+      >
         <p>No se encontraron registros</p>
-       </div>
+      </div>
       <div id="bootstrap_table" v-else>
         <div class="col-3 mr-0 align-rigth">
           <input
@@ -107,19 +111,23 @@
           :current-page="currentPage"
           :filter="filter"
         >
-          <template v-slot:cell(Activo)="data">      
-            <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.TipoDePagoId" style="cursor: default;">     
-            <i              
-              class="far fa-check-square"
-              style="color: green"
-            ></i>
+          <template v-slot:cell(Activo)="data">
+            <button
+              class="btn btn-default"
+              v-if="data.item.Activo == 1"
+              :key="data.item.TipoDePagoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-check-square" style="color: green"></i>
             </button>
-            <button class="btn btn-default" v-else :key="data.item.TipoDePagoId" style="cursor: default;">
-            <i             
-              class="far fa-times-circle"
-              style="color: red"              
-            ></i>
-            </button>            
+            <button
+              class="btn btn-default"
+              v-else
+              :key="data.item.TipoDePagoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-times-circle" style="color: red"></i>
+            </button>
           </template>
           <template v-slot:cell(opciones)="data">
             <button
@@ -179,8 +187,14 @@
                       <tipos-ciclo-escolar
                         :label="'Ciclo escolar'"
                         :titulo="true"
-                        :tipoDeCicloEscolarId="item ? item.TipoDeCicloEscolar.TipoDeCicloEscolarId : -1"
-                        v-on:seleccionarCicloEscolar="seleccionarCicloEscolarItem($event)"
+                        :tipoDeCicloEscolarId="
+                          item
+                            ? item.TipoDeCicloEscolar.TipoDeCicloEscolarId
+                            : -1
+                        "
+                        v-on:seleccionarCicloEscolar="
+                          seleccionarCicloEscolarItem($event)
+                        "
                         :funcion="'seleccionarCicloEscolar'"
                       ></tipos-ciclo-escolar>
                     </div>
@@ -252,11 +266,13 @@ export default {
           sortable: true,
         },
         {
-          key: "Concepto",
+          key: "Nombre",
+          label: "Concepto",
           sortable: true,
         },
         {
-          key: "Cantidad",
+          key: "Monto",
+          label: "Cantidad",
           sortable: true,
         },
         {
@@ -301,8 +317,7 @@ export default {
       try {
         this.isLoading = true;
         const filtros = {
-          filtro: {
-            activo: 1,
+          filtro: {            
           },
         };
 
@@ -311,23 +326,26 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError){
-          if (response.data.response.length > 0){
-          response.data.response.forEach((element) => {
-            this.ciclosEscolares.push({
-              TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-              Nombre: element["002AñoDeInicio"] + " - " + element["002AñoDeTermino"],
-              Activo: element["002Activo"],
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              this.ciclosEscolares.push({
+                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                Nombre:
+                  element["002AñoDeInicio"] +
+                  " - " +
+                  element["002AñoDeTermino"],
+                Activo: element["002Activo"],
+              });
             });
-          });
+          }
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtener información, favor de volverlo a intentar."
+          );
         }
-      }else{
-        console.log(response);
-        this.$alert(
-          "No se pudo obtener información, favor de volverlo a intentar."
-        ); 
-      }
-              this.isLoading = false;
+        this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
@@ -355,21 +373,18 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError) {        
-          if (response.data.response.length > 0) {           
-            response.data.response.forEach((element) => {
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach(async (element) => {
               this.items.push({
                 TipoDePagoId: element["001TipoDePagoId"],
                 Nombre: element["001Nombre"],
                 Monto: "$" + element["001Monto"],
-                TipoDeCicloEscolar: this.ciclosEscolares.find(
-                  (ciclo) =>
-                    ciclo.TipoDeCicloEscolarId ===
-                    Number(element["002TipoDeCicloEscolarId"])
-                ),
+                TipoDeCicloEscolar: await this.findCicloEscolar(element),
                 Activo: element["001Activo"],
               });
             });
+            console.log(this.items);
           }
         } else
           this.$alert(
@@ -381,8 +396,18 @@ export default {
         console.log(err);
       }
     },
+    async findCicloEscolar(element) {
+      let ciclo = this.ciclosEscolares.find(
+        (ciclo) =>
+          ciclo.TipoDeCicloEscolarId ===
+          Number(element["002TipoDeCicloEscolarId"])
+      );
+      console.log(element["002TipoDeCicloEscolarId"]);
+      console.log(ciclo);
+      return ciclo;
+    },
     seleccionarCicloEscolar: function(element) {
-      this.filtro_cicloEscolar = element;      
+      this.filtro_cicloEscolar = element;
     },
     seleccionarCicloEscolarItem(element) {
       this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId = Number(element);
@@ -392,11 +417,13 @@ export default {
       this.item = item;
 
       if (item.TipoDePagoId > 0) {
-        this.item.Monto = this.item.Monto.includes('$') ? this.item.Monto.split("$")[1] : this.item.Monto;        
-      }else{
-        this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1};
+        this.item.Monto = this.item.Monto.includes("$")
+          ? this.item.Monto.split("$")[1]
+          : this.item.Monto;
+      } else {
+        this.item.TipoDeCicloEscolar = { TipoDeCicloEscolarId: -1 };
       }
-      
+
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarTipoDePago() {
@@ -425,7 +452,7 @@ export default {
           routeAPI + "administracion/guardarTiposDePago",
           data
         );
-        
+
         this.isLoading = false;
         if (!response.data.hayError) {
           this.mostrarModal = false;
@@ -458,7 +485,7 @@ export default {
           routeAPI + "administracion/editarTiposDePago",
           data
         );
-        
+
         this.isLoading = false;
         if (!response.data.hayError) {
           this.mostrarModal = false;
@@ -486,7 +513,7 @@ export default {
           routeAPI + "administracion/cancelarTiposDePago",
           data
         );
-        
+
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El tipo de pago se canceló correctamente.");
@@ -499,7 +526,7 @@ export default {
         console.log(err);
       }
     },
-    async limpiarVariables () {
+    async limpiarVariables() {
       this.items = [];
 
       this.item = {
@@ -507,7 +534,7 @@ export default {
         Monto: 0,
         TipoDeCicloEscolar: { TipoDeCicloEscolarId: -1 },
         Activo: "-1",
-      }
+      };
     },
     limpiarFiltros() {
       this.filtro_nombre = "";
