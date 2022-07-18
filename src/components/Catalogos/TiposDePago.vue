@@ -36,7 +36,8 @@
             type="text"
             v-model="filtro_nombre"
             placeholder="Indicar Concepto"
-            @keypress.enter="getTiposDePago"
+           @keypress.enter="getTiposDePago"
+            
           />
         </div>
         <div class="col-3">
@@ -182,6 +183,8 @@
                         type="text"
                         class="form-control"
                         v-model="item.Nombre"
+                        @keypress="BuscarExistente($event)"
+                        @dropdown="BuscarExistente($event)"
                       />
                     </div>
                     <div class="col-4">
@@ -273,6 +276,7 @@ export default {
         },
         {
           key: "Monto",
+          min:"0",
           label: "Cantidad",
           sortable: true,
         },
@@ -314,7 +318,14 @@ export default {
     },
   },
   methods: {
-    async getTipoDeCicloEscolar() {
+
+    async BuscarExistente(event) {
+     console.log(event.target.value)
+     if (event==this.ciclosEscolares.value)
+     {console.log("El concepto ya existe")}
+     },
+
+   async getTipoDeCicloEscolar() {
       try {
         this.isLoading = true;
         const filtros = {
@@ -426,7 +437,7 @@ export default {
 
       this.mostrarModal = !this.mostrarModal;
     },
-    async guardarTipoDePago() {
+    async guardarTipoDePago() { 
       if (this.item.TipoDePagoId > 0) {
         this.editarTipoDePago();
       } else {
