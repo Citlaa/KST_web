@@ -4,7 +4,8 @@ const routes = [
     {
         name: 'RegistroDeAlumnos',
         path: '/registroDeAlumnos',
-        component: RegistroDeAlumnos
+        component: RegistroDeAlumnos,
+        meta: { requiresAuth: true }
     }   
 ]
 

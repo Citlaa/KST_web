@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Vue2Filters from 'vue2-filters'
 import { BootstrapVue } from 'bootstrap-vue'
 import VueSimpleAlert from "vue-simple-alert";
+import store from "./store/index.js"
 
 // Import Bootstrap an BootstrapVue CSS files (order is important)
 import 'bootstrap/dist/css/bootstrap.css'
@@ -19,6 +20,8 @@ import TiposPeriodo from './components/Catalogos/Selects/TiposPeriodo.vue'
 import TiposGrado from './components/Catalogos/Selects/TiposGrado.vue'
 import TiposEspecialidad from './components/Catalogos/Selects/TiposEspecialidad.vue'
 
+import BaseDialog from './components/Comunes/BaseDialogo.vue';
+
 Vue.use(VueRouter)
 Vue.use(Vue2Filters)
 Vue.use(VueSimpleAlert)
@@ -33,12 +36,27 @@ Vue.component('TiposPeriodo', TiposPeriodo)
 Vue.component('TiposGrado', TiposGrado)
 Vue.component('TiposEspecialidad', TiposEspecialidad)
 
+Vue.component('base-dialog', BaseDialog);
+
 Vue.config.productionTip = false
 
 import routes from '@/routes/routes.js'
 const router = new VueRouter({ mode: 'history', routes: routes })
 
+router.beforeEach(function (to, _, next) {
+  if (to.meta.requiresAuth && !store.getters.isAuthenticated) {        
+    next('/');
+  } 
+  else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {           
+    next('/inicio');
+  }
+  else{    
+      next();
+  }
+});
+
 new Vue({  
   router,
+  store,
   render: h => h(App),
 }).$mount('#app')

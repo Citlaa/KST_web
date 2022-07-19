@@ -403,7 +403,7 @@ export default {
           ciclo.TipoDeCicloEscolarId ===
           Number(element["002TipoDeCicloEscolarId"])
       );
-      console.log(element["002TipoDeCicloEscolarId"]);      
+          
       return ciclo;
     },
     seleccionarCicloEscolar: function(element) {
