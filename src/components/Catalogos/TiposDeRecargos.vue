@@ -209,6 +209,7 @@
                           type="number"
                           class="form-control"
                           v-model="item.Monto"
+                          min="0"
                         />
                       </div>
                       <div class="col-2 padding-model">
@@ -283,6 +284,7 @@ export default {
           key: "Monto",
           label: "Cantidad",
           sortable: true,
+          min:"0",
         },
         {
           key: "TipoDeCicloEscolar.Nombre",
