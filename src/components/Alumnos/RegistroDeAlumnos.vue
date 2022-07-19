@@ -67,6 +67,7 @@
             <input
               class="form-control"
               type="number"
+              min="0"
               v-model="filtros.filtro_numeroDeControl"
             />
           </div>
@@ -327,6 +328,7 @@
                             <label>Número de control</label>
                             <input
                               type="number"
+                              min="0"
                               class="form-control"
                               v-model="item.NumeroDeControl.val"
                               :disabled="!inhabilitar"
@@ -382,7 +384,7 @@
                             </p>
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <label>Beca de incripción</label>
+                            <label>Beca de inscripción</label>
                             <input
                               type="number"
                               class="form-control"
@@ -738,10 +740,12 @@ export default {
         {
           key: "Genero.val",
           label: "Genero",
+          sortable: true,
         },
         {
           key: "TipoEstadoAlumno.val.Nombre",
           label: "Estado",
+          sortable: true,
         },
         {
           label: "Opciones",
