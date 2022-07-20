@@ -80,11 +80,8 @@
           </div>
         </div>
         <div v-if="mostrarFiltros" class="filtro_footer">
-          <button
-            class="button is-default btn-sm mr-1"
-            @click="limpiarFiltros()"
-          >
-            Limpiar
+          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
+            Borrar
           </button>
           <button class="button is-primary btn-sm" @click="getAlumnoConPagos()">
             Buscar
@@ -1230,8 +1227,18 @@ export default {
         console.log(err);
       }
     },
+    limpiarFiltros() {
+      this.filtros.filtro_nombre = "";
+      this.filtros.filtro_apellidoPaterno = "";
+      this.filtros.filtro_apellidoMaterno = "";
+      this.filtros.filtro_curp = "";
+      this.filtros.filtro_numeroDeControl = ""
+      this.filtros.filtro_activo = "-1";
+      //this.getAlumnoConPagos(); 
+      },
   },
 };
+
 </script>
 <style scoped>
 .seccion_data {
