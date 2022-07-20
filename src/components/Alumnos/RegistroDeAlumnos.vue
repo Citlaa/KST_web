@@ -984,6 +984,12 @@ export default {
     },
     async validarAlumno() {
       this.itemIsValid = true;
+
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
+        this.itemIsValid = true;
+        this.$router.push({ name: "Login" });
+      }
+
       if (this.item.Nombre.val === "") {
         this.item.Nombre.isValid = false;
         this.itemIsValid = false;
@@ -1025,7 +1031,7 @@ export default {
       //   this.itemIsValid = false;
       // }
     },
-    async agregarAlumno() {
+    async agregarAlumno() {            
       //Guardamos
       const data = {
         alumno: {
@@ -1043,6 +1049,7 @@ export default {
           EstructuraGrupo: this.item.EstrucuraGrupoId.val,
           BecaInscripcion: this.item.BecaInscripcion.val,
           BecaMensualidad: this.item.BecaMensualidad.val,
+          UsuarioId: this.$store.getters.userId,
           FechaRegistro: new Date()
             .toISOString()
             .slice(0, 19)

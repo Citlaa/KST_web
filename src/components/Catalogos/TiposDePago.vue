@@ -446,6 +446,10 @@ export default {
     },
     async agregarTipoDePago() {
       try {
+        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
+          this.$router.push({ name: "Login" });
+        }
+        
         this.isLoading = true;
         const data = {
           tipoDePago: {
@@ -455,6 +459,7 @@ export default {
             TipoDeCicloEscolarId: Number(
               this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId
             ),
+            UsuarioId: this.$store.getters.userId,
             Activo: Number(this.item.Activo),
           },
         };

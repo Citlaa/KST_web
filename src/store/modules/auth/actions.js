@@ -36,15 +36,15 @@ export default {
       throw error;
     }
     
-    const expiresIn = +110 * 1000;
+    const expiresIn = +999 * 1000;
     const expirationDate = new Date().getTime() + expiresIn;    
 
-    localStorage.setItem("userId", response.localId);
+    localStorage.setItem("userId", response.data.response[0]['019Activo']);
     localStorage.setItem("tokenExpiration", expirationDate);
 
-    timer = setTimeout(function() {
-      context.dispatch("autoLogout");
-    }, expiresIn);
+    // timer = setTimeout(function() {
+    //   context.dispatch("autoLogout");
+    // }, expiresIn);
 
     context.commit("setUser", {
       userId: response.data.response[0]['019Activo'],

@@ -714,6 +714,10 @@ export default {
     validarPago() {
       this.itemIsValid = true;
 
+      if(this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined){
+        this.$router.push({ name: 'Login' });
+      }
+
       if (this.pago_item.TipoDePago.val.TipoDePagoId <= 0) {
         this.pago_item.TipoDePago.isValid = false;
         this.itemIsValid = false;
@@ -809,6 +813,7 @@ export default {
               TipoDeRecargoId: recargo.TipoRecargo.Id,
               DiasRetraso: recargo.DiasRetraso,
               TotalAPagar: recargo.TotalAPagar,
+              UsuarioId: this.$store.getters.userId,
               Activo: Enum.EstatusGeneral.Activo
             },
           };
@@ -830,6 +835,7 @@ export default {
             .slice(0, 19)
             .replace("T", " "),
           AlumnoId: this.alumno_item.AlumnoId,
+          UsuarioId: this.$store.getters.userId,
           Activo: Enum.EstatusGeneral.Activo,
         },
       };
