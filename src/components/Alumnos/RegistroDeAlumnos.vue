@@ -432,6 +432,7 @@
                               :titulo="true"
                               :label="'Ciclo Escolar*'"
                               :actual="true"
+                              :disabled="!inhabilitar"
                               :tipoDeCicloEscolarId="
                                 item ? item.CicloEscolar.val : -1
                               "
@@ -458,13 +459,14 @@
                               :titulo="true"
                               :label="'Nivel'"
                               :funcion="'seleccionarNivelItem'"
+                              :disabled="!inhabilitar"
                               @seleccionarNivelItem="
                                 seleccionarNivelItem($event)
                               "
                             />
                           </div>
                           <div class="col-4 form-group padding-model">
-                            <grupos :label="'Grupo'"
+                            <grupos :label="'Grupo*'"
                             :tipoDeGrupoId="item.EstrucuraGrupoId.val"
                             :key="item.EstrucuraGrupoId.key" :titulo="true"
                             :disabled="!inhabilitar"
@@ -477,8 +479,8 @@
                         </div>
                       </section>
                       <section id="data_tutor">
-                        <div class="row seccion_modal">
-                          <div class="row col-12" v-if="inhabilitar">
+                        <div class="row seccion_modal" v-if="inhabilitar">
+                          <div class="row col-12">
                             <div class="col-12 seccion_titulo_modal">
                               <h3>Buscar Padre o Tutor</h3>
                               <p
@@ -1190,7 +1192,8 @@ export default {
         this.cargarItem(item);
       this.mostrarModal = !this.mostrarModal;
     },
-    cargarItem: function(item) {
+    cargarItem: async function(item) {
+      const grupo = await this.getGrupo(item.EstructuraGrupo.val)
       this.item.AlumnoId.val = item.AlumnoId.val;
       this.item.Nombre.val = item.Nombre.val;
       this.item.ApellidoPaterno.val = item.ApellidoPaterno.val;
@@ -1206,6 +1209,14 @@ export default {
       this.item.Domicilio.val = item.Domicilio.val;
       this.item.TipoEstadoAlumno.val = item.Activo.val;
 
+      this.item.CicloEscolar.val = grupo.TipoDeCicloEscolar;
+      this.item.CicloEscolar.key = "CargarItem" + grupo.TipoDeCicloEscolar
+      
+      this.item.TiposNivelId.val = grupo.TiposNivel;
+      this.item.TiposNivelId.key = "CargarItem" + grupo.TiposNivel;
+
+      this.item.EstrucuraGrupoId.val = grupo.EstructuraDeGrupoId;
+      this.item.EstrucuraGrupoId.key = "CargarItem" + grupo.EstructuraDeGrupoId
       //cargar Tutores
       this.getTutores();
     },
@@ -1357,6 +1368,9 @@ export default {
                     Number(element["014TipoEstadoAlumnoId"])
                 ),
               },
+              EstructuraGrupo: {
+                val: element["010EstructuraDeGrupoId"]
+              },
               Activo:Number(element["011Activo"]),
             });
           });
@@ -1393,6 +1407,47 @@ export default {
           });
         });
         this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getGrupo(id) {
+      try {
+        this.isLoading = true;        
+        const filtros = {
+          filtro: {
+            estructuraDeGrupoId: id 
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "administracion/estructurasDeGrupo",
+          filtros
+        );
+        var grupo = {};
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              grupo = {
+                EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],
+                TipoDeCicloEscolar: Number(element["002TipoDeCicloEscolarId"]),
+                TipoModalidad: Number(element["004TipoModalidadId"]),
+                TipoPeriodo: Number(element["005TipoPeriodoId"]),
+                TipoDeGrupo: Number(element["006TipoDeGrupoId"]),
+                TiposNivel: Number(element["007TiposNivelId"]),
+                TipoGrado: Number(element["008TipoGradoId"]),
+                Especialidad: Number(element["009TipoEspecialidadId"]),
+                Activo: element["010Activo"],
+              }
+            });
+          }
+        } else
+          this.$alert(
+            "No se pudo obtener información, favor de volverlo a intentar."
+          );
+
+        this.isLoading = false;
+        return grupo;
       } catch (err) {
         console.log(err);
       }
