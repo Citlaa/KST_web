@@ -660,13 +660,7 @@ export default {
           isValid: true,
         },
         Fecha: {
-          val: moment(
-            moment()
-              .add(1, "M")
-              .month() +
-              "-5-" +
-              moment().year()
-          ).format("yyyy-MM-DD"),
+          val: moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD"),
           isValid: true,
         },
         Autoriza: {
@@ -932,7 +926,7 @@ export default {
     limpiarRecargo() {
       this.recargo_item.TipoRecargo.val = { TipoDeRecargoId: 0 };
       this.recargo_item.Monto.val = 0;
-      this.recargo_item.Fecha.val = moment().format("yyyy-MM-DD");
+      this.recargo_item.Fecha.val = moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD");
       this.recargo_item.Autoriza.val = null;
       this.recargo_item.TotalAPagar = 0;
       this.recargo_item.DiasRetraso = 0;
