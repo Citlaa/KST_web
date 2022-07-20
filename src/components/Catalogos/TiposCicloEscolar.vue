@@ -330,14 +330,18 @@ export default {
     },
     async agregarTipoDeCicloEscolar() {
       try {
+        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
+          this.$router.push({ name: "Login" });
+        }
+        
         this.isLoading = true;
         const data = {
           tipoDeCicloEscolar: {
             TipoDeCicloEscolarId: null,
             Inicio: Number(this.item.AñoDeInicio),
             Termino: Number(this.item.AñoDeTermino), 
-            Activo: Number(this.item.Activo),
-            
+            UsuarioId: this.$store.getters.userId,
+            Activo: Number(this.item.Activo),            
           },
         };
 

@@ -129,7 +129,7 @@
             :current-page="currentPage"
             :filter="filter"
           >
-            <template v-slot:cell(Activo)="data">
+            <template v-slot:cell(Activo)="data">                            
               <button
                 class="btn btn-default"
                 v-if="data.item.Activo == 1"
@@ -139,6 +139,7 @@
                 <i class="far fa-check-square" style="color: green"></i>
               </button>
               <button
+                v-else
                 class="btn btn-default"
                 :key="data.item.AlumnoId"
                 style="cursor: default;"
@@ -748,6 +749,11 @@ export default {
           sortable: true,
         },
         {
+          key: "Activo",
+          label: "Activo",
+          sortable: true,
+        },
+        {
           label: "Opciones",
           key: "opciones",
         },
@@ -984,6 +990,12 @@ export default {
     },
     async validarAlumno() {
       this.itemIsValid = true;
+
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
+        this.itemIsValid = true;
+        this.$router.push({ name: "Login" });
+      }
+
       if (this.item.Nombre.val === "") {
         this.item.Nombre.isValid = false;
         this.itemIsValid = false;
@@ -1025,7 +1037,7 @@ export default {
       //   this.itemIsValid = false;
       // }
     },
-    async agregarAlumno() {
+    async agregarAlumno() {            
       //Guardamos
       const data = {
         alumno: {
@@ -1043,6 +1055,7 @@ export default {
           EstructuraGrupo: this.item.EstrucuraGrupoId.val,
           BecaInscripcion: this.item.BecaInscripcion.val,
           BecaMensualidad: this.item.BecaMensualidad.val,
+          UsuarioId: this.$store.getters.userId,
           FechaRegistro: new Date()
             .toISOString()
             .slice(0, 19)
@@ -1292,7 +1305,7 @@ export default {
           routeAPI + "alumnos/alumnos",
           filtros
         );
-
+        console.log(response.data.response);
         if (!response.data.hayError) {
           response.data.response.forEach((element) => {
             this.items.push({
@@ -1344,9 +1357,7 @@ export default {
                     Number(element["014TipoEstadoAlumnoId"])
                 ),
               },
-              Activo: {
-                val: element["011Activo"],
-              },
+              Activo:Number(element["011Activo"]),
             });
           });
         } else {

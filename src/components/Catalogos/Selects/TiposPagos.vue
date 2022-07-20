@@ -94,7 +94,7 @@ export default {
       }
     },
     seleccionar: function() {
-      let _item = this.items.find(i => i.TipoDePagoId === 1);
+      let _item = this.items.find(i => i.TipoDePagoId === this.valor);
 
       this.valor > 0
         ? this.$emit(this.$props.funcion, { id: this.valor, monto: _item.Monto})

@@ -122,7 +122,11 @@
         <i class="fas fa-plus" style></i>&nbsp;&nbsp;Agregar grupo
       </button>
       <br />
-      <div class="row col-12" v-if="items.length <= 0" style="display: grid; justify-content: center;">
+      <div
+        class="row col-12"
+        v-if="items.length <= 0"
+        style="display: grid; justify-content: center;"
+      >
         <p>No se encontraron registros</p>
       </div>
       <div id="bootstrap_table" v-else>
@@ -146,17 +150,21 @@
           :filter="filter"
         >
           <template v-slot:cell(Activo)="data">
-            <button class="btn btn-default" v-if="data.item.Activo == 1" :key="data.item.EstructuraDeGrupoId" style="cursor: default;">     
-            <i
-              class="far fa-check-square"
-              style="color: green">
-            </i>
+            <button
+              class="btn btn-default"
+              v-if="data.item.Activo == 1"
+              :key="data.item.EstructuraDeGrupoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-check-square" style="color: green"> </i>
             </button>
-            <button class="btn btn-default" v-else :key="data.item.EstructuraDeGrupoId" style="cursor: default;">
-            <i 
-              class="far fa-times-circle" 
-              style="color: red">
-            </i>
+            <button
+              class="btn btn-default"
+              v-else
+              :key="data.item.EstructuraDeGrupoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-times-circle" style="color: red"> </i>
             </button>
           </template>
           <template v-slot:cell(opciones)="data">
@@ -211,8 +219,10 @@
                           :label="'Ciclo Escolar'"
                           :titulo="true"
                           :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                          v-on:seleccionarCicloEscolarItem="seleccionarCicloEscolarItem($event)"
-                          :funcion="'seleccionarCicloEscolarItem'"                          
+                          v-on:seleccionarCicloEscolarItem="
+                            seleccionarCicloEscolarItem($event)
+                          "
+                          :funcion="'seleccionarCicloEscolarItem'"
                         />
                       </div>
                       <div class="col-3 form-group padding-model">
@@ -447,8 +457,7 @@ export default {
       try {
         this.isLoading = true;
         const filtros = {
-          filtro: {
-          },
+          filtro: {},
         };
 
         const response = await axios.post(
@@ -456,23 +465,23 @@ export default {
           filtros
         );
 
-        if (!response.data.hayError){
-          if (response.data.response.length > 0){
-          response.data.response.forEach((element) => {
-          this.ciclosEscolares.push({
-            TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
-            Nombre:
-              element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
-          });
-        });
+        if (!response.data.hayError) {
+          if (response.data.response.length > 0) {
+            response.data.response.forEach((element) => {
+              this.ciclosEscolares.push({
+                TipoDeCicloEscolarId: element["002TipoDeCicloEscolarId"],
+                Nombre:
+                  element["002AñoDeInicio"] + "-" + element["002AñoDeTermino"],
+              });
+            });
+          }
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtener información, favor de volverlo a intentar."
+          );
         }
-      }else{
-        console.log(response);
-        this.$alert(
-          "No se pudo obtener información, favor de volverlo a intentar."
-        ); 
-      }
-      this.isLoading = false;
+        this.isLoading = false;
       } catch (err) {
         console.log(err);
       }
@@ -718,7 +727,7 @@ export default {
     seleccionarCicloEscolar: function(element) {
       this.filtros.filtro_cicloEscolar = element;
     },
-    seleccionarCicloEscolarItem: function(element) { 
+    seleccionarCicloEscolarItem: function(element) {
       console.log(element);
       this.item.TipoDeCicloEscolarId = element;
     },
@@ -758,12 +767,13 @@ export default {
     seleccionarEspecialidadItem: function(element) {
       this.item.TipoEspecialidadId = element;
     },
-    abrirModal: function(tipo,item) {
+    abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
-      
+
       if (tipo == "Editar") {
         this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
-        this.item.TipoDeCicloEscolarId = item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
+        this.item.TipoDeCicloEscolarId =
+          item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
         this.item.TiposNivelId = item.TiposNivel.TipoNivelId;
         this.item.TipoModalidadId = item.TipoModalidad.TipoDeModalidadId;
         this.item.TipoPeriodoId = item.TipoPeriodo.TipoPeriodoId;
@@ -779,11 +789,15 @@ export default {
         this.editarGrupo();
       } else {
         this.agregarGrupo();
-      }      
+      }
     },
     async agregarGrupo() {
-      try {
+      try {        
+        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
+          this.$router.push({ name: "Login" });
+        }
         this.isLoading = true;
+
         const data = {
           estructuraDeGrupo: {
             EstructuraDeGrupoId: null,
@@ -794,16 +808,16 @@ export default {
             TipoGradoId: Number(this.item.TipoGradoId),
             TipoDeGrupoId: Number(this.item.TipoDeGrupoId),
             TipoEspecialidadId: Number(this.item.TipoEspecialidadId),
+            UsuarioId: this.$store.getters.userId,
             Activo: Number(this.item.Activo),
           },
         };
-console.log(this.item);
+
         const response = await axios.post(
           routeAPI + "administracion/guardarEstructurasDeGrupo",
           data
         );
 
-        
         this.isLoading = false;
         if (!response.data.hayError) {
           this.mostrarModal = false;
@@ -840,7 +854,6 @@ console.log(this.item);
           data
         );
 
-        
         this.isLoading = false;
         if (!response.data.hayError) {
           this.$alert("El grupo se guardó con éxito.");
@@ -894,7 +907,7 @@ console.log(this.item);
         TipoDeGrupoId: -1,
         TipoEspecialidadId: -1,
         Activo: "-1",
-      }
+      };
     },
     limpiarFiltros() {
       this.filtros.filtro_cicloEscolar = "";

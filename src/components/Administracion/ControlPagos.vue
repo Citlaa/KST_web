@@ -657,13 +657,7 @@ export default {
           isValid: true,
         },
         Fecha: {
-          val: moment(
-            moment()
-              .add(1, "M")
-              .month() +
-              "-5-" +
-              moment().year()
-          ).format("yyyy-MM-DD"),
+          val: moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD"),
           isValid: true,
         },
         Autoriza: {
@@ -710,6 +704,10 @@ export default {
     },
     validarPago() {
       this.itemIsValid = true;
+
+      if(this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined){
+        this.$router.push({ name: 'Login' });
+      }
 
       if (this.pago_item.TipoDePago.val.TipoDePagoId <= 0) {
         this.pago_item.TipoDePago.isValid = false;
@@ -806,6 +804,7 @@ export default {
               TipoDeRecargoId: recargo.TipoRecargo.Id,
               DiasRetraso: recargo.DiasRetraso,
               TotalAPagar: recargo.TotalAPagar,
+              UsuarioId: this.$store.getters.userId,
               Activo: Enum.EstatusGeneral.Activo
             },
           };
@@ -827,6 +826,7 @@ export default {
             .slice(0, 19)
             .replace("T", " "),
           AlumnoId: this.alumno_item.AlumnoId,
+          UsuarioId: this.$store.getters.userId,
           Activo: Enum.EstatusGeneral.Activo,
         },
       };
@@ -923,7 +923,7 @@ export default {
     limpiarRecargo() {
       this.recargo_item.TipoRecargo.val = { TipoDeRecargoId: 0 };
       this.recargo_item.Monto.val = 0;
-      this.recargo_item.Fecha.val = moment().format("yyyy-MM-DD");
+      this.recargo_item.Fecha.val = moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD");
       this.recargo_item.Autoriza.val = null;
       this.recargo_item.TotalAPagar = 0;
       this.recargo_item.DiasRetraso = 0;
