@@ -72,7 +72,7 @@
             class="button is-default btn-sm mr-1"
             @click="limpiarFiltros()"
           >
-            Limpiar
+            Mostrar todo
           </button>
           <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">
             Filtrar
