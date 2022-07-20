@@ -475,6 +475,16 @@
                             seleccionarEstructuraGrupo($event) "
                             :funcion="'seleccionarEstructuraGrupo'"
                             @blur="limpiarValidez('EstrucuraGrupoId')" />
+                            <p
+                              v-if="!item.EstrucuraGrupoId.isValid"
+                              style="color: red"
+                            >
+                              Favor de seleccionar grupo
+                              <i
+                                class="far fa-times-circle"
+                                style="color: red"
+                              ></i>
+                            </p>
                           </div>
                         </div>
                       </section>
@@ -1034,6 +1044,10 @@ export default {
         this.item.Domicilio.isValid = false;
         this.itemIsValid = false;
       }
+      if (Number(this.item.EstrucuraGrupoId.val) <= 0) {
+        this.item.EstrucuraGrupoId.isValid = false;
+        this.itemIsValid = false;
+      }
       // if (this.item.tutores.val.length <= 0) {
       //   this.item.tutores.isValid = false;
       //   this.itemIsValid = false;
@@ -1109,6 +1123,9 @@ export default {
           Promedio: this.item.Promedio.val,
           Domicilio: this.item.Domicilio.val,
           TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+          EstructuraGrupo: this.item.EstrucuraGrupoId.val,
+          BecaInscripcion: this.item.BecaInscripcion.val,
+          BecaMensualidad: this.item.BecaMensualidad.val,
           FechaRegistro: new Date()
             .toISOString()
             .slice(0, 19)
@@ -1132,6 +1149,8 @@ export default {
           console.log("El alumno se editó con éxito.");
           if(this.item.tutores.val.length > 0)
             this.guardarTutores(this.item.AlumnoId.val);
+          else
+            this.getAlumnos();
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
