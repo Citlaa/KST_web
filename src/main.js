@@ -45,8 +45,11 @@ Vue.config.productionTip = false
 import routes from '@/routes/routes.js'
 const router = new VueRouter({ mode: 'history', routes: routes })
 
-router.beforeEach(function (to, _, next) {
-  if (to.meta.requiresAuth && !store.getters.isAuthenticated) {        
+router.beforeEach(function (to, _, next) {  
+  if(to.meta.requiresAuth == undefined && to.meta.requiresUnauth == undefined){    
+    next('/');
+  }
+  else if (to.meta.requiresAuth && !store.getters.isAuthenticated) {        
     next('/');
   } 
   else if (to.meta.requiresUnauth && store.getters.isAuthenticated) {           
