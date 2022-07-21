@@ -19,6 +19,7 @@ import TiposNivel from './components/Catalogos/Selects/TiposNivel.vue'
 import TiposPeriodo from './components/Catalogos/Selects/TiposPeriodo.vue'
 import TiposGrado from './components/Catalogos/Selects/TiposGrado.vue'
 import TiposEspecialidad from './components/Catalogos/Selects/TiposEspecialidad.vue'
+import Usuarios from './components/Catalogos/Selects/usuarios.vue';
 
 import BaseDialog from './components/Comunes/BaseDialogo.vue';
 
@@ -35,6 +36,7 @@ Vue.component('TiposNivel', TiposNivel)
 Vue.component('TiposPeriodo', TiposPeriodo)
 Vue.component('TiposGrado', TiposGrado)
 Vue.component('TiposEspecialidad', TiposEspecialidad)
+Vue.component('usuarios', Usuarios)
 
 Vue.component('base-dialog', BaseDialog);
 

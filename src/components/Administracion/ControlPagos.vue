@@ -439,15 +439,17 @@
                           <div
                             class="col-12 form-group padding-model"
                             v-if="mostrarEditarRecargo.quienAutoriza"
-                          >
-                            <label>Quien autoriza*</label>
-                            <input
-                              type="text"
-                              class="form-control"
-                              v-model="recargo_item.Autoriza.val"
+                          >                            
+                            <usuarios
+                              :key="recargo_item.Autoriza.val"
+                              :label="'Quien autoriza*'"
+                              :titulo="true"
+                              :usuarioId ="recargo_item.Autoriza.val"
                               :disabled="!inhabilitar"
-                              @blur="autorizaEvt"
-                            />
+                              @seleccionarTipoDeRecargo="seleccionarUsuario($event)"
+                              :funcion="'seleccionarTipoDeRecargo'"
+                              >
+                              </usuarios>
                           </div>
                           <section id="data_table">
                             <br />
@@ -536,6 +538,13 @@
       </div>
     </section>
     <cargando v-if="isLoading"></cargando>
+    <base-dialog
+      :show="!!error"
+      :title="'Log in'"
+      @close="handleError"
+    >
+      <p>{{ error }}</p>
+    </base-dialog>
   </div>
 </template>
 
@@ -557,6 +566,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      error: null,
       mostrarFiltros: true,
       mostrarModal: false,
       mostrarEditarRecargo: {
@@ -804,6 +814,7 @@ export default {
               TipoDeRecargoId: recargo.TipoRecargo.Id,
               DiasRetraso: recargo.DiasRetraso,
               TotalAPagar: recargo.TotalAPagar,
+              UsuarioId_Autoriza: recargo.UsuarioId_Autoriza,
               UsuarioId: this.$store.getters.userId,
               Activo: Enum.EstatusGeneral.Activo
             },
@@ -904,6 +915,7 @@ export default {
         Monto: this.recargo_item.TipoRecargo.val.Monto,
         DiasRetraso: this.recargo_item.DiasRetraso,
         TotalAPagar: this.recargo_item.TotalAPagar,
+        UsuarioId_Autoriza: this.recargo_item.Autoriza.val  
       });
 
       this.indexRecargos++;
@@ -930,10 +942,6 @@ export default {
       this.mostrarEditarRecargo.quienAutoriza = false;
       this.mostrarEditarRecargo.desabledMonto = true;
     },
-    autorizaEvt() {
-      this.mostrarEditarRecargo.desabledMonto = false;
-      this.mostrarEditarRecargo.displayRecargoBtn = false;
-    },
     abrirModal: function(tipo, inhabilitar, item) {
       this.titutoModal = tipo;
       this.mostrarModal = !this.mostrarModal;
@@ -953,6 +961,7 @@ export default {
 
       this.pago_item.CicloEscolar.val = -1;
       this.pago_item.CicloEscolar.key = "edit_" + -1;
+      this.mostrarEditarRecargo.quienAutoriza = false;
       this.itemsRecargo = [];
     },
     async cargarItem(item) {      
@@ -997,8 +1006,14 @@ export default {
       this.recargo_item.TipoRecargo.val = item;
       this.recargo_item.Monto.val = item.Monto;
 
-      if (item.Monto.length > 2) this.mostrarEditarRecargo.displayBtn = true;
-      else this.mostrarEditarRecargo.displayBtn = false;
+      this.mostrarEditarRecargo.displayBtn = true;      
+    },
+    seleccionarUsuario(item) {
+      this.recargo_item.Autoriza.val = item;   
+      if(item > 0){
+      this.mostrarEditarRecargo.desabledMonto = false;
+      this.mostrarEditarRecargo.displayRecargoBtn = false;
+      }
     },
     seleccionarTipoDePago(item) {
       if (item != null) {
@@ -1015,8 +1030,19 @@ export default {
 
       this.limpiarValidez("TipoDePago");
     },
+    async validarFiltros(){
+      let isValid =  true;
+      
+      if(this.filtros.filtro_nombre == "" && this.filtros.filtro_apellidoPaterno == "" && this.filtros.filtro_apellidoMaterno == "" && 
+          this.filtros.filtro_curp == "" && this.filtros.filtro_numeroDeControl == "" && this.filtros.filtro_activo == "-1"){
+        isValid =  false;      
+      }
+      
+      return isValid;
+    },
     async getAlumnoConPagos() {
       try {
+        if(await this.validarFiltros()){
         this.isLoading = true;
         this.pagos_items = [];
         const filtros = {
@@ -1047,6 +1073,13 @@ export default {
         if (!response.data.hayError) {
           this.isLoading = false;
           this.mostrarAlumno = true;
+
+          if(response.data.response.length <= 0){
+            this.error = "No se encontró ninún alumno, favor de verificar los datos.";
+            this.mostrarAlumno = false;
+            return;
+          }
+
           let alumno = response.data.response[0];
 
           this.getGrupos(Number(alumno["010EstructuraDeGrupoId"]));
@@ -1058,6 +1091,11 @@ export default {
           this.alumno_item.Curp = alumno["011CURP"];
           this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
           this.getPagos(Number(alumno["011AlumnoId"]));
+        }
+        }else{
+          console.log("error");
+          this.error = "Favor de indicar algún filtro";
+          this.mostrarAlumno = false;
         }
       } catch (err) {
         console.log(err);
@@ -1236,6 +1274,9 @@ export default {
       this.filtros.filtro_activo = "-1";
       //this.getAlumnoConPagos(); 
       },
+    handleError() {
+      this.error = null;
+    },
   },
 };
 
