@@ -74,7 +74,7 @@
           Mostrar Todo
         </button>
         <button class="button is-primary btn-sm" @click="getTiposDePago()">
-          Filtrar
+          Buscar
         </button>
       </div>
     </div>
@@ -255,6 +255,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isValid:true,
       ciclosEscolares: [],
       items: [],
       item: {
@@ -318,13 +319,11 @@ export default {
     },
   },
   methods: {
-
     async BuscarExistente(event) {
      console.log(event.target.value)
      if (event==this.ciclosEscolares.value)
      {console.log("El concepto ya existe")}
      },
-
    async getTipoDeCicloEscolar() {
       try {
         this.isLoading = true;
@@ -444,12 +443,20 @@ export default {
         this.agregarTipoDePago();
       }
     },
-    async agregarTipoDePago() {
-      try {
-        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
+    async validar(){
+      this.isValid = true;
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
           this.$router.push({ name: "Login" });
-        }
-        
+      }
+    
+      if(this.item.Nombre == "" || this.item.Monto == undefined || Number(this.item.Monto) <=0 || Number(this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId) <= 0 || this.item.Activo == undefined || Number(this.item.Activo) <= 0){
+        this.$alert("Favor de completar datos.");
+        this.isValid = false;
+      }      
+    },
+    async agregarTipoDePago() {
+      try {                        
+        if(await this.validar()){
         this.isLoading = true;
         const data = {
           tipoDePago: {
@@ -478,6 +485,7 @@ export default {
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
         }
       } catch (err) {
         console.log(err);

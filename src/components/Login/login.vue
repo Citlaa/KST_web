@@ -27,7 +27,7 @@
           id="login"
           class="fadeIn second"
           name="login"
-          placeholder="login"
+          placeholder="Usuario"
           v-model="email"
         />
         <input
@@ -35,7 +35,7 @@
           id="password"
           class="fadeIn third"
           name="login"
-          placeholder="password"
+          placeholder="Contraseña"
           v-model="password"
         />
         <input type="submit" class="fadeIn fourth" value="Entrar" />

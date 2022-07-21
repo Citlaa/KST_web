@@ -75,7 +75,7 @@
             Mostrar todo
           </button>
           <button class="button is-primary btn-sm" @click="getTiposDeRecargo()">
-            Filtrar
+            Buscar
           </button>
         </div>
       </div>
@@ -258,6 +258,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isValid: true,
       ciclosEscolares: [],
       items: [],
       item: {
@@ -427,12 +428,22 @@ export default {
         this.agregarTipoDeRecago();
       }
     },
-    async agregarTipoDeRecago() {
-      try {
-        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
+    async validar(){
+      this.isValid = true;
+
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
           this.$router.push({ name: "Login" });
-        }
-        
+      }
+
+      if(this.item.Nombre == "" || this.item.Monto == undefined || Number(this.item.Monto) <=0 || Number(this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId) <= 0 || this.item.Activo == undefined || Number(this.item.Activo) <= 0){
+        this.$alert("Favor de completar datos.");
+        this.isValid = false;
+      }  
+    }, 
+    async agregarTipoDeRecago() {
+      try {    
+        await this.validar();
+        if(this.isValid){       
         this.isLoading = true;
         const data = {
           tipoDeRecargo: {
@@ -460,6 +471,7 @@ export default {
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
         }
       } catch (err) {
         console.log(err);

@@ -66,7 +66,7 @@
           class="button is-primary btn-sm"
           @click="getTiposDeCicloEscolar()"
         >
-          Filtrar
+          Buscar
         </button>
       </div>
     </div>
@@ -223,6 +223,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isValid:true,
       items: [],
       item: {
         AñoDeInicio: Number,
@@ -328,12 +329,33 @@ export default {
         this.agregarTipoDeCicloEscolar();
       }
     },
+    async validar(){
+      this.isValid  = true;
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
+          this.isValid = false;
+          this.$router.push({ name: "Login" });
+      }
+
+      if(this.item.AñoDeTermino == undefined || this.item.AñoDeInicio == undefined || this.item.Activo == undefined)          
+      {
+        this.$alert("Favor de completar datos.");
+        this.isValid = false;
+      }
+
+      if(this.item.AñoDeTermino <= this.item.AñoDeInicio)          
+      {
+        this.$alert("El año de Termino no puede ser anterior o igual al año de inicio");
+        this.isValid = false;
+      }
+
+      return this.isValid;
+    },
     async agregarTipoDeCicloEscolar() {
       try {
-        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {          
-          this.$router.push({ name: "Login" });
-        }
-        
+        await this.validar();
+
+        if(this.isValid){
+                
         this.isLoading = true;
         const data = {
           tipoDeCicloEscolar: {
@@ -352,19 +374,13 @@ export default {
 
         this.mostrarModal = false;
         this.isLoading = false;
-        if (!response.data.hayError) {
-          if(this.item.AñoDeTermino>this.item.AñoDeInicio)
-          {
+        if (!response.data.hayError) {          
            this.$alert("El ciclo escolar se guardó con éxito.");
-           this.getTiposDeCicloEscolar();
-          }
-          else
-          {
-            this.$alert("El año de Termino no puede ser anterior al año de inicio");
-          }
+           this.getTiposDeCicloEscolar();         
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
         }
       } catch (err) {
         console.log(err);
@@ -433,6 +449,7 @@ export default {
       this.filtro_añoDeInicio = "";
       this.filtro_añoDeTermino = "";
       this.filtro_activo = "-1";
+      this.getTiposDeCicloEscolar();
     },
   },
 };

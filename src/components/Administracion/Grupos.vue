@@ -344,6 +344,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      isValid: true,
       ciclosEscolares: [],
       modalidades: [],
       periodos: [],
@@ -791,11 +792,22 @@ export default {
         this.agregarGrupo();
       }
     },
+    async validar(){
+      this.isValid = true;
+
+      if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
+          this.$router.push({ name: "Login" });
+      }
+    
+      if(this.item.TipoDeCicloEscolarId <= 0 || this.item.TiposNivelId <=0 || this.item.TipoModalidadId <= 0 ||
+          this.item.TipoPeriodoId <= 0  || this.item.TipoGradoId <= 0  || this.item.TipoDeGrupoId <= 0  || this.item.TipoEspecialidadId <=0 || this.item.Activo <=0){
+        this.$alert("Favor de completar datos.");
+        this.isValid = false;
+      }
+    },
     async agregarGrupo() {
       try {        
-        if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
-          this.$router.push({ name: "Login" });
-        }
+        if(await this.validar()){
         this.isLoading = true;
 
         const data = {
@@ -827,6 +839,7 @@ export default {
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
+        }
         }
       } catch (err) {
         console.log(err);

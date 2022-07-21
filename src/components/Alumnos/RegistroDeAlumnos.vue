@@ -88,7 +88,7 @@
             Mostrar Todo
           </button>
           <button class="button is-primary btn-sm" @click="getAlumnos()">
-            Filtrar
+            Buscar
           </button>
         </div>
       </div>
@@ -402,7 +402,18 @@
                               :disabled="!inhabilitar"
                             />
                           </div>
-                          <div class="col-12 form-group padding-model">
+                          <div class="col-4 form-group padding-model">
+                            <tipos-estado-alumno
+                              :label="'Estado de Alumno*'"
+                              :estadoAlumnoId="item.TipoEstatusAlumno.val"
+                              :key="item.TipoEstatusAlumno.key"
+                              :titulo="true"
+                              :disabled="!inhabilitar"
+                              @seleccionarEstadoAlumno="seleccionarEstadoAlumno($event)"
+                              :funcion="'seleccionarEstadoAlumno'"
+                              ></tipos-estado-alumno>                            
+                          </div>
+                          <div class="col-8 form-group padding-model">
                             <label>Domicilio*</label>
                             <textarea
                               type="text"
@@ -422,6 +433,13 @@
                                 style="color: red"
                               ></i>
                             </p>
+                          </div>
+                          <div class="col-4 padding-model">
+                            <label>Activo</label>
+                            <select class="form-control" v-model="item.Activo">
+                              <option value="1">Si</option>
+                              <option value="0">No</option>
+                            </select>
                           </div>
                           <div class="col-12 seccion_titulo_modal">
                             <h3>Grupo</h3>
@@ -699,6 +717,7 @@ import escuela from "../../components/Catalogos/Selects/EscuelasProcedencia.vue"
 import tiposParentesco from "../../components/Catalogos/Selects/TiposParentesco.vue";
 import grupos from "../../components/Catalogos/Selects/EstructurasGrupos.vue";
 import TiposCicloEscolar from "../Catalogos/Selects/TiposCicloEscolar.vue";
+import TiposEstadoAlumno from "../Catalogos/Selects/EstadosAlumno.vue";
 
 export default {
   components: {
@@ -706,6 +725,7 @@ export default {
     tiposParentesco,
     grupos,
     TiposCicloEscolar,
+    TiposEstadoAlumno
   },
   data() {
     return {
@@ -822,6 +842,11 @@ export default {
         BecaMensualidad: {
           val: 0,
         },
+        TipoEstatusAlumno:{
+          val: 0,
+          isValid: true,
+          key: "",
+        },
         CicloEscolar: {
           val: 0,
           isValid: true,
@@ -848,6 +873,9 @@ export default {
         TipoEstadoAlumno: {
           val: true,
         },
+        Activo:{
+          val: 0
+        }
       },
       items: [],
       itemIsValid: true,
@@ -878,7 +906,11 @@ export default {
     this.getEstadosAlumno();
     this.getAlumnos();   
   },
-  methods: {            
+  methods: {    
+    seleccionarEstadoAlumno(element) {
+      this.item.TipoEstatusAlumno.val = Number(element);
+      this.item.TipoEstatusAlumno.isValid = true;
+    },        
     seleccionarEscuela(element) {
       this.item.EscuelaId.val = Number(element);
       this.item.EscuelaId.isValid = true;
@@ -1076,7 +1108,7 @@ export default {
             .toISOString()
             .slice(0, 19)
             .replace("T", " "),
-          Activo: Enum.EstatusGeneral.Activo,
+          Activo:  this.item.Activo,
         },
       };
 
@@ -1122,7 +1154,7 @@ export default {
           EscuelaId: this.item.EscuelaId.val,
           Promedio: this.item.Promedio.val,
           Domicilio: this.item.Domicilio.val,
-          TipoEstatusAlumno: Enum.TipoEstatusAlumno.Activo,
+          TipoEstatusAlumno: this.item.TipoEstatusAlumno.val,
           EstructuraGrupo: this.item.EstrucuraGrupoId.val,
           BecaInscripcion: this.item.BecaInscripcion.val,
           BecaMensualidad: this.item.BecaMensualidad.val,
@@ -1130,7 +1162,7 @@ export default {
             .toISOString()
             .slice(0, 19)
             .replace("T", " "),
-          Activo: Enum.EstatusGeneral.Activo,
+          Activo: this.item.Activo,
         },
       };
 
@@ -1225,8 +1257,9 @@ export default {
       this.item.NumeroDeControl.val = item.NumeroDeControl.val;
       this.item.EscuelaId.val = item.EscuelaDeProcedenciaId.val;
       this.item.Promedio.val = item.PromedioDeProcedencia.val;
-      this.item.Domicilio.val = item.Domicilio.val;
-      this.item.TipoEstadoAlumno.val = item.Activo.val;
+      this.item.Domicilio.val = item.Domicilio.val;      
+      this.item.TipoEstatusAlumno.val = item.TipoEstadoAlumno.val.EstadoDeAlumnoId;
+      this.item.Activo = item.Activo;
 
       this.item.CicloEscolar.val = grupo.TipoDeCicloEscolar;
       this.item.CicloEscolar.key = "CargarItem" + grupo.TipoDeCicloEscolar
@@ -1236,6 +1269,7 @@ export default {
 
       this.item.EstrucuraGrupoId.val = grupo.EstructuraDeGrupoId;
       this.item.EstrucuraGrupoId.key = "CargarItem" + grupo.EstructuraDeGrupoId
+      
       //cargar Tutores
       this.getTutores();
     },
