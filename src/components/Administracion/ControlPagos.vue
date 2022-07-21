@@ -472,7 +472,7 @@
                                     <td>{{ item.TipoRecargo.Nombre }}</td>
                                     <td>{{ currencyFormat(item.Monto) }}</td>
                                     <td>{{ item.DiasRetraso }}</td>
-                                    <td>{{ item.TotalAPagar }}</td>
+                                    <td>${{ item.TotalAPagar }}</td>
                                     <td>
                                       <button
                                         class="btn btn-default"
@@ -483,10 +483,17 @@
                                       </button>
                                     </td>
                                   </tr>
+                                  <tr>
+                                    <td>Pago</td>
+                                    <td>${{ currencyFormat(this.pago_item.TipoDePago.val.Monto) }}</td>
+                                    <td>{{ }}</td>
+                                    <td>${{ currencyFormat(this.pago_item.TipoDePago.val.Monto) }}</td>
+                                    <td></td>
+                                  </tr>
                                 </tbody>
                               </table>
                             </div>
-                          </section>
+                          </section>                          
                           <section id="data_total">
                             <br />
                             <div class="col-12 seccion_total_modal">
