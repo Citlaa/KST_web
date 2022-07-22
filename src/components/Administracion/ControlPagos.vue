@@ -964,6 +964,7 @@ export default {
       this.pago_item.FechaDePago.val = moment().format("yyyy-MM-DD");
 
       this.pago_item.TipoDePago.val.TipoDePagoId = -1;
+      this.pago_item.TipoDePago.val.TipoDePagoId.Monto = 0;
       this.pago_item.TipoDePago.key = "edit_" + -1;
 
       this.pago_item.CicloEscolar.val = -1;
@@ -1024,7 +1025,7 @@ export default {
     },
     seleccionarTipoDePago(item) {
       if (item != null) {
-        
+        console.log(item);
         this.pago_item.TipoDePago.val.Monto = item.monto;
         this.cantidadTipoPago = item.monto;
         this.pago_item.TipoDePago.val.TipoDePagoId = item.id;
