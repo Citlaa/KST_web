@@ -770,7 +770,8 @@ export default {
     },
     abrirModal: function(tipo, item) {
       this.titutoModal = tipo;
-
+      this.limpiarVariables();
+      
       if (tipo == "Editar") {
         this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
         this.item.TipoDeCicloEscolarId =
@@ -786,6 +787,7 @@ export default {
       this.mostrarModal = !this.mostrarModal;
     },
     async guardarGrupo() {
+      console.log("entra");
       if (this.item.EstructuraDeGrupoId > 0) {
         this.editarGrupo();
       } else {
@@ -804,6 +806,7 @@ export default {
         this.$alert("Favor de completar datos.");
         this.isValid = false;
       }
+      return true;
     },
     async agregarGrupo() {
       try {        

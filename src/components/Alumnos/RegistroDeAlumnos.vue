@@ -413,7 +413,7 @@
                               :funcion="'seleccionarEstadoAlumno'"
                               ></tipos-estado-alumno>                            
                           </div>
-                          <div class="col-8 form-group padding-model">
+                          <div class="col-12 form-group padding-model">
                             <label>Domicilio*</label>
                             <textarea
                               type="text"
@@ -434,13 +434,13 @@
                               ></i>
                             </p>
                           </div>
-                          <div class="col-4 padding-model">
+                          <!-- <div class="col-4 padding-model">
                             <label>Activo</label>
                             <select class="form-control" v-model="item.Activo">
                               <option value="1">Si</option>
                               <option value="0">No</option>
                             </select>
-                          </div>
+                          </div> -->
                           <div class="col-12 seccion_titulo_modal">
                             <h3>Grupo</h3>
                           </div>
@@ -576,6 +576,9 @@
                                 </div>
                               </div>
                               <div v-else>
+                                <div class="col-12 seccion_titulo_modal">
+                                <h3>Resultados de la búsqueda</h3>
+                              </div>
                                 <table class="table">
                                   <thead>
                                     <tr>
@@ -584,7 +587,7 @@
                                       <th>Apellido Paterno</th>
                                       <th>Apellido Materno</th>
                                       <th>Domicilio</th>
-                                      <th></th>
+                                      <th>Parentesco</th>
                                       <th></th>
                                     </tr>
                                   </thead>
@@ -628,7 +631,7 @@
                               class="row"
                             >
                               <div class="col-12 seccion_titulo_modal">
-                                <h3>Padres o Tutores del alumno</h3>
+                                <h3>Padres o Tutores agregados al alumno</h3>
                               </div>
                               <div class="col-12">
                                 <table class="table">
@@ -945,10 +948,11 @@ export default {
       const selected = this.item.tutores.val.find(
         (i) => i.tutor.padreId === tutor.PadreId
       );
-
+      
       if (selected) {
         this.$alert("El padre/tutor ya esta agregado.");
       } else {
+        
         this.item.tutores.val.push({
           parentesco: {
             parentesoId: this.item.parentesco.val.TipoParentescoId,
@@ -956,6 +960,8 @@ export default {
           },
           tutor: tutor,
         });
+        console.log("agregar tutor: ")
+        console.log(this.item)
       }
     },
     eliminarTutor(tutor) {
@@ -1024,7 +1030,8 @@ export default {
     },
     async guardarAlumno() {
       this.validarAlumno();
-
+      console.log("guardarAlumno");
+      console.log(this.item);
       if (this.itemIsValid) {
         if (this.item.AlumnoId.val > 0) this.editarAlumno();
         else this.agregarAlumno();
@@ -1108,13 +1115,14 @@ export default {
             .toISOString()
             .slice(0, 19)
             .replace("T", " "),
-          Activo:  this.item.Activo,
+          Activo:  "1",
         },
       };
 
       try {
         this.isLoading = true;
-
+        console.log("agregarAlumno");
+console.log(this.item.tutores);
         const response = await axios.post(
           routeAPI + "alumnos/agregarAlumno",
           data
@@ -1126,6 +1134,7 @@ export default {
           // this.$alert("El alumno se guardó con éxito.");
           this.mostrarModal = false;
           console.log("El alumno se guardó con éxito.");
+          
           if(this.item.tutores.length > 0)
             this.guardarTutores(response.data.response.insertId);
           else
@@ -1179,6 +1188,7 @@ export default {
         if (!response.data.hayError) {
           this.mostrarModal = false;
           console.log("El alumno se editó con éxito.");
+          
           if(this.item.tutores.val.length > 0)
             this.guardarTutores(this.item.AlumnoId.val);
           else
@@ -1205,16 +1215,17 @@ export default {
           filtros.filtro.apellidoPaterno = this.filtro_tutores.filtro_apellidoPaterno;
         if (this.filtro_tutores.filtro_apellidoMaterno != "")
           filtros.filtro.apellidoMaterno = this.filtro_tutores.filtro_apellidoMaterno;
-
+        console.log("filtros" + filtros);
         const response = await axios.post(
           routeAPI + "alumnos/tutores",
           filtros
-        );
+        );        
 
         if (!response.data.hayError) {
           if (response.data.response.length > 0) {
+            console.log("response" + response);
             response.data.response.forEach((element) => {
-              this.items.push({
+              this.tutores.push({
                 PadreId: element["012PadreId"],
                 Nombre: element["012Nombre"],
                 ApellidoPaterno: element["012ApellidoPaterno"],

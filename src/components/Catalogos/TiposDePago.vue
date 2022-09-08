@@ -452,7 +452,8 @@ export default {
       if(this.item.Nombre == "" || this.item.Monto == undefined || Number(this.item.Monto) <=0 || Number(this.item.TipoDeCicloEscolar.TipoDeCicloEscolarId) <= 0 || this.item.Activo == undefined || Number(this.item.Activo) <= 0){
         this.$alert("Favor de completar datos.");
         this.isValid = false;
-      }      
+      } 
+      return this.isValid;     
     },
     async agregarTipoDePago() {
       try {                        

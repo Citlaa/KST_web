@@ -439,6 +439,7 @@ export default {
         this.$alert("Favor de completar datos.");
         this.isValid = false;
       }  
+      return this.isValid;
     }, 
     async agregarTipoDeRecago() {
       try {    
