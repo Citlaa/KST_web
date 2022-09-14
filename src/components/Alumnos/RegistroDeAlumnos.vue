@@ -133,7 +133,7 @@
               <button
                 class="btn btn-default"
                 v-if="data.item.Activo == 1"
-                :key="data.item.AlumnoId"
+                :key="data.item.AlumnoId.val"
                 style="cursor: default;"
               >
                 <i class="far fa-check-square" style="color: green"></i>
@@ -141,7 +141,7 @@
               <button
                 v-else
                 class="btn btn-default"
-                :key="data.item.AlumnoId"
+                :key="data.item.AlumnoId.val"
                 style="cursor: default;"
               >
                 <i class="far fa-times-circle" style="color: red"></i>
@@ -411,7 +411,17 @@
                               :disabled="!inhabilitar"
                               @seleccionarEstadoAlumno="seleccionarEstadoAlumno($event)"
                               :funcion="'seleccionarEstadoAlumno'"
-                              ></tipos-estado-alumno>                            
+                              ></tipos-estado-alumno>  
+                              <p
+                              v-if="!item.TipoEstatusAlumno.isValid"
+                              style="color: red"
+                            >
+                              Favor de ingresar estado
+                              <i
+                                class="far fa-times-circle"
+                                style="color: red"
+                              ></i>
+                            </p>                          
                           </div>
                           <div class="col-12 form-group padding-model">
                             <label>Domicilio*</label>
@@ -1014,6 +1024,7 @@ export default {
             console.log("El tutor se guardó con éxito.");
             this.getAlumnos();
             this.limpiarVariables();
+            this.mostrarModal = false;
           } else {
             console.log(response);
             this.$alert(
@@ -1040,6 +1051,7 @@ export default {
       }
     },
     async validarAlumno() {
+      console.log(this.item);
       this.itemIsValid = true;
 
       if (this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined) {
@@ -1087,6 +1099,10 @@ export default {
         this.item.EstrucuraGrupoId.isValid = false;
         this.itemIsValid = false;
       }
+      if (Number(this.item.TipoEstatusAlumno.val) <= 0) {
+        this.item.TipoEstatusAlumno.isValid = false;
+        this.itemIsValid = false;
+      }
       // if (this.item.tutores.val.length <= 0) {
       //   this.item.tutores.isValid = false;
       //   this.itemIsValid = false;
@@ -1121,8 +1137,7 @@ export default {
 
       try {
         this.isLoading = true;
-        console.log("agregarAlumno");
-console.log(this.item.tutores);
+
         const response = await axios.post(
           routeAPI + "alumnos/agregarAlumno",
           data
@@ -1130,16 +1145,14 @@ console.log(this.item.tutores);
 
         this.isLoading = false;
 
-        if (!response.data.hayError) {
-          // this.$alert("El alumno se guardó con éxito.");
-          this.mostrarModal = false;
-          console.log("El alumno se guardó con éxito.");
-          
-          if(this.item.tutores.length > 0)
+        if (!response.data.hayError) {                                        
+          if(this.item.tutores.val.length > 0)
             this.guardarTutores(response.data.response.insertId);
-          else
+          else{
+            this.$alert("El alumno se guardó con éxito.");
             this.getAlumnos();
-
+            this.mostrarModal = false;
+          }          
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -1181,18 +1194,18 @@ console.log(this.item.tutores);
         const response = await axios.post(
           routeAPI + "alumnos/editarAlumno",
           data
-        );
-
-        this.isLoading = false;
+        );       
 
         if (!response.data.hayError) {
-          this.mostrarModal = false;
-          console.log("El alumno se editó con éxito.");
+          this.isLoading = false;
           
           if(this.item.tutores.val.length > 0)
             this.guardarTutores(this.item.AlumnoId.val);
-          else
+          else{
+            this.$alert("El alumno se guardó con éxito.");
+            this.mostrarModal = false;
             this.getAlumnos();
+          }                      
         } else {
           console.log(response);
           this.$alert("No se pudo guardar, favor de volverlo a intentar.");
@@ -1269,8 +1282,10 @@ console.log(this.item.tutores);
       this.item.EscuelaId.val = item.EscuelaDeProcedenciaId.val;
       this.item.Promedio.val = item.PromedioDeProcedencia.val;
       this.item.Domicilio.val = item.Domicilio.val;      
-      this.item.TipoEstatusAlumno.val = item.TipoEstadoAlumno.val.EstadoDeAlumnoId;
       this.item.Activo = item.Activo;
+      
+      this.item.TipoEstatusAlumno.val = item.TipoEstadoAlumno.val.EstadoDeAlumnoId;
+      this.item.TipoEstatusAlumno.key = "CargarItem" + item.TipoEstadoAlumno.val.EstadoDeAlumnoId;   
 
       this.item.CicloEscolar.val = grupo.TipoDeCicloEscolar;
       this.item.CicloEscolar.key = "CargarItem" + grupo.TipoDeCicloEscolar
@@ -1538,6 +1553,14 @@ console.log(this.item.tutores);
       this.item.tutores.val = [];
       this.item.parentesco.val = 0;
       this.item.TipoEstadoAlumno.val = true;
+      this.item.TiposNivelId.val = 0;
+      this.item.EstrucuraGrupoId.val = 0;
+      this.tutores = [];
+        this.filtro_tutores = {
+        filtro_nombre: "",
+        filtro_apellidoPaterno: "",
+        filtro_apellidoMaterno: "",
+      };
     },
   },
 };

@@ -44,7 +44,7 @@
             <b-dropdown-item :to="{ name: 'RegistroDeAlumnos' }"
               >Registro de alumnos</b-dropdown-item
             >
-            <b-dropdown-item :to="{ name: '' }"
+            <b-dropdown-item :to="{ name: 'RegistroDeTutores' }"
               >Registro de Padre/Tutor</b-dropdown-item
             >
           </b-nav-item-dropdown>
