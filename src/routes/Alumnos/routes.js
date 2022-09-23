@@ -10,7 +10,7 @@ const routes = [
     },
     {
         name: 'RegistroDeTutores',
-        path: '/registrDeTutores',
+        path: '/registroDeTutores',
         component: RegistroDeTutores,
         meta: { requiresAuth: true }
     }

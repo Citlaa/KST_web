@@ -517,8 +517,8 @@
                         </div>
                       </section>
                       <section id="data_tutor">
-                        <div class="row seccion_modal" v-if="inhabilitar">
-                          <div class="row col-12">
+                        <div class="row seccion_modal" >
+                          <div class="row col-12" v-if="inhabilitar">
                             <div class="col-12 seccion_titulo_modal">
                               <h3>Buscar Padre o Tutor</h3>
                               <p
@@ -1180,6 +1180,7 @@ export default {
           EstructuraGrupo: this.item.EstrucuraGrupoId.val,
           BecaInscripcion: this.item.BecaInscripcion.val,
           BecaMensualidad: this.item.BecaMensualidad.val,
+          UsuarioId: this.$store.getters.userId,
           FechaRegistro: new Date()
             .toISOString()
             .slice(0, 19)
@@ -1228,7 +1229,8 @@ export default {
           filtros.filtro.apellidoPaterno = this.filtro_tutores.filtro_apellidoPaterno;
         if (this.filtro_tutores.filtro_apellidoMaterno != "")
           filtros.filtro.apellidoMaterno = this.filtro_tutores.filtro_apellidoMaterno;
-        console.log("filtros" + filtros);
+        filtros.filtro.activo = Enum.TipoEstatusAlumno.Activo;
+        
         const response = await axios.post(
           routeAPI + "alumnos/tutores",
           filtros
@@ -1395,7 +1397,7 @@ export default {
           routeAPI + "alumnos/alumnos",
           filtros
         );
-        console.log(response.data.response);
+        
         if (!response.data.hayError) {
           response.data.response.forEach((element) => {
             this.items.push({
