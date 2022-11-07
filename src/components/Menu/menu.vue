@@ -49,7 +49,7 @@
             >
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Reportes">
-            <b-dropdown-item :to="{ name: '' }" class="ms-auto"
+            <b-dropdown-item :to="{ name: 'ListaDeGrupo' }" class="ms-auto"
               >Lista de grupo</b-dropdown-item
             >
             <b-dropdown-item :to="{ name: '' }"
