@@ -319,30 +319,7 @@
                             <div class="col-12 seccion_titulo_modal">
                               <h3>Alumnos registrados al grupo</h3>
                             </div>
-                            <div class="col-12">
-                              <!-- <table class="table">
-                                <thead>
-                                  <tr>
-                                    <th>Folio</th>
-                                    <th>Nombre</th>
-                                    <th>Apellido Paterno</th>
-                                    <th>Apellido Materno</th>
-                                    <th>Estatus</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  <tr
-                                    v-for="alumno in item.Alumnos"
-                                    :key="alumno.AlumnoId.val"
-                                  >
-                                    <td>{{ alumno.AlumnoId.val }}</td>
-                                    <td>{{ alumno.Nombre.val }}</td>
-                                    <td>{{ alumno.ApellidoPaterno.val }}</td>
-                                    <td>{{ alumno.ApellidoMaterno.val }}</td>
-                                    <td>{{ alumno.TipoEstadoAlumno.val.Nombre }}</td>
-                                  </tr>
-                                </tbody>
-                              </table> -->
+                            <div class="col-12">                             
                               <div class="col-3 mr-0 align-rigth">
                                 <input
                                   class="form-control"
@@ -398,12 +375,66 @@
         </div>
       </transition>
     </div>
+    <div id="pdf_dev" v-show="false">
+      <div id="app" ref="document">
+        <div id="element-to-convert">
+          <div id="header" class="row">
+            <div class="logo col-3">
+              <img
+                src="@/assets/logo.png"
+                id="icon"
+                alt="User Icon"
+                style="max-width: 150px"
+              />
+            </div>
+            <div class="col-7 text-align">
+              <h1 style="text-align:center; font-size:120%; font-weight:bold; margin-bottom:10px">
+                Instituto Víctor Manuel Castelazo Muriel
+              </h1>
+              <h1 style="text-align:center;">Grupo {{item.TipoGrado}}° {{item.TipoDeGrupo}}</h1>
+              <!-- //Grado grupo -->
+              <h1 style="text-align:center;">{{item.TiposNivel}} {{item.TipoModalidad}}</h1>
+              <!-- //Nivel Modalidad Especialidad -->
+              <h1 style="text-align:center;">{{item.TipoEspecialidad}} {{item.TipoDeCicloEscolar}} </h1>
+              <!-- //Especialidad Ciclo -->
+            </div>
+          </div>
+          <div id="alumnos_tabla" style="margin-top: 15px">
+            <table class="table table-hover striped ">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Folio</th>
+                  <th style="text-align:center;">Nombre</th>
+                  <th style="text-align:center;">Apellido Paterno</th>
+                  <th style="text-align:center;">Apellido Materno</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="alumno in item.Alumnos" :key="alumno.AlumnoId.val">
+                  <td style="text-align:center;">{{ alumno.AlumnoId.val }}</td>
+                  <td style="text-align:center;">{{ alumno.Nombre.val }}</td>
+                  <td style="text-align:center;">{{ alumno.ApellidoPaterno.val }}</td>
+                  <td style="text-align:center;">{{ alumno.ApellidoMaterno.val }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row" colspan="3" style="text-align:center;">Número total de aulmnos</th>
+                  <td colspan="1">77</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
     <cargando v-if="isLoading"></cargando>
   </div>
 </template>
 <script>
 import axios from "axios";
 import routeAPI from "@/js/api";
+import html2pdf from "html2pdf.js";
 
 export default {
   data() {
@@ -507,7 +538,7 @@ export default {
           key: "ApellidoPaterno.val",
           label: "Apellido Paterno",
           sortable: true,
-        },        
+        },
         {
           key: "ApellidoMaterno.val",
           label: "Apellido Materno",
@@ -521,7 +552,7 @@ export default {
       ],
       alumnos_perPage: 10,
       alumnos_currentPage: 1,
-      alumnos_filter: "",      
+      alumnos_filter: "",
     };
   },
   computed: {
@@ -543,8 +574,12 @@ export default {
     this.getEstadosAlumno();
   },
   methods: {
-    async descargarLista(){
-
+    async descargarLista() {
+      html2pdf(document.getElementById("element-to-convert"), {
+        margin: 10,
+        html2canvas:  { scale: 2 },
+        filename: "listaGrupo" +  this.item.TiposNivel + this.item.TipoGrado + this.item.TipoDeGrupo + ".pdf",
+      });
     },
     async getTipoDeCicloEscolar() {
       try {
@@ -847,7 +882,6 @@ export default {
       this.filtros.filtro_cicloEscolar = element;
     },
     seleccionarCicloEscolarItem: function(element) {
-      console.log(element);
       this.item.TipoDeCicloEscolarId = element;
     },
     seleccionarTipoModalidad: function(element) {
@@ -928,12 +962,20 @@ export default {
       this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
       this.item.TipoDeCicloEscolarId =
         item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
+       this.item.TipoDeCicloEscolar =
+        item.TipoDeCicloEscolar.Nombre;
       this.item.TiposNivelId = item.TiposNivel.TipoNivelId;
+      this.item.TiposNivel = item.TiposNivel.Nombre;
       this.item.TipoModalidadId = item.TipoModalidad.TipoDeModalidadId;
+      this.item.TipoModalidad = item.TipoModalidad.Nombre;
       this.item.TipoPeriodoId = item.TipoPeriodo.TipoPeriodoId;
+      this.item.TipoPeriodo = item.TipoPeriodo.Nombre;
       this.item.TipoGradoId = item.TipoGrado.TipoGradoId;
+      this.item.TipoGrado = item.TipoGrado.Nombre;
       this.item.TipoDeGrupoId = item.TipoDeGrupo.TipoGrupoId;
+      this.item.TipoDeGrupo = item.TipoDeGrupo.Nombre;
       this.item.TipoEspecialidadId = item.Especialidad.EspecialidadId;
+      this.item.TipoEspecialidad = item.Especialidad.Nombre;
       this.item.Activo = item.Activo;
       this.item.Alumnos = [];
       this.getAlumnosDeGrupo();
@@ -1013,7 +1055,6 @@ export default {
             });
           });
           this.mostrarModal = !this.mostrarModal;
-          console.log(this.item.Alumnos);
         } else {
           console.log(response);
           this.$alert(
@@ -1046,5 +1087,37 @@ export default {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   margin-bottom: 5px;
+}
+
+#app {
+  margin-top: 100px;
+  text-align: center;
+}
+
+#icon {
+  width: 60%;
+}
+
+.logo {
+  text-align: left;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #000;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #dbdbdb;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+
+tfoot {
+  border-top: 3px solid #000;
 }
 </style>
