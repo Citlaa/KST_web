@@ -80,16 +80,79 @@
           </div>
         </div>
         <div v-if="mostrarFiltros" class="filtro_footer">
-          <button class="button is-default btn-sm mr-1" @click="limpiarFiltros()">
-            Borrar
+          <button
+            class="button is-default btn-sm mr-1"
+            @click="limpiarFiltros()"
+          >
+            Mostrar Todo
           </button>
-          <button class="button is-primary btn-sm" @click="getAlumnoConPagos()">
+          <button class="button is-primary btn-sm" @click="getAlumnos()">
             Buscar
           </button>
         </div>
       </div>
     </section>
     <br />
+    <section id="alumnos_list">
+      <div
+        class="row col-12"
+        v-if="alumnos_items.length <= 0"
+        style="display: grid; justify-content: center;"
+      >
+        <p>No se encontraron registros</p>
+      </div>
+      <div id="bootstrap_table" v-else>
+        <div class="col-3 mr-0 align-rigth">
+          <input
+            class="form-control"
+            v-model="filter"
+            type="search"
+            placeholder="Buscar"
+            @blur="currentPage = 1"
+          />
+        </div>
+        <b-table
+          striped
+          hover
+          outlined
+          :items="alumnos_items"
+          :fields="alumnos_fields"
+          :per-page="alumnos_perPage"
+          :current-page="alumnos_currentPage"
+          :filter="alumnos_filter"
+        >
+          <template v-slot:cell(Activo)="data">
+            <button
+              class="btn btn-default"
+              v-if="data.item.Activo == 1"
+              :key="data.item.EstructuraDeGrupoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-check-square" style="color: green"> </i>
+            </button>
+            <button
+              class="btn btn-default"
+              v-else
+              :key="data.item.EstructuraDeGrupoId"
+              style="cursor: default;"
+            >
+              <i class="far fa-times-circle" style="color: red"> </i>
+            </button>
+          </template>
+          <template v-slot:cell(opciones)="data">                        
+            <input type="radio" 
+              v-model="alumno_selected" 
+              name="alumno_selected" 
+              @change="alumno_selected = data" :key="data.AlumnoId" />
+          </template>
+        </b-table>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="rows"
+          :per-page="perPage"
+        ></b-pagination>
+      </div>
+    </section>
     <section id="data_alumnos" v-if="mostrarAlumno">
       <div class="row col-12 seccion_data">
         <div class="col-12 seccion_titulo_first">
@@ -439,17 +502,19 @@
                           <div
                             class="col-12 form-group padding-model"
                             v-if="mostrarEditarRecargo.quienAutoriza"
-                          >                            
+                          >
                             <usuarios
                               :key="recargo_item.Autoriza.val"
                               :label="'Quien autoriza*'"
                               :titulo="true"
-                              :usuarioId ="recargo_item.Autoriza.val"
+                              :usuarioId="recargo_item.Autoriza.val"
                               :disabled="!inhabilitar"
-                              @seleccionarTipoDeRecargo="seleccionarUsuario($event)"
+                              @seleccionarTipoDeRecargo="
+                                seleccionarUsuario($event)
+                              "
                               :funcion="'seleccionarTipoDeRecargo'"
-                              >
-                              </usuarios>
+                            >
+                            </usuarios>
                           </div>
                           <section id="data_table">
                             <br />
@@ -485,15 +550,27 @@
                                   </tr>
                                   <tr>
                                     <td>Pago</td>
-                                    <td>${{ currencyFormat(this.pago_item.TipoDePago.val.Monto) }}</td>
-                                    <td>{{ }}</td>
-                                    <td>${{ currencyFormat(this.pago_item.TipoDePago.val.Monto) }}</td>
+                                    <td>
+                                      ${{
+                                        currencyFormat(
+                                          this.pago_item.TipoDePago.val.Monto
+                                        )
+                                      }}
+                                    </td>
+                                    <td>{{}}</td>
+                                    <td>
+                                      ${{
+                                        currencyFormat(
+                                          this.pago_item.TipoDePago.val.Monto
+                                        )
+                                      }}
+                                    </td>
                                     <td></td>
                                   </tr>
                                 </tbody>
                               </table>
                             </div>
-                          </section>                          
+                          </section>
                           <section id="data_total">
                             <br />
                             <div class="col-12 seccion_total_modal">
@@ -545,11 +622,7 @@
       </div>
     </section>
     <cargando v-if="isLoading"></cargando>
-    <base-dialog
-      :show="!!error"
-      :title="'Log in'"
-      @close="handleError"
-    >
+    <base-dialog :show="!!error" :title="'Log in'" @close="handleError">
       <p>{{ error }}</p>
     </base-dialog>
   </div>
@@ -593,10 +666,16 @@ export default {
       },
       inhabilitar: true,
       perPage: 5,
+      alumnos_perPage: 10,
       currentPage: 1,
+      alumnos_currentPage: 1,
       pagos_items: [],
+      alumnos_items:[],
       filter: "",
+      alumnos_filter: "",
       itemsRecargo: [],
+      estadosAlumno: [],
+      alumno_selected:{},
       fields: [
         {
           key: "PagoId",
@@ -616,6 +695,47 @@ export default {
         {
           key: "FechaPago",
           label: "Fecha de pago",
+          sortable: true,
+        },
+        {
+          label: "Opciones",
+          key: "opciones",
+        },
+      ],
+      alumnos_fields:[
+        {
+          key: "AlumnoId.val",
+          label: "Folio",
+          sortable: true,
+        },
+        {
+          key: "NombreCompleto.val",
+          label: "Nombre",
+          sortable: true,
+        },
+        {
+          key: "Curp.val",
+          label: "CURP",
+          sortable: true,
+        },
+        {
+          key: "NumeroDeControl.val",
+          label: "Número de Control",
+          sortable: true,
+        },
+        {
+          key: "Genero.val",
+          label: "Genero",
+          sortable: true,
+        },
+        {
+          key: "TipoEstadoAlumno.val.Nombre",
+          label: "Estado",
+          sortable: true,
+        },
+        {
+          key: "Activo",
+          label: "Activo",
           sortable: true,
         },
         {
@@ -674,7 +794,13 @@ export default {
           isValid: true,
         },
         Fecha: {
-          val: moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD"),
+          val: moment(
+            moment()
+              .add(1, "M")
+              .month() +
+              "-5-" +
+              moment().year()
+          ).format("yyyy-MM-DD"),
           isValid: true,
         },
         Autoriza: {
@@ -687,7 +813,7 @@ export default {
       indexRecargos: 0,
       cantidadTipoPago: 0,
       newCantidadTipoPago: 0,
-      mostrarAlumno: false
+      mostrarAlumno: false,
     };
   },
   computed: {
@@ -700,8 +826,36 @@ export default {
       this.newCantidadTipoPago = newValue;
     },
   },
-  created() {},
+  created() {
+    this.getEstadosAlumno();
+  },
   methods: {
+    async getEstadosAlumno() {
+      try {
+        this.isLoading = true;
+        const filtros = {
+          filtro: {
+            activo: 1,
+          },
+        };
+
+        const response = await axios.post(
+          routeAPI + "catalogo/estadosDeAlumnos",
+          filtros
+        );
+
+        response.data.response.forEach((element) => {
+          this.estadosAlumno.push({
+            EstadoDeAlumnoId: element["014TiposEstadoAlumnoId"],
+            Nombre: element["014Nombre"],
+            Activo: element["014Activo"],
+          });
+        });
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
     actualizarCantidadTotal() {
       this.pago_item.Cantidad.val -= this.pago_item.TipoDePago.val.Monto;
       this.pago_item.Cantidad.val += Number(this.newCantidadTipoPago);
@@ -713,7 +867,8 @@ export default {
       if (this.itemIsValid) {
         this.pago_item.Recargos = this.itemsRecargo;
         if (this.pago_item.PagoId && this.pago_item.PagoId.val > 0)
-          this.editarPago();//Editar pago
+          this.editarPago();
+        //Editar pago
         else this.agregarPago(); //Guardar pago
       } else {
         this.$alert("Favor de completar los datos.");
@@ -722,8 +877,11 @@ export default {
     validarPago() {
       this.itemIsValid = true;
 
-      if(this.$store.getters.userId <= 0 || this.$store.getters.userId == undefined){
-        this.$router.push({ name: 'Login' });
+      if (
+        this.$store.getters.userId <= 0 ||
+        this.$store.getters.userId == undefined
+      ) {
+        this.$router.push({ name: "Login" });
       }
 
       if (this.pago_item.TipoDePago.val.TipoDePagoId <= 0) {
@@ -779,7 +937,7 @@ export default {
         if (!response.data.hayError) {
           this.mostrarModal = false;
           console.log("El pago se editó con éxito.");
-          if (this.pago_item.Recargos.length > 0) {            
+          if (this.pago_item.Recargos.length > 0) {
             this.guardarRecargos(this.pago_item.PagoId.val);
           }
         } else {
@@ -791,7 +949,7 @@ export default {
       }
     },
     async guardarRecargos(pagoId) {
-      try {        
+      try {
         // eliminar recargos del pago
         const data = {
           pagoId: pagoId,
@@ -811,19 +969,21 @@ export default {
           );
           return;
         }
-        
+
         this.pago_item.Recargos.forEach(async (recargo) => {
-          
           const data = {
             recargo: {
               PagoId: pagoId,
-              Monto: typeof(recargo.Monto) ==  'string' ? Number(recargo.Monto.split("$")[1]): recargo.Monto,
+              Monto:
+                typeof recargo.Monto == "string"
+                  ? Number(recargo.Monto.split("$")[1])
+                  : recargo.Monto,
               TipoDeRecargoId: recargo.TipoRecargo.Id,
               DiasRetraso: recargo.DiasRetraso,
               TotalAPagar: recargo.TotalAPagar,
               UsuarioId_Autoriza: recargo.UsuarioId_Autoriza,
               UsuarioId: this.$store.getters.userId,
-              Activo: Enum.EstatusGeneral.Activo
+              Activo: Enum.EstatusGeneral.Activo,
             },
           };
 
@@ -861,8 +1021,8 @@ export default {
           this.mostrarModal = false;
           console.log("El pago se guardó con éxito.");
 
-          if (this.pago_item.Recargos.length > 0) {            
-              this.guardarRecargos(response.data.response.insertId);            
+          if (this.pago_item.Recargos.length > 0) {
+            this.guardarRecargos(response.data.response.insertId);
           } else {
             this.$alert("El pago se guardó con éxito.");
             this.getAlumnoConPagos();
@@ -922,7 +1082,7 @@ export default {
         Monto: this.recargo_item.TipoRecargo.val.Monto,
         DiasRetraso: this.recargo_item.DiasRetraso,
         TotalAPagar: this.recargo_item.TotalAPagar,
-        UsuarioId_Autoriza: this.recargo_item.Autoriza.val  
+        UsuarioId_Autoriza: this.recargo_item.Autoriza.val,
       });
 
       this.indexRecargos++;
@@ -942,7 +1102,13 @@ export default {
     limpiarRecargo() {
       this.recargo_item.TipoRecargo.val = { TipoDeRecargoId: 0 };
       this.recargo_item.Monto.val = 0;
-      this.recargo_item.Fecha.val = moment(moment().add(1, "M").month() + "-5-" +moment().year()).format("yyyy-MM-DD");
+      this.recargo_item.Fecha.val = moment(
+        moment()
+          .add(1, "M")
+          .month() +
+          "-5-" +
+          moment().year()
+      ).format("yyyy-MM-DD");
       this.recargo_item.Autoriza.val = null;
       this.recargo_item.TotalAPagar = 0;
       this.recargo_item.DiasRetraso = 0;
@@ -972,7 +1138,7 @@ export default {
       this.mostrarEditarRecargo.quienAutoriza = false;
       this.itemsRecargo = [];
     },
-    async cargarItem(item) {      
+    async cargarItem(item) {
       let recargos = await this.getRecargos(item.PagoId);
       console.log(recargos);
       this.pago_item.PagoId.val = item.PagoId;
@@ -1014,13 +1180,13 @@ export default {
       this.recargo_item.TipoRecargo.val = item;
       this.recargo_item.Monto.val = item.Monto;
 
-      this.mostrarEditarRecargo.displayBtn = true;      
+      this.mostrarEditarRecargo.displayBtn = true;
     },
     seleccionarUsuario(item) {
-      this.recargo_item.Autoriza.val = item;   
-      if(item > 0){
-      this.mostrarEditarRecargo.desabledMonto = false;
-      this.mostrarEditarRecargo.displayRecargoBtn = false;
+      this.recargo_item.Autoriza.val = item;
+      if (item > 0) {
+        this.mostrarEditarRecargo.desabledMonto = false;
+        this.mostrarEditarRecargo.displayRecargoBtn = false;
       }
     },
     seleccionarTipoDePago(item) {
@@ -1038,25 +1204,24 @@ export default {
 
       this.limpiarValidez("TipoDePago");
     },
-    async validarFiltros(){
-      let isValid =  true;
-      
-      if(this.filtros.filtro_nombre == "" && this.filtros.filtro_apellidoPaterno == "" && this.filtros.filtro_apellidoMaterno == "" && 
-          this.filtros.filtro_curp == "" && this.filtros.filtro_numeroDeControl == "" && this.filtros.filtro_activo == "-1"){
-        isValid =  false;      
-      }
-      
+    async validarFiltros() {
+      let isValid = true;
+
+      // if(this.filtros.filtro_nombre == "" && this.filtros.filtro_apellidoPaterno == "" && this.filtros.filtro_apellidoMaterno == "" &&
+      //     this.filtros.filtro_curp == "" && this.filtros.filtro_numeroDeControl == "" && this.filtros.filtro_activo == "-1"){
+      //   isValid =  false;
+      // }
+
       return isValid;
     },
-    async getAlumnoConPagos() {
+    async getAlumnos() {
       try {
-        if(await this.validarFiltros()){
         this.isLoading = true;
-        this.pagos_items = [];
+        this.mostrarAlumno = false;
+        this.items = [];
         const filtros = {
           filtro: {},
         };
-        ////////////////aquí terminar de traer al alumno, despues sus pagos y pintarlos
 
         if (this.filtros.filtro_nombre != "")
           filtros.filtro.nombre = this.filtros.filtro_nombre;
@@ -1077,30 +1242,129 @@ export default {
           routeAPI + "alumnos/alumnos",
           filtros
         );
-
+        
         if (!response.data.hayError) {
-          this.isLoading = false;
-          this.mostrarAlumno = true;
-
-          if(response.data.response.length <= 0){
-            this.error = "No se encontró ninún alumno, favor de verificar los datos.";
-            this.mostrarAlumno = false;
-            return;
-          }
-
-          let alumno = response.data.response[0];
-
-          this.getGrupos(Number(alumno["010EstructuraDeGrupoId"]));
-
-          this.alumno_item.AlumnoId = alumno["011AlumnoId"];
-          this.alumno_item.Nombre = alumno["011Nombre"];
-          this.alumno_item.ApellidoPaterno = alumno["011ApellidoPaterno"];
-          this.alumno_item.ApellidoMaterno = alumno["011ApellidoMaterno"];
-          this.alumno_item.Curp = alumno["011CURP"];
-          this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
-          this.getPagos(Number(alumno["011AlumnoId"]));
+          response.data.response.forEach((element) => {
+            this.alumnos_items.push({
+              AlumnoId: {
+                val: element["011AlumnoId"],
+              },
+              Nombre: {
+                val: element["011Nombre"],
+              },
+              NombreCompleto: {
+                val:
+                  element["011Nombre"] +
+                  " " +
+                  element["011ApellidoPaterno"] +
+                  " " +
+                  element["011ApellidoMaterno"],
+              },
+              ApellidoPaterno: {
+                val: element["011ApellidoPaterno"],
+              },
+              ApellidoMaterno: {
+                val: element["011ApellidoMaterno"],
+              },
+              Curp: {
+                val: element["011CURP"],
+              },
+              FechaNacimiento: {
+                val: element["011FechaNacimiento"],
+              },
+              Genero: {
+                val: element["011Genero"],
+              },
+              NumeroDeControl: {
+                val: element["011NumeroDeControl"],
+              },
+              EscuelaDeProcedenciaId: {
+                val: element["015EscuelaDeProcedenciaId"],
+              },
+              PromedioDeProcedencia: {
+                val: element["011PromedioDeProcedencia"],
+              },
+              Domicilio: {
+                val: element["011Domicilio"],
+              },
+              TipoEstadoAlumno: {
+                val: this.estadosAlumno.find(
+                  (estado) =>
+                    estado.EstadoDeAlumnoId ===
+                    Number(element["014TipoEstadoAlumnoId"])
+                ),
+              },
+              EstructuraGrupo: {
+                val: element["010EstructuraDeGrupoId"]
+              },
+              Activo:Number(element["011Activo"]),
+            });
+          });
+        } else {
+          console.log(response);
+          this.$alert(
+            "No se pudo obtener información, favor de volverlo a intentar."
+          );
         }
-        }else{
+        this.isLoading = false;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async getAlumnoConPagos() {
+      try {
+        if (await this.validarFiltros()) {
+          this.isLoading = true;
+          this.pagos_items = [];
+          const filtros = {
+            filtro: {},
+          };
+          ////////////////aquí terminar de traer al alumno, despues sus pagos y pintarlos
+
+          if (this.filtros.filtro_nombre != "")
+            filtros.filtro.nombre = this.filtros.filtro_nombre;
+          if (this.filtros.filtro_apellidoPaterno != "")
+            filtros.filtro.apellidoPaterno = this.filtros.filtro_apellidoPaterno;
+          if (this.filtros.filtro_apellidoMaterno != "")
+            filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
+          if (this.filtros.filtro_curp != "")
+            filtros.filtro.curp = this.filtros.filtro_curp;
+          if (this.filtros.filtro_numeroDeControl != "")
+            filtros.filtro.numeroDeControl = Number(
+              this.filtros.filtro_numeroDeControl
+            );
+          if (this.filtros.filtro_activo != "")
+            filtros.filtro.activo = Number(this.filtros.filtro_activo);
+
+          const response = await axios.post(
+            routeAPI + "alumnos/alumnos",
+            filtros
+          );
+
+          if (!response.data.hayError) {
+            this.isLoading = false;
+            this.mostrarAlumno = true;
+
+            if (response.data.response.length <= 0) {
+              this.error =
+                "No se encontró ninún alumno, favor de verificar los datos.";
+              this.mostrarAlumno = false;
+              return;
+            }
+
+            let alumno = response.data.response[0];
+
+            this.getGrupos(Number(alumno["010EstructuraDeGrupoId"]));
+
+            this.alumno_item.AlumnoId = alumno["011AlumnoId"];
+            this.alumno_item.Nombre = alumno["011Nombre"];
+            this.alumno_item.ApellidoPaterno = alumno["011ApellidoPaterno"];
+            this.alumno_item.ApellidoMaterno = alumno["011ApellidoMaterno"];
+            this.alumno_item.Curp = alumno["011CURP"];
+            this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
+            this.getPagos(Number(alumno["011AlumnoId"]));
+          }
+        } else {
           console.log("error");
           this.error = "Favor de indicar algún filtro";
           this.mostrarAlumno = false;
@@ -1201,7 +1465,7 @@ export default {
       }
     },
     async getRecargos(pagoId) {
-      try {        
+      try {
         if (pagoId <= 0) {
           alert("No hay pago Id");
         } else {
@@ -1261,7 +1525,7 @@ export default {
           data
         );
         this.isLoading = false;
-        
+
         if (!response.data.hayError) {
           this.$alert("El pago se canceló correctamente.");
           this.getPagos(Number(this.pagos_items.PagoId));
@@ -1278,16 +1542,16 @@ export default {
       this.filtros.filtro_apellidoPaterno = "";
       this.filtros.filtro_apellidoMaterno = "";
       this.filtros.filtro_curp = "";
-      this.filtros.filtro_numeroDeControl = ""
+      this.filtros.filtro_numeroDeControl = "";
       this.filtros.filtro_activo = "-1";
-      //this.getAlumnoConPagos(); 
-      },
+      // this.getAlumnoConPagos();
+      this.getAlumnos();
+    },
     handleError() {
       this.error = null;
     },
   },
 };
-
 </script>
 <style scoped>
 .seccion_data {

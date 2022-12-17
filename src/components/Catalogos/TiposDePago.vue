@@ -207,7 +207,8 @@
                       <input
                         type="number"
                         class="form-control"
-                        v-model="item.Monto"
+                        v-model="item.Monto"               
+                        @change="validateNumber"
                       />
                     </div>
                     <div class="col-2 padding-model">
@@ -319,6 +320,12 @@ export default {
     },
   },
   methods: {
+    validateNumber(event) {
+      if (this.item.Monto < 0) {
+        event.preventDefault();
+        this.item.Monto = 0;
+      }
+    },
     async BuscarExistente(event) {
      console.log(event.target.value)
      if (event==this.ciclosEscolares.value)

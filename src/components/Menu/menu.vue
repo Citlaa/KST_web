@@ -52,7 +52,7 @@
             <b-dropdown-item :to="{ name: 'ListaDeGrupo' }" class="ms-auto"
               >Lista de grupo</b-dropdown-item
             >
-            <b-dropdown-item :to="{ name: '' }"
+            <b-dropdown-item :to="{ name: 'PersonasAdeudo' }"
               >Lista de personas con aduedo</b-dropdown-item
             >
           </b-nav-item-dropdown>

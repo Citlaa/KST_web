@@ -37,7 +37,7 @@
                 <div class="cuerpo_modulo">
                     <ul>
                         <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'ListaDeGrupo' }">Lista de grupo</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link to="/">Lista de personas con aduedo</router-link></li>                    
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'PersonasAdeudo' }">Lista de personas con aduedo</router-link></li>                    
                     </ul> 
                 </div>
             </div>
