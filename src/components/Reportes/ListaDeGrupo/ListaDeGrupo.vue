@@ -419,7 +419,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <th scope="row" colspan="3" style="text-align:center;">Número total de aulmnos</th>
+                  <th scope="row" colspan="3" style="text-align:center;">Número total de alumnos</th>
                   <td colspan="1">77</td>
                 </tr>
               </tfoot>

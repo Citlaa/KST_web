@@ -33,16 +33,15 @@
           <div class="row seccion_modal pt-0">
             <div class="pb-2 pt-2 mb-2" style="border-bottom: 1px solid #ccc">
               <h3 class="col-10">
-                <input 
-                  type="radio" 
-                  class="form-check-input" 
-                  name="tipo_filtro" 
-                  :value="'grupo'"                   
-                  v-model="tipo_filtro" 
-                  />
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  name="tipo_filtro"
+                  :value="'grupo'"
+                  v-model="tipo_filtro"
+                />
                 Búsqueda por grupo
               </h3>
-              
             </div>
             <div class="col-12 row">
               <div class="row m-0 pb-2 pr-0 pl-0">
@@ -130,14 +129,15 @@
           <div class="row seccion_modal pt-1">
             <div class="pb-2 pt-2" style="border-bottom: 1px solid #ccc;">
               <h3 class="col-10">
-                <input 
-                  type="radio" 
-                  class="form-check-input" 
-                  name="tipo_filtro" 
-                  :value="'alumno'"                   
+                <input
+                  type="radio"
+                  class="form-check-input"
+                  name="tipo_filtro"
+                  :value="'alumno'"
                   v-model="tipo_filtro"
-                  />
-                Búsqueda por alumno</h3>
+                />
+                Búsqueda por alumno
+              </h3>
             </div>
             <div class="col-12 row">
               <div class="col-4">
@@ -198,7 +198,7 @@
       <br />
       <div
         class="row col-12"
-        v-if="items.length <= 0"
+        v-if="items.length <= 0 && alumnos_items.length <= 0"
         style="display: grid; justify-content: center;"
       >
         <p>No se encontraron registros</p>
@@ -223,6 +223,9 @@
           :current-page="currentPage"
           :filter="filter"
         >
+          <template v-slot:cell(grupo)="data" v-if="tipo_filtro === 'alumno'">
+            {{data.item.TiposNivel.Nombre}} {{data.item.TipoGrado.Nombre}}° {{data.item.TipoDeGrupo.Nombre}} 
+          </template>
           <template v-slot:cell(Activo)="data">
             <button
               class="btn btn-default"
@@ -258,6 +261,19 @@
           :per-page="perPage"
         ></b-pagination>
       </div>
+      <div
+        v-if="alumnos_items.length > 0"
+        class="modal-footer"
+        style="margin-top: 50px; border: 0px; padding-right: 0px"
+      >
+        <button
+          type="button"
+          class="button is-primary"
+          @click="descargarLista()"
+        >
+          Descargar
+        </button>
+      </div>
     </div>
     <section id="modal">
       <div v-if="mostrarModal" class="modal_div" id="modal_div">
@@ -280,113 +296,113 @@
                   <div class="modal-body">
                     <div class="row seccion_modal">
                       <div class="row container_modal">
-                      <div class="col-12 seccion_titulo_modal">
-                        <h3>Datos del grupo</h3>
+                        <div class="col-12 seccion_titulo_modal">
+                          <h3>Datos del grupo</h3>
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-ciclo-escolar
+                            :label="'Ciclo Escolar'"
+                            :titulo="true"
+                            :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
+                            v-on:seleccionarCicloEscolarItem="
+                              seleccionarCicloEscolarItem($event)
+                            "
+                            :funcion="'seleccionarCicloEscolarItem'"
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-modalidad
+                            :tipoDeModalidadId="item.TipoModalidadId"
+                            :key="item.TipoModalidadId"
+                            :label="'Modalidad'"
+                            :titulo="true"
+                            :funcion="'seleccionarTipoModalidadItem'"
+                            @seleccionarTipoModalidadItem="
+                              seleccionarTipoModalidadItem($event)
+                            "
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-periodo
+                            :tipoPeriodoId="item.TipoPeriodoId"
+                            :key="item.TipoPeriodoId"
+                            :label="'Periodo'"
+                            :titulo="true"
+                            :funcion="'seleccionarPeriodoItem'"
+                            @seleccionarPeriodoItem="
+                              seleccionarPeriodoItem($event)
+                            "
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-grupo
+                            :tipoDeGrupoId="item.TipoDeGrupoId"
+                            :key="item.TipoDeGrupoId"
+                            :label="'Grupo'"
+                            :titulo="true"
+                            :funcion="'seleccionarGrupoItem'"
+                            @seleccionarGrupoItem="seleccionarGrupoItem($event)"
+                            disabled
+                          />
+                        </div>
                       </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-ciclo-escolar
-                          :label="'Ciclo Escolar'"
-                          :titulo="true"
-                          :tipoDeCicloEscolarId="item.TipoDeCicloEscolarId"
-                          v-on:seleccionarCicloEscolarItem="
-                            seleccionarCicloEscolarItem($event)
-                          "
-                          :funcion="'seleccionarCicloEscolarItem'"
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-modalidad
-                          :tipoDeModalidadId="item.TipoModalidadId"
-                          :key="item.TipoModalidadId"
-                          :label="'Modalidad'"
-                          :titulo="true"
-                          :funcion="'seleccionarTipoModalidadItem'"
-                          @seleccionarTipoModalidadItem="
-                            seleccionarTipoModalidadItem($event)
-                          "
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-periodo
-                          :tipoPeriodoId="item.TipoPeriodoId"
-                          :key="item.TipoPeriodoId"
-                          :label="'Periodo'"
-                          :titulo="true"
-                          :funcion="'seleccionarPeriodoItem'"
-                          @seleccionarPeriodoItem="
-                            seleccionarPeriodoItem($event)
-                          "
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-grupo
-                          :tipoDeGrupoId="item.TipoDeGrupoId"
-                          :key="item.TipoDeGrupoId"
-                          :label="'Grupo'"
-                          :titulo="true"
-                          :funcion="'seleccionarGrupoItem'"
-                          @seleccionarGrupoItem="seleccionarGrupoItem($event)"
-                          disabled
-                        />
-                      </div>
-                    </div>
-                    <div class="row container_bottom_modal">
-                      <div class="col-3 form-group padding-model">
-                        <tipos-nivel
-                          :tipoNivelId="item.TiposNivelId"
-                          :key="item.TiposNivelId"
-                          :titulo="true"
-                          :label="'Nivel'"
-                          :funcion="'seleccionarNivelItem'"
-                          @seleccionarNivelItem="seleccionarNivelItem($event)"
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-grado
-                          :tipoDeGradoId="item.TipoGradoId"
-                          :key="item.TipoGradoId"
-                          :label="'Grado'"
-                          :titulo="true"
-                          :funcion="'seleccionarGradoItem'"
-                          @seleccionarGradoItem="seleccionarGradoItem($event)"
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <tipos-especialidad
-                          :TipoEspecialidadId="item.TipoEspecialidadId"
-                          :key="item.TipoEspecialidadId"
-                          :label="'Especialidad'"
-                          :titulo="true"
-                          :funcion="'seleccionarEspecialidadItem'"
-                          @seleccionarEspecialidadItem="
-                            seleccionarEspecialidadItem($event)
-                          "
-                          disabled
-                        />
-                      </div>
-                      <div class="col-3 form-group padding-model">
-                        <label class="activo_label">Activo</label>
-                        <select
-                          class="form-control"
-                          v-model="item.Activo"
-                          disabled
-                        >
-                          <option value="-1" selected
-                            >Seleccionar Activo</option
+                      <div class="row container_bottom_modal">
+                        <div class="col-3 form-group padding-model">
+                          <tipos-nivel
+                            :tipoNivelId="item.TiposNivelId"
+                            :key="item.TiposNivelId"
+                            :titulo="true"
+                            :label="'Nivel'"
+                            :funcion="'seleccionarNivelItem'"
+                            @seleccionarNivelItem="seleccionarNivelItem($event)"
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-grado
+                            :tipoDeGradoId="item.TipoGradoId"
+                            :key="item.TipoGradoId"
+                            :label="'Grado'"
+                            :titulo="true"
+                            :funcion="'seleccionarGradoItem'"
+                            @seleccionarGradoItem="seleccionarGradoItem($event)"
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <tipos-especialidad
+                            :TipoEspecialidadId="item.TipoEspecialidadId"
+                            :key="item.TipoEspecialidadId"
+                            :label="'Especialidad'"
+                            :titulo="true"
+                            :funcion="'seleccionarEspecialidadItem'"
+                            @seleccionarEspecialidadItem="
+                              seleccionarEspecialidadItem($event)
+                            "
+                            disabled
+                          />
+                        </div>
+                        <div class="col-3 form-group padding-model">
+                          <label class="activo_label">Activo</label>
+                          <select
+                            class="form-control"
+                            v-model="item.Activo"
+                            disabled
                           >
-                          <option value="1">Si</option>
-                          <option value="0">No</option>
-                        </select>
+                            <option value="-1" selected
+                              >Seleccionar Activo</option
+                            >
+                            <option value="1">Si</option>
+                            <option value="0">No</option>
+                          </select>
+                        </div>
                       </div>
-                    </div>
                       <section id="alumnos_table">
-                        <div class="row container_modal" >
-                          <div class="row col-12">                                                                                
+                        <div class="row container_modal">
+                          <div class="row col-12">
                             <div class="col-12">
                               <div
                                 v-if="this.item.Alumnos.length <= 0"
@@ -397,61 +413,66 @@
                                   <p>No hay registros de búsqueda</p>
                                 </div>
                               </div>
-                              <div v-if="this.item.Alumnos.length > 0" class="row">
-                            <div class="col-12 seccion_titulo_modal">
-                              <h3>Alumnos con adeudo registrados al grupo</h3>
-                            </div>
-                            <div class="col-12">                             
-                              <div class="col-3 mr-0 align-rigth">
-                                <input
-                                  class="form-control"
-                                  v-model="alumnos_filter"
-                                  type="search"
-                                  placeholder="Buscar"
-                                  @blur="alumnos_currentPage = 1"
-                                />
+                              <div
+                                v-if="this.item.Alumnos.length > 0"
+                                class="row"
+                              >
+                                <div class="col-12 seccion_titulo_modal">
+                                  <h3>
+                                    Alumnos con adeudo registrados al grupo
+                                  </h3>
+                                </div>
+                                <div class="col-12">
+                                  <div class="col-3 mr-0 align-rigth">
+                                    <input
+                                      class="form-control"
+                                      v-model="alumnos_filter"
+                                      type="search"
+                                      placeholder="Buscar"
+                                      @blur="alumnos_currentPage = 1"
+                                    />
+                                  </div>
+                                  <b-table
+                                    striped
+                                    hover
+                                    outlined
+                                    id="alumnos_table"
+                                    :items="item.Alumnos"
+                                    :fields="alumnos_fields"
+                                    :per-page="alumnos_perPage"
+                                    :current-page="alumnos_currentPage"
+                                    :filter="alumnos_filter"
+                                  ></b-table>
+                                  <b-pagination
+                                    v-model="alumnos_currentPage"
+                                    :total-rows="alumnos_rows"
+                                    :per-page="alumnos_perPage"
+                                  ></b-pagination>
+                                </div>
                               </div>
-                              <b-table
-                                striped
-                                hover
-                                outlined
-                                id="alumnos_table"
-                                :items="item.Alumnos"
-                                :fields="alumnos_fields"
-                                :per-page="alumnos_perPage"
-                                :current-page="alumnos_currentPage"
-                                :filter="alumnos_filter"
-                              ></b-table>
-                              <b-pagination
-                                v-model="alumnos_currentPage"
-                                :total-rows="alumnos_rows"
-                                :per-page="alumnos_perPage"
-                              ></b-pagination>
                             </div>
                           </div>
-                            </div>
-                          </div>                          
                         </div>
                       </section>
                     </div>
                   </div>
                   <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="button is-primary"
-                    @click="descargarLista()"
-                  >
-                    Descargar
-                  </button>
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                    @click="mostrarModal = false"
-                  >
-                    Cerrar
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      class="button is-primary"
+                      @click="descargarLista()"
+                    >
+                      Descargar
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                      @click="mostrarModal = false"
+                    >
+                      Cerrar
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -472,14 +493,22 @@
               />
             </div>
             <div class="col-7 text-align">
-              <h1 style="text-align:center; font-size:120%; font-weight:bold; margin-bottom:10px">
+              <h1
+                style="text-align:center; font-size:120%; font-weight:bold; margin-bottom:10px"
+              >
                 Instituto Víctor Manuel Castelazo Muriel
               </h1>
-              <h1 style="text-align:center;">Grupo {{item.TipoGrado}}° {{item.TipoDeGrupo}}</h1>
+              <h1 style="text-align:center;">
+                Grupo {{ item.TipoGrado }}° {{ item.TipoDeGrupo }}
+              </h1>
               <!-- //Grado grupo -->
-              <h1 style="text-align:center;">{{item.TiposNivel}} {{item.TipoModalidad}}</h1>
+              <h1 style="text-align:center;">
+                {{ item.TiposNivel }} {{ item.TipoModalidad }}
+              </h1>
               <!-- //Nivel Modalidad Especialidad -->
-              <h1 style="text-align:center;">{{item.TipoEspecialidad}} {{item.TipoDeCicloEscolar}} </h1>
+              <h1 style="text-align:center;">
+                {{ item.TipoEspecialidad }} {{ item.TipoDeCicloEscolar }}
+              </h1>
               <!-- //Especialidad Ciclo -->
             </div>
           </div>
@@ -497,13 +526,81 @@
                 <tr v-for="alumno in item.Alumnos" :key="alumno.AlumnoId.val">
                   <td style="text-align:center;">{{ alumno.AlumnoId.val }}</td>
                   <td style="text-align:center;">{{ alumno.Nombre.val }}</td>
-                  <td style="text-align:center;">{{ alumno.ApellidoPaterno.val }}</td>
-                  <td style="text-align:center;">{{ alumno.ApellidoMaterno.val }}</td>
+                  <td style="text-align:center;">
+                    {{ alumno.ApellidoPaterno.val }}
+                  </td>
+                  <td style="text-align:center;">
+                    {{ alumno.ApellidoMaterno.val }}
+                  </td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
-                  <th scope="row" colspan="3" style="text-align:center;">Número total de aulmnos</th>
+                  <th scope="row" colspan="3" style="text-align:center;">
+                    Número total de alumnos
+                  </th>
+                  <td colspan="1">77</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="pdf_alumnos" v-show="false">
+      <div id="app" ref="document">
+        <div id="element-to-convert-alumnos">
+          <div id="header" class="row">
+            <div class="logo col-3">
+              <img
+                src="@/assets/logo.png"
+                id="icon"
+                alt="User Icon"
+                style="max-width: 150px"
+              />
+            </div>
+            <div class="col-7 text-align">
+              <h1
+                style="text-align:center; font-size:120%; font-weight:bold; margin-bottom:10px"
+              >
+                Instituto Víctor Manuel Castelazo Muriel
+              </h1>
+              <h1 style="text-align:center;">
+                Alumnos con adeudos
+              </h1>
+            </div>
+          </div>
+          <div id="alumnos_tabla" style="margin-top: 15px">
+            <table class="table table-hover striped ">
+              <thead>
+                <tr>
+                  <th style="text-align:center;">Folio</th>
+                  <th style="text-align:center;">Nombre</th>
+                  <th style="text-align:center;">Apellido Paterno</th>
+                  <th style="text-align:center;">Apellido Materno</th>
+                  <th style="text-align:center;">Grupo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="alumno in alumnos_items" :key="alumno.AlumnoId.val">
+                  <td style="text-align:center;">{{ alumno.AlumnoId.val }}</td>
+                  <td style="text-align:center;">{{ alumno.Nombre.val }}</td>
+                  <td style="text-align:center;">
+                    {{ alumno.ApellidoPaterno.val }}
+                  </td>
+                  <td style="text-align:center;">
+                    {{ alumno.ApellidoMaterno.val }}
+                  </td>
+                  <td style="text-align:center;">
+                    {{alumno.TiposNivel.Nombre}} {{alumno.TipoGrado.Nombre}}° {{alumno.TipoDeGrupo.Nombre}}
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th scope="row" colspan="4" style="text-align:center;">
+                    Número total de alumnos
+                  </th>
                   <td colspan="1">77</td>
                 </tr>
               </tfoot>
@@ -519,6 +616,7 @@
 import axios from "axios";
 import routeAPI from "@/js/api";
 import html2pdf from "html2pdf.js";
+import moment from "moment";
 
 export default {
   data() {
@@ -552,24 +650,24 @@ export default {
       alumnos_items: [],
       item: {
         TipoGrado: {
-          Nombre: ''
+          Nombre: "",
         },
         TipoDeGrupo: {
-          Nombre: ''
+          Nombre: "",
         },
         TiposNivel: {
-          Nombre: ''
+          Nombre: "",
         },
         TipoModalidad: {
-          Nombre: ''
+          Nombre: "",
         },
         TipoEspecialidad: {
-          Nombre: ''
+          Nombre: "",
         },
         TipoDeCicloEscolar: {
-          Nombre: ''
+          Nombre: "",
         },
-        Alumnos: []
+        Alumnos: [],
       },
       filter: "",
       fields: [
@@ -621,8 +719,8 @@ export default {
           key: "opciones",
         },
       ],
-      alumnos_fields:[
-          {
+      alumnos_fields: [
+        {
           key: "AlumnoId.val",
           label: "Folio",
           sortable: true,
@@ -653,19 +751,15 @@ export default {
           sortable: true,
         },
         {
-          key: "Activo",
-          label: "Activo",
+          key: "grupo",
+          label: "Grupo",
           sortable: true,
-        },
-        {
-          label: "Opciones",
-          key: "opciones",
         },
       ],
       perPage: 5,
       currentPage: 1,
       mostrarModal: false,
-       ciclosEscolares: [],
+      ciclosEscolares: [],
       modalidades: [],
       periodos: [],
       tiposDeGrupos: [],
@@ -705,18 +799,33 @@ export default {
   },
   methods: {
     async descargarLista() {
-      html2pdf(document.getElementById("element-to-convert"), {
-        margin: 10,
-        html2canvas:  { scale: 2 },
-        filename: "listaGrupo" +  this.item.TiposNivel + this.item.TipoGrado + this.item.TipoDeGrupo + ".pdf",
-      });
+      if (this.tipo_filtro === "grupo") {
+        html2pdf(document.getElementById("element-to-convert"), {
+          margin: 10,
+          html2canvas: { scale: 2 },
+          filename:
+            "listaGrupo" +
+            this.item.TiposNivel +
+            this.item.TipoGrado +
+            this.item.TipoDeGrupo +
+            ".pdf",
+        });
+      } else {
+        html2pdf(document.getElementById("element-to-convert-alumnos"), {
+          margin: 10,
+          html2canvas: { scale: 2 },
+          filename:
+            "AlumnosConAdeudo-" +
+            moment().format("yyyy-MM-DD") +
+            ".pdf",
+        });
+      }
     },
-    abrirModal: function(item) {            
+    abrirModal: function(item) {
       this.item.EstructuraDeGrupoId = item.EstructuraDeGrupoId;
       this.item.TipoDeCicloEscolarId =
         item.TipoDeCicloEscolar.TipoDeCicloEscolarId;
-       this.item.TipoDeCicloEscolar =
-        item.TipoDeCicloEscolar.Nombre;
+      this.item.TipoDeCicloEscolar = item.TipoDeCicloEscolar.Nombre;
       this.item.TiposNivelId = item.TiposNivel.TipoNivelId;
       this.item.TiposNivel = item.TiposNivel.Nombre;
       this.item.TipoModalidadId = item.TipoModalidad.TipoDeModalidadId;
@@ -731,9 +840,9 @@ export default {
       this.item.TipoEspecialidad = item.Especialidad.Nombre;
       this.item.Activo = item.Activo;
       this.item.Alumnos = [];
-      this.getAlumnosDeGrupo();      
+      this.getAlumnosDeGrupo();
     },
-    async getAlumnosDeGrupo(){
+    async getAlumnosDeGrupo() {
       try {
         this.isLoading = true;
         const data = {
@@ -741,7 +850,7 @@ export default {
             EstructuraDeGrupoId: this.item.EstructuraDeGrupoId,
           },
         };
-        
+
         const response = await axios.post(
           routeAPI + "reportes/alumnosDeGrupoConAdeudo",
           data
@@ -751,7 +860,7 @@ export default {
         if (!response.data.hayError) {
           this.isLoading = false;
           let alumnos_list = [];
-          response.data.response.forEach((element) => {            
+          response.data.response.forEach((element) => {
             alumnos_list.push({
               AlumnoId: {
                 val: element["011AlumnoId"],
@@ -809,7 +918,7 @@ export default {
           });
 
           this.item.Alumnos = alumnos_list;
-          this.mostrarModal = !this.mostrarModal;                      
+          this.mostrarModal = !this.mostrarModal;
         } else {
           console.log(response);
           this.$alert(
@@ -846,7 +955,7 @@ export default {
         console.log(err);
       }
     },
-      async getTipoDeCicloEscolar() {
+    async getTipoDeCicloEscolar() {
       try {
         this.isLoading = true;
         const filtros = {
@@ -1104,10 +1213,9 @@ export default {
       else this.getAlumnos();
     },
     getBusqueda() {
-      if (this.tipo_filtro === "grupo"){
-       this.getGrupos();
-      }
-      else { 
+      if (this.tipo_filtro === "grupo") {
+        this.getGrupos();
+      } else {
         this.getAlumnos();
       }
     },
@@ -1213,7 +1321,7 @@ export default {
           filtros.filtro.numeroDeControl = Number(
             this.filtros.filtro_numeroDeControl
           );
-          
+
         const response = await axios.get(
           routeAPI + "reportes/alumnosConAdeudo",
           filtros
@@ -1221,23 +1329,61 @@ export default {
 
         if (!response.data.hayError) {
           if (response.data.response.length > 0) {
+            console.log(response.data.response);
             response.data.response.forEach((element) => {
-              this.items.push({
-                EstructuraDeGrupoId: element["010EstructuraDeGrupoId"],
-                TipoDeCicloEscolar: this.ciclosEscolares.find(
-                  (ciclo) =>
-                    ciclo.TipoDeCicloEscolarId ===
-                    Number(element["002TipoDeCicloEscolarId"])
-                ),
-                TipoModalidad: this.modalidades.find(
-                  (modalidad) =>
-                    modalidad.TipoDeModalidadId ===
-                    Number(element["004TipoModalidadId"])
-                ),
-                TipoPeriodo: this.periodos.find(
-                  (per) =>
-                    per.TipoPeriodoId === Number(element["005TipoPeriodoId"])
-                ),
+              this.alumnos_items.push({
+                AlumnoId: {
+                  val: element["011AlumnoId"],
+                },
+                Nombre: {
+                  val: element["011Nombre"],
+                },
+                NombreCompleto: {
+                  val:
+                    element["011Nombre"] +
+                    " " +
+                    element["011ApellidoPaterno"] +
+                    " " +
+                    element["011ApellidoMaterno"],
+                },
+                ApellidoPaterno: {
+                  val: element["011ApellidoPaterno"],
+                },
+                ApellidoMaterno: {
+                  val: element["011ApellidoMaterno"],
+                },
+                Curp: {
+                  val: element["011CURP"],
+                },
+                FechaNacimiento: {
+                  val: element["011FechaNacimiento"],
+                },
+                Genero: {
+                  val: element["011Genero"],
+                },
+                NumeroDeControl: {
+                  val: element["011NumeroDeControl"],
+                },
+                EscuelaDeProcedenciaId: {
+                  val: element["015EscuelaDeProcedenciaId"],
+                },
+                PromedioDeProcedencia: {
+                  val: element["011PromedioDeProcedencia"],
+                },
+                Domicilio: {
+                  val: element["011Domicilio"],
+                },
+                TipoEstadoAlumno: {
+                  val: this.estadosAlumno.find(
+                    (estado) =>
+                      estado.EstadoDeAlumnoId ===
+                      Number(element["014TipoEstadoAlumnoId"])
+                  ),
+                },
+                EstructuraGrupo: {
+                  val: element["010EstructuraDeGrupoId"],
+                },
+                Activo: Number(element["011Activo"]),
                 TipoDeGrupo: this.tiposDeGrupos.find(
                   (grupo) =>
                     grupo.TipoGrupoId === Number(element["006TipoDeGrupoId"])
@@ -1250,14 +1396,9 @@ export default {
                   (grado) =>
                     grado.TipoGradoId === Number(element["008TipoGradoId"])
                 ),
-                Especialidad: this.especialidades.find(
-                  (especialidad) =>
-                    especialidad.EspecialidadId ===
-                    Number(element["009TipoEspecialidadId"])
-                ),
-                Activo: element["010Activo"],
               });
             });
+            console.log("get alumnos", this.alumnos_items);
           }
         } else
           this.$alert(
@@ -1271,6 +1412,7 @@ export default {
     },
     limpiarVariables: function() {
       this.items = [];
+      this.alumnos_items = [];
 
       this.item = {
         EstructuraDeGrupoId: -1,
@@ -1340,5 +1482,4 @@ tbody tr:nth-child(even) {
 tfoot {
   border-top: 3px solid #000;
 }
-
 </style>
