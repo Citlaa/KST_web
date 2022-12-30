@@ -143,7 +143,7 @@
             <input type="radio" 
               v-model="alumno_selected" 
               name="alumno_selected" 
-              @change="alumno_selected = data" :key="data.AlumnoId" />
+              @change="seleccionarAlumno(data)" :key="data.AlumnoId" />
           </template>
         </b-table>
         <b-pagination
@@ -154,7 +154,7 @@
       </div>
     </section>
     <section id="data_alumnos" v-if="mostrarAlumno">
-      <div class="row col-12 seccion_data">
+      <div class="row col-12 seccion_data" style="margin-top: 65px;">
         <div class="col-12 seccion_titulo_first">
           <h3>Datos del alumno</h3>
         </div>
@@ -704,6 +704,10 @@ export default {
       ],
       alumnos_fields:[
         {
+          label: "",
+          key: "opciones",
+        },
+        {
           key: "AlumnoId.val",
           label: "Folio",
           sortable: true,
@@ -737,11 +741,7 @@ export default {
           key: "Activo",
           label: "Activo",
           sortable: true,
-        },
-        {
-          label: "Opciones",
-          key: "opciones",
-        },
+        },      
       ],
       alumno_item: {
         AlumnoId: "",
@@ -830,6 +830,10 @@ export default {
     this.getEstadosAlumno();
   },
   methods: {
+    seleccionarAlumno(data){
+      this.alumno_selected = data;
+      this.getAlumnoConPagos();
+    },
     async getEstadosAlumno() {
       try {
         this.isLoading = true;
@@ -1216,6 +1220,7 @@ export default {
     },
     async getAlumnos() {
       try {
+        if (await this.validarFiltros()) {
         this.isLoading = true;
         this.mostrarAlumno = false;
         this.items = [];
@@ -1244,6 +1249,7 @@ export default {
         );
         
         if (!response.data.hayError) {
+          this.alumnos_items = [];
           response.data.response.forEach((element) => {
             this.alumnos_items.push({
               AlumnoId: {
@@ -1307,34 +1313,31 @@ export default {
           );
         }
         this.isLoading = false;
+        } else {
+          console.log("error");
+          this.error = "Favor de indicar algún filtro";
+          this.mostrarAlumno = false;
+        }
       } catch (err) {
         console.log(err);
       }
     },
     async getAlumnoConPagos() {
       try {
-        if (await this.validarFiltros()) {
+          if(this.alumno_selected.item === null || this.alumno_selected.item === undefined){
+            this.error = "Favor de seleccionar un alumno.";
+            this.mostrarAlumno = false; 
+          }else{
           this.isLoading = true;
           this.pagos_items = [];
           const filtros = {
             filtro: {},
           };
-          ////////////////aquí terminar de traer al alumno, despues sus pagos y pintarlos
-
-          if (this.filtros.filtro_nombre != "")
-            filtros.filtro.nombre = this.filtros.filtro_nombre;
-          if (this.filtros.filtro_apellidoPaterno != "")
-            filtros.filtro.apellidoPaterno = this.filtros.filtro_apellidoPaterno;
-          if (this.filtros.filtro_apellidoMaterno != "")
-            filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
-          if (this.filtros.filtro_curp != "")
-            filtros.filtro.curp = this.filtros.filtro_curp;
-          if (this.filtros.filtro_numeroDeControl != "")
-            filtros.filtro.numeroDeControl = Number(
-              this.filtros.filtro_numeroDeControl
-            );
-          if (this.filtros.filtro_activo != "")
-            filtros.filtro.activo = Number(this.filtros.filtro_activo);
+          
+          const alumno = this.alumno_selected.item;
+          
+          if (alumno.AlumnoId.val != "")
+            filtros.filtro.id = alumno.AlumnoId.val;        
 
           const response = await axios.post(
             routeAPI + "alumnos/alumnos",
@@ -1363,12 +1366,8 @@ export default {
             this.alumno_item.Curp = alumno["011CURP"];
             this.alumno_item.NumeroDeControl = alumno["011NumeroDeControl"];
             this.getPagos(Number(alumno["011AlumnoId"]));
-          }
-        } else {
-          console.log("error");
-          this.error = "Favor de indicar algún filtro";
-          this.mostrarAlumno = false;
-        }
+          }  
+          }    
       } catch (err) {
         console.log(err);
       }

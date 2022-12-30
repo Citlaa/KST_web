@@ -539,7 +539,7 @@
                   <th scope="row" colspan="3" style="text-align:center;">
                     Número total de alumnos
                   </th>
-                  <td colspan="1">77</td>
+                  <td colspan="1">{{item.Alumnos.length}}</td>
                 </tr>
               </tfoot>
             </table>
@@ -601,7 +601,7 @@
                   <th scope="row" colspan="4" style="text-align:center;">
                     Número total de alumnos
                   </th>
-                  <td colspan="1">77</td>
+                  <td colspan="1">{{alumnos_items.length}}</td>
                 </tr>
               </tfoot>
             </table>
