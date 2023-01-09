@@ -546,7 +546,7 @@ export default {
         },
         {
           key: "TipoEstadoAlumno.val.Nombre",
-          label: "Estatus",
+          label: "Estado",
           sortable: true,
         },
       ],

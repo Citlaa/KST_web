@@ -67,6 +67,8 @@
             <input
               class="form-control"
               type="number"
+              min = 1
+              @change="selectNumeroDeControl"
               v-model="filtros.filtro_numeroDeControl"
             />
           </div>
@@ -105,7 +107,7 @@
         <div class="col-3 mr-0 align-rigth">
           <input
             class="form-control"
-            v-model="filter"
+            v-model="alumnos_filter"
             type="search"
             placeholder="Buscar"
             @blur="currentPage = 1"
@@ -830,6 +832,13 @@ export default {
     this.getEstadosAlumno();
   },
   methods: {
+    selectNumeroDeControl(value){
+      if(value.target.value < 0){
+        this.filtros.filtro_numeroDeControl = (value.target.value * -1);
+      }else if(value.target.value == 0){
+        this.filtros.filtro_numeroDeControl = 1;
+      }
+    },
     seleccionarAlumno(data){
       this.alumno_selected = data;
       this.getAlumnoConPagos();
@@ -1236,7 +1245,7 @@ export default {
           filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
         if (this.filtros.filtro_curp != "")
           filtros.filtro.curp = this.filtros.filtro_curp;
-        if (this.filtros.filtro_numeroDeControl != "")
+        if (this.filtros.filtro_numeroDeControl > 0)
           filtros.filtro.numeroDeControl = Number(
             this.filtros.filtro_numeroDeControl
           );

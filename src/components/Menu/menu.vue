@@ -53,7 +53,7 @@
               >Lista de grupo</b-dropdown-item
             >
             <b-dropdown-item :to="{ name: 'PersonasAdeudo' }"
-              >Lista de personas con aduedo</b-dropdown-item
+              >Lista de personas con adeudo</b-dropdown-item
             >
           </b-nav-item-dropdown>
           <b-nav-item v-if="isLoggedIn" @click="logout" >

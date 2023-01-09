@@ -224,7 +224,7 @@
           :filter="filter"
         >
           <template v-slot:cell(grupo)="data" v-if="tipo_filtro === 'alumno'">
-            {{data.item.TiposNivel.Nombre}} {{data.item.TipoGrado.Nombre}}° {{data.item.TipoDeGrupo.Nombre}} 
+            {{ data.item.TiposNivel.Nombre }} {{ data.item.TipoGrado.Nombre }}° {{ data.item.TipoDeGrupo.Nombre }}
           </template>
           <template v-slot:cell(Activo)="data">
             <button
@@ -285,7 +285,7 @@
                   <div class="modal-header">
                     <div class="col-11">
                       <h2 class="modal-title text-center">
-                        Alumnos con aduedo
+                        Alumnos con adeudo
                       </h2>
                       <div class="line_red"></div>
                     </div>
@@ -539,7 +539,7 @@
                   <th scope="row" colspan="3" style="text-align:center;">
                     Número total de alumnos
                   </th>
-                  <td colspan="1">{{item.Alumnos.length}}</td>
+                  <td colspan="1">{{ item.Alumnos.length }}</td>
                 </tr>
               </tfoot>
             </table>
@@ -601,7 +601,7 @@
                   <th scope="row" colspan="4" style="text-align:center;">
                     Número total de alumnos
                   </th>
-                  <td colspan="1">{{alumnos_items.length}}</td>
+                  <td colspan="1">{{ alumnos_items.length }}</td>
                 </tr>
               </tfoot>
             </table>
@@ -815,9 +815,7 @@ export default {
           margin: 10,
           html2canvas: { scale: 2 },
           filename:
-            "AlumnosConAdeudo-" +
-            moment().format("yyyy-MM-DD") +
-            ".pdf",
+            "AlumnosConAdeudo-" + moment().format("yyyy-MM-DD") + ".pdf",
         });
       }
     },
@@ -845,79 +843,94 @@ export default {
     async getAlumnosDeGrupo() {
       try {
         this.isLoading = true;
-        const data = {
-          data: {
+        const filtros = {
+          filtro: {
             EstructuraDeGrupoId: this.item.EstructuraDeGrupoId,
           },
         };
 
         const response = await axios.post(
           routeAPI + "reportes/alumnosDeGrupoConAdeudo",
-          data
+          filtros
         );
-
-        this.isLoading = false;
+        
         if (!response.data.hayError) {
-          this.isLoading = false;
           let alumnos_list = [];
-          response.data.response.forEach((element) => {
-            alumnos_list.push({
-              AlumnoId: {
-                val: element["011AlumnoId"],
-              },
-              Nombre: {
-                val: element["011Nombre"],
-              },
-              NombreCompleto: {
-                val:
-                  element["011Nombre"] +
-                  " " +
-                  element["011ApellidoPaterno"] +
-                  " " +
-                  element["011ApellidoMaterno"],
-              },
-              ApellidoPaterno: {
-                val: element["011ApellidoPaterno"],
-              },
-              ApellidoMaterno: {
-                val: element["011ApellidoMaterno"],
-              },
-              Curp: {
-                val: element["011CURP"],
-              },
-              FechaNacimiento: {
-                val: element["011FechaNacimiento"],
-              },
-              Genero: {
-                val: element["011Genero"],
-              },
-              NumeroDeControl: {
-                val: element["011NumeroDeControl"],
-              },
-              EscuelaDeProcedenciaId: {
-                val: element["015EscuelaDeProcedenciaId"],
-              },
-              PromedioDeProcedencia: {
-                val: element["011PromedioDeProcedencia"],
-              },
-              Domicilio: {
-                val: element["011Domicilio"],
-              },
-              TipoEstadoAlumno: {
-                val: this.estadosAlumno.find(
-                  (estado) =>
-                    estado.EstadoDeAlumnoId ===
-                    Number(element["014TipoEstadoAlumnoId"])
-                ),
-              },
-              EstructuraGrupo: {
-                val: element["010EstructuraDeGrupoId"],
-              },
-              Activo: Number(element["011Activo"]),
-            });
-          });
+          let alumnos_adeudo = [];
+          if (response.data.response.length > 0) {            
+            alumnos_list = response.data.response;
+          }
 
-          this.item.Alumnos = alumnos_list;
+          const response_sinPagos = await axios.post(
+            routeAPI + "reportes/alumnosSinPagos",
+            filtros
+          );
+          
+          if (!response_sinPagos.data.hayError) {
+            if (response_sinPagos.data.response.length > 0) {              
+              alumnos_list = alumnos_list.concat(response_sinPagos.data.response);
+            }
+            
+            alumnos_list.forEach((element) => {              
+              alumnos_adeudo.push({
+                AlumnoId: {
+                  val: element["011AlumnoId"],
+                },
+                Nombre: {
+                  val: element["011Nombre"],
+                },
+                NombreCompleto: {
+                  val:
+                    element["011Nombre"] +
+                    " " +
+                    element["011ApellidoPaterno"] +
+                    " " +
+                    element["011ApellidoMaterno"],
+                },
+                ApellidoPaterno: {
+                  val: element["011ApellidoPaterno"],
+                },
+                ApellidoMaterno: {
+                  val: element["011ApellidoMaterno"],
+                },
+                Curp: {
+                  val: element["011CURP"],
+                },
+                FechaNacimiento: {
+                  val: element["011FechaNacimiento"],
+                },
+                Genero: {
+                  val: element["011Genero"],
+                },
+                NumeroDeControl: {
+                  val: element["011NumeroDeControl"],
+                },
+                EscuelaDeProcedenciaId: {
+                  val: element["015EscuelaDeProcedenciaId"],
+                },
+                PromedioDeProcedencia: {
+                  val: element["011PromedioDeProcedencia"],
+                },
+                Domicilio: {
+                  val: element["011Domicilio"],
+                },
+                TipoEstadoAlumno: {
+                  val: this.estadosAlumno.find(
+                    (estado) =>
+                      estado.EstadoDeAlumnoId ===
+                      Number(element["014TipoEstadoAlumnoId"])
+                  ),
+                },
+                EstructuraGrupo: {
+                  val: element["010EstructuraDeGrupoId"],
+                },
+                Activo: Number(element["011Activo"]),
+              });
+            });
+          }
+          this.isLoading = false;
+
+          this.item.Alumnos = alumnos_adeudo;
           this.mostrarModal = !this.mostrarModal;
         } else {
           console.log(response);
@@ -1322,15 +1335,30 @@ export default {
             this.filtros.filtro_numeroDeControl
           );
 
-        const response = await axios.get(
+        const response = await axios.post(
           routeAPI + "reportes/alumnosConAdeudo",
           filtros
         );
 
         if (!response.data.hayError) {
+          let alumnos_list = [];
           if (response.data.response.length > 0) {
-            console.log(response.data.response);
-            response.data.response.forEach((element) => {
+            alumnos_list = response.data.response;
+          }
+
+          const response_sinPagos = await axios.post(
+            routeAPI + "reportes/alumnosSinPagos",
+            filtros
+          );
+
+          if (!response.data.hayError) {
+            if (response_sinPagos.data.response.length > 0) {
+              alumnos_list = alumnos_list.concat(
+                response_sinPagos.data.response
+              );
+            }
+
+            alumnos_list.forEach((element) => {
               this.alumnos_items.push({
                 AlumnoId: {
                   val: element["011AlumnoId"],
@@ -1398,8 +1426,7 @@ export default {
                 ),
               });
             });
-            console.log("get alumnos", this.alumnos_items);
-          }
+          }          
         } else
           this.$alert(
             "No se pudo obtener información, favor de volverlo a intentar."
