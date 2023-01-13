@@ -835,8 +835,6 @@ export default {
     selectNumeroDeControl(value){
       if(value.target.value < 0){
         this.filtros.filtro_numeroDeControl = (value.target.value * -1);
-      }else if(value.target.value == 0){
-        this.filtros.filtro_numeroDeControl = 1;
       }
     },
     seleccionarAlumno(data){
@@ -1245,7 +1243,7 @@ export default {
           filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
         if (this.filtros.filtro_curp != "")
           filtros.filtro.curp = this.filtros.filtro_curp;
-        if (this.filtros.filtro_numeroDeControl > 0)
+        if (this.filtros.filtro_numeroDeControl >= 0)
           filtros.filtro.numeroDeControl = Number(
             this.filtros.filtro_numeroDeControl
           );

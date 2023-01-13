@@ -438,7 +438,7 @@
                                     outlined
                                     id="alumnos_table"
                                     :items="item.Alumnos"
-                                    :fields="alumnos_fields"
+                                    :fields="alumnos_grupo_fields"
                                     :per-page="alumnos_perPage"
                                     :current-page="alumnos_currentPage"
                                     :filter="alumnos_filter"
@@ -717,6 +717,38 @@ export default {
         {
           label: "Opciones",
           key: "opciones",
+        },
+      ],
+      alumnos_grupo_fields:[
+        {
+          key: "AlumnoId.val",
+          label: "Folio",
+          sortable: true,
+        },
+        {
+          key: "NombreCompleto.val",
+          label: "Nombre",
+          sortable: true,
+        },
+        {
+          key: "Curp.val",
+          label: "CURP",
+          sortable: true,
+        },
+        {
+          key: "NumeroDeControl.val",
+          label: "Número de Control",
+          sortable: true,
+        },
+        {
+          key: "Genero.val",
+          label: "Genero",
+          sortable: true,
+        },
+        {
+          key: "TipoEstadoAlumno.val.Nombre",
+          label: "Estado",
+          sortable: true,
         },
       ],
       alumnos_fields: [
