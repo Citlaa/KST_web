@@ -95,6 +95,7 @@
           striped
           hover
           outlined
+          responsive="xs"
           :items="items"
           :fields="fields"
           :per-page="perPage"

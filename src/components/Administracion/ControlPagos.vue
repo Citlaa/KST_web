@@ -117,6 +117,7 @@
           striped
           hover
           outlined
+          responsive="md"
           :items="alumnos_items"
           :fields="alumnos_fields"
           :per-page="alumnos_perPage"
@@ -247,6 +248,7 @@
                 striped
                 hover
                 outlined
+                responsive="md"
                 :items="pagos_items"
                 :fields="fields"
                 :per-page="perPage"

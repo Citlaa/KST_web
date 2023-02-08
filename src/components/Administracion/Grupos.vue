@@ -143,6 +143,7 @@
           striped
           hover
           outlined
+          responsive="md"
           :items="items"
           :fields="fields"
           :per-page="perPage"

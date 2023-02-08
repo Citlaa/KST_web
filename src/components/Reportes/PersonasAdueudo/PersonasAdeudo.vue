@@ -217,6 +217,7 @@
           striped
           hover
           outlined
+          responsive="md"
           :items="tipo_filtro === 'grupo' ? items : alumnos_items"
           :fields="tipo_filtro === 'grupo' ? fields : alumnos_fields"
           :per-page="perPage"
@@ -436,8 +437,10 @@
                                     striped
                                     hover
                                     outlined
+                                    responsive="md"
                                     id="alumnos_table"
                                     :items="item.Alumnos"
+                                    :sticky-header="stickyHeader"
                                     :fields="alumnos_grupo_fields"
                                     :per-page="alumnos_perPage"
                                     :current-page="alumnos_currentPage"
