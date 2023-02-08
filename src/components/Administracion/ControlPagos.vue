@@ -1,7 +1,7 @@
 <template>
   <div class="container is-max-desktop">
     <div class="col-12" id="Titulo">
-      <h1 class="titulo_azul">Control de pagos</h1>
+      <h1 class="titulo_azul">Registro de pagos</h1>
       <div class="line_red"></div>
     </div>
     <section id="filtro">
@@ -95,7 +95,7 @@
       </div>
     </section>
     <br />
-    <section id="alumnos_list">
+    <section id="alumnos_list">      
       <div
         class="row col-12"
         v-if="alumnos_items.length <= 0"
@@ -104,6 +104,9 @@
         <p>No se encontraron registros</p>
       </div>
       <div id="bootstrap_table" v-else>
+        <p class="mt-1" style="color: red">
+          Selecciona el alumno que registrará un pago.
+        </p>
         <div class="col-3 mr-0 align-rigth">
           <input
             class="form-control"
@@ -321,7 +324,7 @@
                   <div class="modal-header">
                     <div class="col-11">
                       <h2 class="modal-title text-center">
-                        {{ titutoModal }} tipo de pago
+                        {{ titutoModal }} pago
                       </h2>
                       <div class="line_red"></div>
                     </div>
@@ -479,6 +482,7 @@
                               type="date"
                               class="form-control"
                               v-model="recargo_item.Fecha.val"
+                              :max="new Date(new Date().setDate(new Date().getDate()-2)).toISOString().split('T')[0]"
                               :disabled="!inhabilitar"
                             />
                           </div>
@@ -561,7 +565,7 @@
                                         )
                                       }}
                                     </td>
-                                    <td>{{}}</td>
+                                    <td></td>
                                     <td>
                                       ${{
                                         currencyFormat(
@@ -1102,8 +1106,9 @@ export default {
       this.limpiarRecargo();
     },
     async calcularTotal() {
+      const yesterday = new Date(new Date().setDate(new Date().getDate()-1))
       var diasRetraso = Math.trunc(
-        (new Date().getTime() -
+        (yesterday.getTime() -
           new Date(this.recargo_item.Fecha.val).getTime()) /
           (1000 * 60 * 60 * 24)
       );
@@ -1128,11 +1133,10 @@ export default {
       this.mostrarEditarRecargo.quienAutoriza = false;
       this.mostrarEditarRecargo.desabledMonto = true;
     },
-    abrirModal: function(tipo, inhabilitar, item) {
+    abrirModal: function(tipo, inhabilitar, item) {      
       this.titutoModal = tipo;
       this.mostrarModal = !this.mostrarModal;
       this.inhabilitar = inhabilitar;
-
       this.limpiarModal();
       if (item && item.PagoId && item.PagoId > 0) this.cargarItem(item);
     },
@@ -1142,8 +1146,8 @@ export default {
       this.pago_item.Cantidad.val = 0;
       this.pago_item.FechaDePago.val = moment().format("yyyy-MM-DD");
 
-      this.pago_item.TipoDePago.val.TipoDePagoId = -1;
-      this.pago_item.TipoDePago.val.TipoDePagoId.Monto = 0;
+      this.pago_item.TipoDePago.val.TipoDePagoId = -1;      
+      this.pago_item.TipoDePago.val.Monto = 0;
       this.pago_item.TipoDePago.key = "edit_" + -1;
 
       this.pago_item.CicloEscolar.val = -1;
@@ -1245,11 +1249,11 @@ export default {
           filtros.filtro.apellidoMaterno = this.filtros.filtro_apellidoMaterno;
         if (this.filtros.filtro_curp != "")
           filtros.filtro.curp = this.filtros.filtro_curp;
-        if (this.filtros.filtro_numeroDeControl >= 0)
+        if (this.filtros.filtro_numeroDeControl !== "" && Number(this.filtros.filtro_numeroDeControl) >= 0)
           filtros.filtro.numeroDeControl = Number(
             this.filtros.filtro_numeroDeControl
           );
-        if (this.filtros.filtro_activo != "")
+        if (Number(this.filtros.filtro_activo) >= 0)
           filtros.filtro.activo = Number(this.filtros.filtro_activo);
 
         const response = await axios.post(
@@ -1444,7 +1448,7 @@ export default {
             routeAPI + "administracion/pagos",
             filtros
           );
-
+          
           if (!response.data.hayError) {
             if (response.data.response.length > 0) {
               response.data.response.forEach((element) => {

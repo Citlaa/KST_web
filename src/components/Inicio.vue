@@ -12,10 +12,10 @@
                 <div class="cuerpo_modulo">
                     <ul>
                         <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDePago'}">Tipos de pago</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'Grupos'}">Creación de grupos</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposCicloEscolar'}">Ciclo Escolar</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDePagos'}">Control de pagos</router-link></li>
                         <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDeRecargos'}">Tipos de recargos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposDePagos'}">Registro de pagos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'Grupos'}">Creación de grupos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'TiposCicloEscolar'}">Ciclo Escolar</router-link></li>                                                
                     </ul> 
                 </div>
             </div>
@@ -36,8 +36,8 @@
                 </div>
                 <div class="cuerpo_modulo">
                     <ul>
-                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'ListaDeGrupo' }">Lista de grupo</router-link></li>
-                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'PersonasAdeudo' }">Lista de personas con aduedo</router-link></li>                    
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'ListaDeGrupo' }">Lista de grupos</router-link></li>
+                        <li><i class="fas fa-chevron-right"></i> <router-link :to="{ name: 'PersonasAdeudo' }">Lista de personas con adeudo</router-link></li>                    
                     </ul> 
                 </div>
             </div>

@@ -372,7 +372,7 @@
                           <div class="col-4 form-group padding-model">
                             <label>Promedio de procedencia</label>
                             <input
-                              type="text"
+                              type="number"
                               class="form-control"
                               v-model="item.Promedio.val"
                               :disabled="!inhabilitar"
@@ -534,7 +534,7 @@
                               </p>
                               <p class="mt-1" style="color: red">
                                 Favor de buscar el nombre del padre o tutor, si
-                                no existe agregarlo.
+                                no existe agregarlo en la vista "Registro de Padre/Tutor".
                               </p>
                             </div>
                             <div class="col-4 form-group padding-model">
@@ -599,7 +599,7 @@
                                       <th>Apellido Materno</th>
                                       <th>Domicilio</th>
                                       <th>Parentesco</th>
-                                      <th></th>
+                                      <th>Agregar</th>
                                     </tr>
                                   </thead>
                                   <tbody>
@@ -625,6 +625,7 @@
                                       <td>
                                         <button
                                           class="btn btn-default"
+                                          title="Agregar padre/tutor al alumno"
                                           @click="agregarTutor(tutor)"
                                         >
                                           <i class="fas fa-plus"></i>

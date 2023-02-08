@@ -27,18 +27,18 @@
             <b-dropdown-item :to="{ name: 'TiposDePago' }"
               >Tipos de pago</b-dropdown-item
             >
+            <b-dropdown-item :to="{ name: 'TiposDeRecargos' }"
+              >Tipos de recargos</b-dropdown-item
+            >
+            <b-dropdown-item :to="{ name: 'TiposDePagos' }"
+              >Registro de pagos</b-dropdown-item
+            >
             <b-dropdown-item :to="{ name: 'Grupos' }"
               >Creación de grupos</b-dropdown-item
             >
             <b-dropdown-item :to="{ name: 'TiposCicloEscolar' }"
               >Ciclo Escolar</b-dropdown-item
-            >
-            <b-dropdown-item :to="{ name: 'TiposDePagos' }"
-              >Control de pagos</b-dropdown-item
-            >
-            <b-dropdown-item :to="{ name: 'TiposDeRecargos' }"
-              >Tipos de recargos</b-dropdown-item
-            >
+            >                        
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Alumnos">
             <b-dropdown-item :to="{ name: 'RegistroDeAlumnos' }"
@@ -50,7 +50,7 @@
           </b-nav-item-dropdown>
           <b-nav-item-dropdown text="Reportes">
             <b-dropdown-item :to="{ name: 'ListaDeGrupo' }" class="ms-auto"
-              >Lista de grupo</b-dropdown-item
+              >Lista de grupos</b-dropdown-item
             >
             <b-dropdown-item :to="{ name: 'PersonasAdeudo' }"
               >Lista de personas con adeudo</b-dropdown-item
